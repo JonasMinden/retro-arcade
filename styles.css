@@ -741,3 +741,145 @@ button,
   box-shadow: 0 0 12px rgba(255, 209, 102, 0.28);
   background: rgba(255, 209, 102, 0.18);
 }
+
+.popular-game-link {
+  color: var(--accent-blue) !important;
+  border-color: rgba(113, 227, 255, 0.18) !important;
+  background: rgba(113, 227, 255, 0.06) !important;
+}
+
+.footer-legal-link {
+  color: var(--accent-yellow) !important;
+}
+
+.game-card__art {
+  position: relative;
+  overflow: hidden;
+  height: 96px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-size: cover;
+  background-position: center;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), inset 0 -20px 30px rgba(0,0,0,0.26);
+}
+
+.game-card__art::before,
+.game-card__art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.game-card__art::before {
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent 20%, transparent 80%, rgba(0,0,0,0.22));
+}
+
+.game-card__art::after {
+  background: repeating-linear-gradient(180deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 4px);
+  opacity: 0.34;
+}
+
+.pixel-art--snake {
+  background:
+    radial-gradient(circle at 76% 28%, #ff5fb2 0 8px, transparent 9px),
+    linear-gradient(90deg, transparent 0 12%, #87ff65 12% 22%, transparent 22% 28%, #87ff65 28% 38%, transparent 38% 46%, #87ff65 46% 72%, transparent 72%),
+    linear-gradient(180deg, transparent 0 18%, rgba(111,247,221,0.16) 18% 20%, transparent 20% 38%, rgba(111,247,221,0.16) 38% 40%, transparent 40% 58%, rgba(111,247,221,0.16) 58% 60%, transparent 60%),
+    #07111c;
+}
+
+.pixel-art--pong {
+  background:
+    linear-gradient(90deg, #09101a 0 10%, #f7f5ff 10% 14%, #09101a 14% 84%, #f7f5ff 84% 88%, #09101a 88%),
+    linear-gradient(90deg, transparent 0 49%, rgba(255,255,255,0.35) 49% 51%, transparent 51%),
+    radial-gradient(circle at 52% 54%, #ffd166 0 7px, transparent 8px),
+    linear-gradient(180deg, rgba(113,227,255,0.1), transparent 40%),
+    #101221;
+}
+
+.pixel-art--breakout {
+  background:
+    linear-gradient(90deg, #ff5fb2 0 16%, transparent 16% 18%, #ffd166 18% 34%, transparent 34% 36%, #71e3ff 36% 52%, transparent 52% 54%, #87ff65 54% 70%, transparent 70% 72%, #ff9b54 72% 88%, transparent 88%),
+    radial-gradient(circle at 48% 68%, #f7f5ff 0 7px, transparent 8px),
+    linear-gradient(90deg, transparent 0 30%, #ff9b54 30% 70%, transparent 70%),
+    #101221;
+}
+
+.pixel-art--tetris {
+  background:
+    linear-gradient(90deg, transparent 0 8%, #71e3ff 8% 22%, transparent 22% 25%, #ff5fb2 25% 39%, transparent 39% 42%, #ffd166 42% 56%, transparent 56% 59%, #87ff65 59% 73%, transparent 73% 76%, #ff9b54 76% 90%, transparent 90%),
+    linear-gradient(180deg, transparent 0 20%, rgba(255,255,255,0.07) 20% 22%, transparent 22% 44%, rgba(255,255,255,0.07) 44% 46%, transparent 46% 68%, rgba(255,255,255,0.07) 68% 70%, transparent 70%),
+    linear-gradient(180deg, rgba(113,227,255,0.12), transparent 36%),
+    #101221;
+}
+
+.pixel-art--invaders {
+  background:
+    linear-gradient(90deg, transparent 0 15%, #87ff65 15% 21%, transparent 21% 27%, #87ff65 27% 33%, transparent 33% 39%, #87ff65 39% 45%, transparent 45% 51%, #87ff65 51% 57%, transparent 57% 63%, #87ff65 63% 69%, transparent 69%),
+    linear-gradient(180deg, transparent 0 16%, #87ff65 16% 32%, transparent 32% 46%, #ff5fb2 46% 54%, transparent 54% 68%, #71e3ff 68% 76%, transparent 76%),
+    linear-gradient(90deg, transparent 0 48%, rgba(255,255,255,0.18) 48% 52%, transparent 52%),
+    #0b0f1d;
+}
+
+.pixel-art--asteroids {
+  background:
+    radial-gradient(circle at 22% 32%, #ffd166 0 10px, transparent 11px),
+    radial-gradient(circle at 58% 28%, #ff9b54 0 13px, transparent 14px),
+    radial-gradient(circle at 76% 68%, #71e3ff 0 9px, transparent 10px),
+    linear-gradient(135deg, transparent 0 43%, #f7f5ff 43% 47%, transparent 47%),
+    radial-gradient(circle at 70% 18%, rgba(255,255,255,0.18) 0 2px, transparent 3px),
+    #07101c;
+}
+
+.pixel-art--pacman {
+  background:
+    radial-gradient(circle at 24% 50%, #ffd166 0 18px, transparent 19px),
+    radial-gradient(circle at 65% 44%, #ff5fb2 0 12px, transparent 13px),
+    radial-gradient(circle at 80% 44%, #71e3ff 0 12px, transparent 13px),
+    radial-gradient(circle at 73% 72%, #ff9b54 0 12px, transparent 13px),
+    linear-gradient(90deg, transparent 0 10%, rgba(39,60,255,0.85) 10% 12%, transparent 12% 88%, rgba(39,60,255,0.85) 88% 90%, transparent 90%),
+    linear-gradient(180deg, transparent 0 16%, rgba(39,60,255,0.85) 16% 18%, transparent 18% 82%, rgba(39,60,255,0.85) 82% 84%, transparent 84%),
+    #101221;
+}
+
+.pixel-art--pinball {
+  background:
+    radial-gradient(circle at 28% 28%, #ff5fb2 0 10px, transparent 11px),
+    radial-gradient(circle at 68% 26%, #71e3ff 0 10px, transparent 11px),
+    radial-gradient(circle at 48% 46%, #ffd166 0 12px, transparent 13px),
+    linear-gradient(135deg, transparent 0 42%, #ff9b54 42% 47%, transparent 47%),
+    linear-gradient(225deg, transparent 0 42%, #ff9b54 42% 47%, transparent 47%),
+    linear-gradient(180deg, transparent 0 76%, #4c2026 76% 100%),
+    #0b0f1d;
+}
+
+.pixel-art--doodle {
+  background:
+    linear-gradient(180deg, #6fd4ff 0 66%, #67c65f 66% 73%, transparent 73%),
+    linear-gradient(90deg, transparent 0 16%, #87ff65 16% 34%, transparent 34% 56%, #87ff65 56% 74%, transparent 74%),
+    radial-gradient(circle at 46% 32%, #ffd166 0 10px, transparent 11px),
+    #101221;
+}
+
+.pixel-art--helicopter {
+  background:
+    linear-gradient(90deg, #0b0f1d 0 10%, #ff9b54 10% 12%, #0b0f1d 12% 62%, #ff9b54 62% 64%, #0b0f1d 64% 100%),
+    linear-gradient(180deg, transparent 0 24%, #71e3ff 24% 32%, transparent 32% 46%, #71e3ff 46% 54%, transparent 54% 68%, #71e3ff 68% 76%, transparent 76%),
+    linear-gradient(90deg, transparent 0 24%, #ffd166 24% 50%, transparent 50%),
+    #101221;
+}
+
+.pixel-art--crossy {
+  background:
+    linear-gradient(180deg, #6fd46d 0 22%, #4a4743 22% 44%, #71e3ff 44% 60%, #4a4743 60% 80%, #6fd46d 80% 100%),
+    linear-gradient(90deg, transparent 0 18%, #ffd166 18% 22%, transparent 22% 42%, #ff5fb2 42% 48%, transparent 48% 66%, #ffd166 66% 70%, transparent 70%),
+    radial-gradient(circle at 36% 16%, #f7f5ff 0 6px, transparent 7px),
+    #101221;
+}
+
+.pixel-art--runner {
+  background:
+    linear-gradient(180deg, #0c1732 0 66%, #ff9b54 66% 72%, #4a2f18 72% 100%),
+    linear-gradient(90deg, transparent 0 18%, #71e3ff 18% 28%, transparent 28% 46%, #ff5fb2 46% 56%, transparent 56% 72%, #87ff65 72% 82%, transparent 82%),
+    linear-gradient(90deg, transparent 0 58%, #f7f5ff 58% 62%, transparent 62%),
+    #101221;
+}

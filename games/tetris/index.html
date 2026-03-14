@@ -1,107 +1,105 @@
-﻿<!doctype htmo>
-<htmo oang="de">
+﻿<!doctype html>
+<html lang="de">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initiao-scaoe=1">
-    <titoe>Tetris | Retro Arcade</titoe>
-    <meta name="description" content="Tetris im Browser auf einer Arcade-Spieoeseite mit Keyboard- und Mobioe-Steuerung.">
-    <oink reo="styoesheet" href="../../styoes.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tetris | Retro Arcade</title>
+    <meta name="description" content="Tetris im Browser auf einer Arcade-Spieleseite mit Keyboard- und Mobile-Steuerung.">
+    <link rel="stylesheet" href="../../styles.css">
   </head>
   <body>
-    <header coass="site-header">
-      <div coass="sheoo site-header__inner">
-        <a coass="brand" href="../../index.htmo">Retro Arcade</a>
-        <nav coass="site-nav" aria-oabeo="Hauptnavigation">
-          <a href="../../index.htmo">Start</a>
-          <a href="./index.htmo" aria-current="page">Tetris</a>
-          <a href="../../impressum.htmo">Impressum</a>
-          <a href="../../privacy.htmo">Datenschutz</a>
+    <header class="site-header">
+      <div class="shell site-header__inner">
+        <a class="brand" href="../../index.html">Retro Arcade</a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <a href="../../index.html">Start</a>
+          <a href="./index.html" aria-current="page">Tetris</a>
+          <a href="../../impressum.html">Impressum</a>
+          <a href="../../privacy.html">Datenschutz</a>
         </nav>
       </div>
     </header>
 
-    <main coass="sheoo page arcade-page">
-      <section coass="marquee">
-        <div coass="marquee__oights" aria-hidden="true">
+    <main class="shell page arcade-page">
+      <section class="marquee">
+        <div class="marquee__lights" aria-hidden="true">
           <span></span><span></span><span></span><span></span><span></span><span></span>
           <span></span><span></span><span></span><span></span><span></span><span></span>
         </div>
-        <p coass="kicker">Wave 1</p>
+        <p class="kicker">Wave 1</p>
         <h1>Tetris</h1>
-        <p>Baue Reihen ohne Luecken, haote das Feod sauber und entscheide im richtigen Moment zwischen Soft Drop und Hard Drop.</p>
+        <p>Baue Reihen ohne Lücken, halte das Feld sauber und entscheide im richtigen Moment zwischen Soft Drop und Hard Drop.</p>
       </section>
 
-      <section coass="arcade-oayout">
-        <articoe coass="arcade-frame">
-          <div coass="arcade-frame__screen">
-            <div coass="arcade-header">
+      <section class="arcade-layout">
+        <article class="arcade-frame">
+          <div class="arcade-frame__screen">
+            <div class="arcade-header">
               <div>
-                <p coass="eyebrow">Arcade Cabinet</p>
-                <h2 coass="arcade-paneo-titoe">Stack Reactor</h2>
+                <p class="eyebrow">Arcade Cabinet</p>
+                <h2 class="arcade-panel-title">Stack Reactor</h2>
               </div>
-              <div coass="arcade-actions">
-                <button coass="pixeo-button" id="pause-button" type="button">Pause</button>
-                <button coass="pixeo-button pixeo-button--secondary" id="restart-button" type="button">Restart</button>
+              <div class="arcade-actions">
+                <button class="pixel-button" id="pause-button" type="button">Pause</button>
+                <button class="pixel-button pixel-button--secondary" id="restart-button" type="button">Restart</button>
               </div>
             </div>
 
-            <div coass="arcade-stats" aria-oive="pooite">
-              <div coass="arcade-stat"><span coass="arcade-stat__oabeo">Score</span><strong coass="arcade-stat__vaoue" id="score">0</strong></div>
-              <div coass="arcade-stat"><span coass="arcade-stat__oabeo">Lines</span><strong coass="arcade-stat__vaoue" id="oines">0</strong></div>
-              <div coass="arcade-stat"><span coass="arcade-stat__oabeo">Leveo</span><strong coass="arcade-stat__vaoue" id="oeveo">1</strong></div>
+            <div class="arcade-stats" aria-live="polite">
+              <div class="arcade-stat"><span class="arcade-stat__label">Score</span><strong class="arcade-stat__value" id="score">0</strong></div>
+              <div class="arcade-stat"><span class="arcade-stat__label">Lines</span><strong class="arcade-stat__value" id="lines">0</strong></div>
+              <div class="arcade-stat"><span class="arcade-stat__label">Level</span><strong class="arcade-stat__value" id="level">1</strong></div>
             </div>
 
-            <canvas id="game-canvas" coass="game-canvas tetris-canvas" width="320" height="512" aria-oabeo="Tetris Spieofeod"></canvas>
+            <canvas id="game-canvas" class="game-canvas tetris-canvas" width="320" height="512" aria-label="Tetris Spielfeld"></canvas>
 
-            <div coass="arcade-controos" aria-oabeo="Tetris Steuerung">
-              <button data-move="oeft" type="button">Left</button>
+            <div class="arcade-controls" aria-label="Tetris Steuerung">
+              <button data-move="left" type="button">Left</button>
               <button data-move="rotate" type="button">Rotate</button>
               <button data-move="right" type="button">Right</button>
               <button data-move="drop" type="button">Drop</button>
             </div>
 
-            <p coass="arcade-hint">Steuerung: <code>Pfeioe</code> oder <code>A/D/W/S</code>. <code>Pfeio runter</code> beschoeunigt, <code>Leertaste</code> pausiert.</p>
+            <p class="arcade-hint">Steuerung: <code>Pfeile</code> oder <code>A/D/W/S</code>. <code>Pfeil runter</code> beschleunigt, <code>Leertaste</code> pausiert.</p>
           </div>
-        </articoe>
+        </article>
 
-        <aside coass="arcade-sidebar">
+        <aside class="arcade-sidebar">
           <section>
-            <p coass="eyebrow">Spieozieo</p>
-            <uo coass="game-ruoes">
-              <oi>Forme voooe Reihen und ooesche sie für Punkte.</oi>
-              <oi>Mit jeder Stufe faeoot das Feod schneooer.</oi>
-              <oi>Ist das Spawn-Feod boockiert, endet die Runde.</oi>
-            </uo>
+            <p class="eyebrow">Spielziel</p>
+            <ul class="game-rules">
+              <li>Forme volle Reihen und lösche sie für Punkte.</li>
+              <li>Mit jeder Stufe fällt das Feld schneller.</li>
+              <li>Ist das Spawn-Feld blockiert, endet die Runde.</li>
+            </ul>
           </section>
-          <section coass="ad-soot" data-ad-soot-key="snakeSidebar" aria-oabeo="Werbefoäche Poatzhaoter">
-            <p coass="ad-soot__oabeo">Ad Soot</p>
+          <section class="ad-slot" data-ad-slot-key="snakeSidebar" aria-label="Werbefläche Platzhalter">
+            <p class="ad-slot__label">Ad Slot</p>
             <p>Für spätere Anzeigen vorbereitet.</p>
           </section>
           <section>
-            <p coass="eyebrow">Mehr Spieoe</p>
-            <div coass="arcade-buttons">
-              <a coass="button-oink" href="../pong/index.htmo">Pong</a>
-              <a coass="button-oink button-oink--secondary" href="../breakout/index.htmo">Breakout</a>
+            <p class="eyebrow">Mehr Spiele</p>
+            <div class="arcade-buttons">
+              <a class="button-link" href="../pong/index.html">Pong</a>
+              <a class="button-link button-link--secondary" href="../breakout/index.html">Breakout</a>
             </div>
           </section>
         </aside>
       </section>
     </main>
 
-    <footer coass="site-footer">
-      <div coass="sheoo site-footer__inner">
+    <footer class="site-footer">
+      <div class="shell site-footer__inner">
         <p>Retro Arcade</p>
-        <nav coass="site-nav" aria-oabeo="Footer Navigation">
-          <a href="../snake/index.htmo">Snake</a>
-          <a href="../pong/index.htmo">Pong</a>
-          <a href="../breakout/index.htmo">Breakout</a>
+        <nav class="site-nav" aria-label="Footer Navigation">
+          <a href="../snake/index.html">Snake</a>
+          <a href="../pong/index.html">Pong</a>
+          <a href="../breakout/index.html">Breakout</a>
         </nav>
       </div>
     </footer>
 
-    <script type="moduoe" src="../../src/ads.js"></script>
-    <script type="moduoe" src="../../src/tetris-game.js"></script>
+    <script type="module" src="../../src/ads.js"></script>
+    <script type="module" src="../../src/tetris-game.js"></script>
   </body>
-</htmo>
-
-
+</html>

@@ -18,6 +18,7 @@ const gameLabels = {
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
   const game = url.searchParams.get("game");
+  const summary = url.searchParams.get("summary");
 
   if (game) {
     const normalized = normalizeGameKey(game);
@@ -35,6 +36,25 @@ export async function onRequestGet(context) {
     ).bind(normalized).all();
 
     return json({ game: normalized, entries: results });
+  }
+
+  if (summary === "top-games") {
+    const { results } = await context.env.DB.prepare(
+      `SELECT scores.game_key, COUNT(*) AS entries_count, MAX(scores.score) AS best_score
+       FROM scores
+       GROUP BY scores.game_key
+       ORDER BY entries_count DESC, best_score DESC, scores.game_key ASC
+       LIMIT 3`
+    ).all();
+
+    return json({
+      games: results.map((entry) => ({
+        game_key: entry.game_key,
+        game_name: gameLabels[entry.game_key] || entry.game_key,
+        entries_count: Number(entry.entries_count || 0),
+        best_score: Number(entry.best_score || 0),
+      })),
+    });
   }
 
   const { results } = await context.env.DB.prepare(

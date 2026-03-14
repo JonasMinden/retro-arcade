@@ -14,6 +14,12 @@
 };
 
 const COOKIE_CONSENT_KEY = "retro_arcade_cookie_consent_v1";
+const DEFAULT_POPULAR_GAMES = [
+  { game_key: "snake", game_name: "Snake" },
+  { game_key: "pac-man", game_name: "Pac-Man" },
+  { game_key: "tetris", game_name: "Tetris" },
+];
+
 let currentUser = null;
 
 function rootAsset(path) {
@@ -34,6 +40,10 @@ function detectGameKey() {
   const path = window.location.pathname.replace(/index\.html$/, "");
   const match = path.match(/\/games\/([^/]+)\/?$/);
   return match ? match[1] : null;
+}
+
+function gamePath(gameKey) {
+  return gameKey ? `/games/${gameKey}/` : "/";
 }
 
 async function api(url, options = {}) {
@@ -137,8 +147,38 @@ function createCookieBanner() {
   });
 }
 
+function markCurrentLink(link) {
+  const currentPath = window.location.pathname.replace(/index\.html$/, "/");
+  const linkPath = new URL(link.href, window.location.origin).pathname.replace(/index\.html$/, "/");
+  if (currentPath === linkPath) {
+    link.setAttribute("aria-current", "page");
+  } else {
+    link.removeAttribute("aria-current");
+  }
+}
+
+function buildNavLink(href, label, className = "") {
+  const link = document.createElement("a");
+  link.href = href;
+  link.textContent = label;
+  if (className) link.className = className;
+  markCurrentLink(link);
+  return link;
+}
+
+function syncFooterLegalLinks() {
+  document.querySelectorAll(".site-footer .site-nav").forEach((nav) => {
+    nav.querySelectorAll("[data-legal-link]").forEach((node) => node.remove());
+    const legal = buildNavLink("/impressum.html", "Impressum", "footer-legal-link");
+    const privacy = buildNavLink("/privacy.html", "Datenschutz", "footer-legal-link");
+    legal.dataset.legalLink = "true";
+    privacy.dataset.legalLink = "true";
+    nav.append(legal, privacy);
+  });
+}
+
 function updateHeaderAuth() {
-  const navs = document.querySelectorAll(".site-nav");
+  const navs = document.querySelectorAll(".site-header .site-nav");
   navs.forEach((nav) => {
     const existing = nav.querySelector("[data-auth-slot]");
     if (existing) existing.remove();
@@ -158,6 +198,34 @@ function updateHeaderAuth() {
     }
     nav.appendChild(wrapper);
   });
+}
+
+function renderPopularGames(games) {
+  const popularGames = games?.length ? games : DEFAULT_POPULAR_GAMES;
+  document.querySelectorAll(".site-header .site-nav").forEach((nav) => {
+    nav.querySelectorAll("[data-popular-game]").forEach((node) => node.remove());
+    nav.querySelectorAll('a[href$="impressum.html"], a[href$="privacy.html"]').forEach((node) => node.remove());
+
+    const authSlot = nav.querySelector("[data-auth-slot]");
+    popularGames.forEach((game) => {
+      const link = buildNavLink(gamePath(game.game_key), game.game_name, "popular-game-link");
+      link.dataset.popularGame = "true";
+      if (authSlot) {
+        nav.insertBefore(link, authSlot);
+      } else {
+        nav.appendChild(link);
+      }
+    });
+  });
+}
+
+async function loadPopularGames() {
+  try {
+    const data = await api("/api/scoreboard?summary=top-games");
+    renderPopularGames(data.games || []);
+  } catch {
+    renderPopularGames(DEFAULT_POPULAR_GAMES);
+  }
 }
 
 function scoreboardMarkup(title) {
@@ -243,6 +311,7 @@ async function refreshScoreboard() {
         message.textContent = "Score gespeichert.";
         loadScoreboard(gameKey, panel);
         loadRecentScores();
+        loadPopularGames();
       } catch (error) {
         message.textContent = error.message;
       }
@@ -309,6 +378,8 @@ export async function initSiteUi() {
   ensureFavicon();
   createCookieBanner();
   await initUser();
+  syncFooterLegalLinks();
+  await loadPopularGames();
   bindAccountForms();
   await Promise.all([refreshScoreboard(), loadRecentScores()]);
   const gameKey = detectGameKey();
