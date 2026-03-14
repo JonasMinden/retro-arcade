@@ -227,6 +227,40 @@ async function loadPopularGames() {
   }
 }
 
+function scoreLockKey(gameKey) {
+  return `retro_arcade_last_submitted_${gameKey}`;
+}
+
+function readLastSubmittedScore(gameKey) {
+  try {
+    return Number(window.sessionStorage.getItem(scoreLockKey(gameKey)) || "0");
+  } catch {
+    return 0;
+  }
+}
+
+function writeLastSubmittedScore(gameKey, score) {
+  try {
+    window.sessionStorage.setItem(scoreLockKey(gameKey), String(score));
+  } catch {
+    // Ignore storage errors and keep the UI usable.
+  }
+}
+
+function syncSubmitButtonState(gameKey, panel, score) {
+  const button = panel.querySelector("[data-submit-score]");
+  const message = panel.querySelector("[data-submit-message]");
+  if (!button) return;
+  const lastSubmitted = readLastSubmittedScore(gameKey);
+  const locked = Number.isFinite(score) && score > 0 && score === lastSubmitted;
+  button.disabled = locked;
+  if (locked && message && !message.textContent) {
+    message.textContent = "Diesen Score hast du in dieser Runde bereits gespeichert.";
+  }
+  if (!locked && message && message.textContent === "Diesen Score hast du in dieser Runde bereits gespeichert.") {
+    message.textContent = "";
+  }
+}
 function scoreboardMarkup(title) {
   return `
     <section class="scoreboard-panel">
@@ -342,3 +376,4 @@ async function initSiteUi() {
 }
 
 export { initSiteUi, detectGameKey };
+
