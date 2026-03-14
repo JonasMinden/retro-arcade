@@ -75,7 +75,7 @@ export async function hashPassword(password, saltHex) {
     {
       name: "PBKDF2",
       salt: fromHex(saltHex),
-      iterations: 120000,
+      iterations: 100000,
       hash: "SHA-256",
     },
     key,
@@ -132,3 +132,4 @@ export function normalizeGameKey(game) {
   const allowed = ["snake", "pong", "breakout", "tetris", "space-invaders", "asteroids", "pac-man", "pinball"];
   return allowed.includes(game) ? game : null;
 }
+
