@@ -20,12 +20,12 @@ if (canvas) {
     "#.........#.........#",
     "#.###.#.#####.#.###.#",
     "#o..#.#.......#.#..o#",
-    "###.#.###...###.#.###",
+    "###.#.###.#.###.#.###",
     "#...#...#...#...#...#",
     "#.#####.#.#.#.#####.#",
     "#.......#.#.#.......#",
     "#.###.###.#.###.###.#",
-    "#...#..... .....#...#",
+    "#...#...........#...#",
     "###.#.#.#####.#.#.###",
     "#.....#...#...#.....#",
     "#.########.########.#",
@@ -83,10 +83,14 @@ if (canvas) {
     state.paused = false;
     state.gameOver = false;
     resetPositions();
+    syncHud();
+    pauseButton.textContent = "Pause";
+  }
+
+  function syncHud() {
     scoreElement.textContent = String(state.score);
     livesElement.textContent = String(state.lives);
     pelletsElement.textContent = String(state.pellets);
-    pauseButton.textContent = "Pause";
   }
 
   function isWall(x, y) {
@@ -98,18 +102,15 @@ if (canvas) {
   }
 
   function tryMove(entity, direction) {
+    if (!direction) return false;
     const nextX = entity.x + direction.x;
     const nextY = entity.y + direction.y;
-    if (!isWall(nextX, nextY)) {
-      entity.x = nextX;
-      entity.y = nextY;
-      entity.direction = direction;
-      if (entity === state.player) {
-        entity.heading = direction;
-      }
-      return true;
-    }
-    return false;
+    if (isWall(nextX, nextY)) return false;
+    entity.x = nextX;
+    entity.y = nextY;
+    entity.direction = direction;
+    if (entity === state.player) entity.heading = direction;
+    return true;
   }
 
   function getNeighbors(x, y) {
@@ -123,11 +124,11 @@ if (canvas) {
 
   function findDirectionTowards(startX, startY, targetX, targetY, flee = false) {
     const queue = [{ x: targetX, y: targetY }];
-    const distances = new Map([`${targetX},${targetY}`, 0]);
+    const distances = new Map([[`${targetX},${targetY}`, 0]]);
 
     while (queue.length) {
       const current = queue.shift();
-      const currentDistance = distances.get(`${current.x},${current.y}`);
+      const currentDistance = distances.get(`${current.x},${current.y}`) || 0;
       getNeighbors(current.x, current.y).forEach((dir) => {
         const nextX = current.x + dir.x;
         const nextY = current.y + dir.y;
@@ -140,35 +141,24 @@ if (canvas) {
     }
 
     const options = getNeighbors(startX, startY);
-    if (!options.length) {
-      return { x: 0, y: 0 };
-    }
-
+    if (!options.length) return { x: 0, y: 0 };
     options.sort((a, b) => {
       const aDistance = distances.get(`${startX + a.x},${startY + a.y}`) ?? Number.MAX_SAFE_INTEGER;
       const bDistance = distances.get(`${startX + b.x},${startY + b.y}`) ?? Number.MAX_SAFE_INTEGER;
       return flee ? bDistance - aDistance : aDistance - bDistance;
     });
-
     return options[0];
   }
 
   function chooseGhostDirection(ghost) {
     const frightened = state.powerTimer > 0;
-    const targetX = frightened ? ghost.homeX : state.player.x;
-    const targetY = frightened ? ghost.homeY : state.player.y;
-    let direction = findDirectionTowards(ghost.x, ghost.y, targetX, targetY, frightened);
-
-    const opposite = { x: -ghost.direction.x, y: -ghost.direction.y };
-    if (
-      direction.x === opposite.x &&
-      direction.y === opposite.y &&
-      getNeighbors(ghost.x, ghost.y).length > 1
-    ) {
-      const alternatives = getNeighbors(ghost.x, ghost.y).filter((dir) => dir.x !== opposite.x || dir.y !== opposite.y);
-      direction = alternatives[0] || direction;
-    }
-
+    const direction = findDirectionTowards(
+      ghost.x,
+      ghost.y,
+      frightened ? ghost.homeX : state.player.x,
+      frightened ? ghost.homeY : state.player.y,
+      frightened
+    );
     return direction;
   }
 
@@ -185,11 +175,11 @@ if (canvas) {
       state.pellets -= 1;
       state.powerTimer = 7.5;
     }
-    scoreElement.textContent = String(state.score);
-    pelletsElement.textContent = String(state.pellets);
     if (state.pellets <= 0) {
       startLevel(false);
+      return;
     }
+    syncHud();
   }
 
   function handleGhostCollisions() {
@@ -200,41 +190,42 @@ if (canvas) {
           ghost.y = ghost.homeY;
           ghost.direction = { x: 0, y: -1 };
           state.score += 200;
-          scoreElement.textContent = String(state.score);
+          syncHud();
         } else {
           state.lives -= 1;
-          livesElement.textContent = String(state.lives);
           if (state.lives <= 0) {
             state.gameOver = true;
           } else {
             resetPositions();
           }
+          syncHud();
         }
       }
     });
   }
 
   function update(delta) {
-    if (state.paused || state.gameOver) {
-      return;
-    }
+    if (state.paused || state.gameOver) return;
 
     state.powerTimer = Math.max(0, state.powerTimer - delta);
     state.moveTimer += delta;
     state.ghostTimer += delta;
-    state.mouthTimer += delta * 9;
+    state.mouthTimer += delta * 10;
 
     if (state.moveTimer >= 0.16) {
       state.moveTimer = 0;
+      let moved = false;
       if (state.queuedDirection) {
-        tryMove(state.player, state.queuedDirection);
+        moved = tryMove(state.player, state.queuedDirection);
       }
-      tryMove(state.player, state.player.direction);
+      if (!moved) {
+        tryMove(state.player, state.player.direction);
+      }
       eatPellet();
       handleGhostCollisions();
     }
 
-    const ghostStep = state.powerTimer > 0 ? 0.24 : 0.21;
+    const ghostStep = state.powerTimer > 0 ? 0.24 : 0.2;
     if (state.ghostTimer >= ghostStep) {
       state.ghostTimer = 0;
       state.ghosts.forEach((ghost) => {
@@ -279,7 +270,7 @@ if (canvas) {
     const py = state.player.y * state.tile + state.tile / 2;
     const heading = state.player.heading || { x: 1, y: 0 };
     const baseAngle = Math.atan2(heading.y, heading.x);
-    const mouth = 0.18 + Math.abs(Math.sin(state.mouthTimer)) * 0.34;
+    const mouth = 0.16 + Math.abs(Math.sin(state.mouthTimer)) * 0.3;
     ctx.fillStyle = state.powerTimer > 0 ? "#fff3a6" : "#ffd166";
     ctx.beginPath();
     ctx.moveTo(px, py);
@@ -367,15 +358,17 @@ if (canvas) {
   });
 
   controlButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const map = {
-        up: { x: 0, y: -1 },
-        down: { x: 0, y: 1 },
-        left: { x: -1, y: 0 },
-        right: { x: 1, y: 0 },
-      };
+    const map = {
+      up: { x: 0, y: -1 },
+      down: { x: 0, y: 1 },
+      left: { x: -1, y: 0 },
+      right: { x: 1, y: 0 },
+    };
+    button.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
       setDirection(map[button.dataset.move]);
     });
+    button.addEventListener("click", () => setDirection(map[button.dataset.move]));
   });
 
   pauseButton.addEventListener("click", togglePause);

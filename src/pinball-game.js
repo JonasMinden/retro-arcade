@@ -20,20 +20,29 @@ if (canvas) {
     ball: null,
     lastTime: 0,
     bumpers: [
-      { x: 118, y: 162, radius: 25, color: "#ff5fb2", score: 35 },
-      { x: 208, y: 122, radius: 22, color: "#ffd166", score: 45 },
-      { x: 304, y: 172, radius: 25, color: "#71e3ff", score: 35 },
+      { x: 112, y: 156, radius: 24, color: "#ff5fb2", score: 40 },
+      { x: 208, y: 118, radius: 22, color: "#ffd166", score: 55 },
+      { x: 304, y: 164, radius: 24, color: "#71e3ff", score: 40 },
+      { x: 152, y: 258, radius: 16, color: "#87ff65", score: 80 },
+      { x: 260, y: 258, radius: 16, color: "#ff9b54", score: 80 },
+    ],
+    posts: [
+      { x: 82, y: 326, radius: 9 },
+      { x: 330, y: 326, radius: 9 },
+      { x: 208, y: 338, radius: 11 },
     ],
     targets: [
-      { x: 92, y: 248, width: 16, height: 54, color: "#ff9b54", score: 75, active: true },
-      { x: 312, y: 248, width: 16, height: 54, color: "#ff9b54", score: 75, active: true },
-      { x: 202, y: 208, width: 18, height: 48, color: "#87ff65", score: 120, active: true },
+      { x: 72, y: 236, width: 16, height: 58, color: "#ff9b54", score: 90, active: true },
+      { x: 332, y: 236, width: 16, height: 58, color: "#ff9b54", score: 90, active: true },
+      { x: 202, y: 210, width: 16, height: 52, color: "#87ff65", score: 120, active: true },
+      { x: 128, y: 86, width: 14, height: 46, color: "#ffd166", score: 110, active: true },
+      { x: 276, y: 86, width: 14, height: 46, color: "#ffd166", score: 110, active: true },
     ],
   };
 
   function createBall() {
     return {
-      x: 376,
+      x: 377,
       y: 520,
       vx: 0,
       vy: 0,
@@ -44,8 +53,8 @@ if (canvas) {
 
   function flippers() {
     return [
-      { pivotX: 148, pivotY: 540, length: 72, angle: state.leftActive ? -0.45 : 0.38, side: "left", color: "#ff9b54" },
-      { pivotX: 272, pivotY: 540, length: 72, angle: state.rightActive ? Math.PI + 0.45 : Math.PI - 0.38, side: "right", color: "#ffd166" },
+      { pivotX: 146, pivotY: 546, length: 58, angle: state.leftActive ? -0.55 : 0.52, color: "#ff9b54" },
+      { pivotX: 270, pivotY: 546, length: 58, angle: state.rightActive ? Math.PI + 0.55 : Math.PI - 0.52, color: "#ffd166" },
     ];
   }
 
@@ -56,62 +65,30 @@ if (canvas) {
     const t = Math.max(0, Math.min(1, ((px - ax) * abx + (py - ay) * aby) / lengthSquared));
     const closestX = ax + abx * t;
     const closestY = ay + aby * t;
-    return { x: closestX, y: closestY, dx: px - closestX, dy: py - closestY, t };
+    return { x: closestX, y: closestY, dx: px - closestX, dy: py - closestY };
   }
 
-  function reflectFromNormal(nx, ny, boost = 1) {
-    const velocityDot = state.ball.vx * nx + state.ball.vy * ny;
-    if (velocityDot >= 0) return;
-    state.ball.vx -= (1.9 * velocityDot) * nx;
-    state.ball.vy -= (1.9 * velocityDot) * ny;
+  function reflect(nx, ny, boost = 1) {
+    const dot = state.ball.vx * nx + state.ball.vy * ny;
+    if (dot >= 0) return;
+    state.ball.vx -= 2 * dot * nx;
+    state.ball.vy -= 2 * dot * ny;
     state.ball.vx *= boost;
     state.ball.vy *= boost;
   }
 
-  function clampBallInside() {
-    const { ball } = state;
-
-    if (ball.x - ball.radius < 26) {
-      ball.x = 26 + ball.radius;
-      ball.vx = Math.abs(ball.vx) * 0.92;
-    }
-    if (ball.x + ball.radius > 346) {
-      ball.x = 346 - ball.radius;
-      ball.vx = -Math.abs(ball.vx) * 0.92;
-    }
-    if (ball.y - ball.radius < 24) {
-      ball.y = 24 + ball.radius;
-      ball.vy = Math.abs(ball.vy) * 0.94;
-    }
-
-    if (ball.y < 150) {
-      const leftSlope = lineDistance(ball.x, ball.y, 26, 96, 98, 30);
-      const rightSlope = lineDistance(ball.x, ball.y, 346, 96, 274, 30);
-      [leftSlope, rightSlope].forEach((collision) => {
-        const distance = Math.hypot(collision.dx, collision.dy);
-        if (distance < ball.radius + 4) {
-          const nx = collision.dx / (distance || 1);
-          const ny = collision.dy / (distance || 1);
-          ball.x = collision.x + nx * (ball.radius + 4);
-          ball.y = collision.y + ny * (ball.radius + 4);
-          reflectFromNormal(nx, ny, 1.02);
-        }
-      });
-    }
-
-    if (ball.y > 448) {
-      const leftGuide = lineDistance(ball.x, ball.y, 52, 454, 112, 582);
-      const rightGuide = lineDistance(ball.x, ball.y, 320, 454, 260, 582);
-      [leftGuide, rightGuide].forEach((collision) => {
-        const distance = Math.hypot(collision.dx, collision.dy);
-        if (distance < ball.radius + 3) {
-          const nx = collision.dx / (distance || 1);
-          const ny = collision.dy / (distance || 1);
-          ball.x = collision.x + nx * (ball.radius + 3);
-          ball.y = collision.y + ny * (ball.radius + 3);
-          reflectFromNormal(nx, ny, 0.98);
-        }
-      });
+  function circleCollision(circle, boost = 1.04, score = 0) {
+    const dx = state.ball.x - circle.x;
+    const dy = state.ball.y - circle.y;
+    const distance = Math.hypot(dx, dy);
+    const minDistance = state.ball.radius + circle.radius;
+    if (distance < minDistance) {
+      const nx = dx / (distance || 1);
+      const ny = dy / (distance || 1);
+      state.ball.x = circle.x + nx * minDistance;
+      state.ball.y = circle.y + ny * minDistance;
+      reflect(nx, ny, boost);
+      if (score) addScore(score);
     }
   }
 
@@ -136,8 +113,8 @@ if (canvas) {
   function launchBall() {
     if (!state.ball.launched) {
       state.ball.launched = true;
-      state.ball.vx = -82;
-      state.ball.vy = -520;
+      state.ball.vx = -48;
+      state.ball.vy = -760;
       statusElement.textContent = "Live";
     }
   }
@@ -153,35 +130,49 @@ if (canvas) {
     scoreElement.textContent = String(state.score);
   }
 
-  function updateBall(delta) {
-    if (!state.ball.launched || state.paused) return;
+  function handleWalls() {
+    const ball = state.ball;
+    if (ball.x - ball.radius < 24) {
+      ball.x = 24 + ball.radius;
+      ball.vx = Math.abs(ball.vx) * 0.94;
+    }
+    if (ball.y - ball.radius < 22) {
+      ball.y = 22 + ball.radius;
+      ball.vy = Math.abs(ball.vy) * 0.96;
+    }
 
-    state.ball.vy += 680 * delta;
-    state.ball.x += state.ball.vx * delta;
-    state.ball.y += state.ball.vy * delta;
+    if (ball.x + ball.radius > 350 && ball.y < 560) {
+      ball.x = 350 - ball.radius;
+      ball.vx = -Math.abs(ball.vx) * 0.94;
+    }
 
-    clampBallInside();
+    const slopes = [
+      [24, 94, 94, 28],
+      [350, 94, 280, 28],
+      [54, 438, 118, 596],
+      [320, 438, 258, 596],
+      [96, 432, 160, 482],
+      [278, 432, 222, 482],
+    ];
 
-    state.bumpers.forEach((bumper) => {
-      const dx = state.ball.x - bumper.x;
-      const dy = state.ball.y - bumper.y;
-      const distance = Math.hypot(dx, dy);
-      const minDistance = state.ball.radius + bumper.radius;
-      if (distance < minDistance) {
-        const nx = dx / (distance || 1);
-        const ny = dy / (distance || 1);
-        state.ball.x = bumper.x + nx * minDistance;
-        state.ball.y = bumper.y + ny * minDistance;
-        const baseSpeed = Math.max(280, Math.hypot(state.ball.vx, state.ball.vy));
-        state.ball.vx = nx * baseSpeed * 1.06;
-        state.ball.vy = ny * baseSpeed * 1.06;
-        addScore(bumper.score);
+    slopes.forEach(([ax, ay, bx, by]) => {
+      const collision = lineDistance(ball.x, ball.y, ax, ay, bx, by);
+      const distance = Math.hypot(collision.dx, collision.dy);
+      if (distance < ball.radius + 3) {
+        const nx = collision.dx / (distance || 1);
+        const ny = collision.dy / (distance || 1);
+        ball.x = collision.x + nx * (ball.radius + 3);
+        ball.y = collision.y + ny * (ball.radius + 3);
+        reflect(nx, ny, 1.01);
       }
     });
+  }
 
+  function handleTargets() {
     state.targets.forEach((target) => {
       if (!target.active) return;
-      const hit = state.ball.x + state.ball.radius > target.x &&
+      const hit =
+        state.ball.x + state.ball.radius > target.x &&
         state.ball.x - state.ball.radius < target.x + target.width &&
         state.ball.y + state.ball.radius > target.y &&
         state.ball.y - state.ball.radius < target.y + target.height;
@@ -191,31 +182,42 @@ if (canvas) {
         addScore(target.score);
       }
     });
+  }
 
-    flippers().forEach((flipper) => {
+  function handleFlippers() {
+    flippers().forEach((flipper, index) => {
       const tipX = flipper.pivotX + Math.cos(flipper.angle) * flipper.length;
       const tipY = flipper.pivotY + Math.sin(flipper.angle) * flipper.length;
       const collision = lineDistance(state.ball.x, state.ball.y, flipper.pivotX, flipper.pivotY, tipX, tipY);
       const distance = Math.hypot(collision.dx, collision.dy);
-      if (distance < state.ball.radius + 7 && state.ball.vy > -40) {
+      if (distance < state.ball.radius + 7 && state.ball.vy > -120) {
         const nx = collision.dx / (distance || 1);
         const ny = collision.dy / (distance || 1);
         state.ball.x = collision.x + nx * (state.ball.radius + 7);
         state.ball.y = collision.y + ny * (state.ball.radius + 7);
-        const lift = flipper.side === "left" ? -280 : 280;
-        state.ball.vx += lift * (flipper.side === "left" ? 1 : -1) * 0.55;
-        state.ball.vy = -Math.abs(state.ball.vy) - (flipper.side === "left" || flipper.side === "right" ? 260 : 160);
-        addScore(10);
+        state.ball.vy = -Math.max(360, Math.abs(state.ball.vy) + (index === 0 ? 280 : 280));
+        state.ball.vx += index === 0 ? -150 : 150;
+        addScore(12);
       }
     });
+  }
 
-    const ballSpeed = Math.hypot(state.ball.vx, state.ball.vy);
-    if (ballSpeed > 760) {
-      state.ball.vx *= 0.985;
-      state.ball.vy *= 0.985;
-    }
+  function updateBall(delta) {
+    if (!state.ball.launched || state.paused) return;
 
-    if (state.ball.y - state.ball.radius > state.height + 18) {
+    state.ball.vy += 700 * delta;
+    state.ball.x += state.ball.vx * delta;
+    state.ball.y += state.ball.vy * delta;
+
+    handleWalls();
+    state.bumpers.forEach((bumper) => circleCollision(bumper, 1.08, bumper.score));
+    state.posts.forEach((post) => circleCollision(post, 1.03, 15));
+    handleTargets();
+    handleFlippers();
+
+    const drainLeft = 182;
+    const drainRight = 234;
+    if (state.ball.y > 554 && state.ball.x > drainLeft && state.ball.x < drainRight) {
       state.lives -= 1;
       livesElement.textContent = String(state.lives);
       if (state.lives <= 0) {
@@ -224,14 +226,33 @@ if (canvas) {
       } else {
         resetBall();
       }
+      return;
+    }
+
+    if (state.ball.y > state.height + 20) {
+      state.lives -= 1;
+      livesElement.textContent = String(state.lives);
+      if (state.lives <= 0) {
+        statusElement.textContent = "Game Over";
+        state.paused = true;
+      } else {
+        resetBall();
+      }
+      return;
+    }
+
+    const speed = Math.hypot(state.ball.vx, state.ball.vy);
+    if (speed > 820) {
+      state.ball.vx *= 0.985;
+      state.ball.vy *= 0.985;
     }
   }
 
   function drawTable() {
     ctx.clearRect(0, 0, state.width, state.height);
     const gradient = ctx.createLinearGradient(0, 0, 0, state.height);
-    gradient.addColorStop(0, "#130b1f");
-    gradient.addColorStop(0.65, "#08101f");
+    gradient.addColorStop(0, "#150a21");
+    gradient.addColorStop(0.5, "#08101f");
     gradient.addColorStop(1, "#04060d");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, state.width, state.height);
@@ -239,43 +260,54 @@ if (canvas) {
     ctx.strokeStyle = "#71e3ff";
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.moveTo(26, 580);
-    ctx.lineTo(26, 96);
-    ctx.lineTo(98, 30);
-    ctx.lineTo(274, 30);
-    ctx.lineTo(346, 96);
-    ctx.lineTo(346, 580);
+    ctx.moveTo(24, 596);
+    ctx.lineTo(24, 94);
+    ctx.lineTo(94, 28);
+    ctx.lineTo(280, 28);
+    ctx.lineTo(350, 94);
+    ctx.lineTo(350, 596);
     ctx.stroke();
 
     ctx.strokeStyle = "rgba(255,255,255,0.2)";
     ctx.lineWidth = 3;
     ctx.strokeRect(360, 48, 34, 512);
 
-    ctx.strokeStyle = "rgba(255,255,255,0.14)";
-    ctx.beginPath();
-    ctx.moveTo(52, 454);
-    ctx.lineTo(112, 582);
-    ctx.moveTo(320, 454);
-    ctx.lineTo(260, 582);
-    ctx.stroke();
-
     ctx.fillStyle = "rgba(255,255,255,0.06)";
-    ctx.fillRect(66, 58, 220, 92);
+    ctx.fillRect(72, 54, 210, 86);
 
     state.bumpers.forEach((bumper) => {
       ctx.fillStyle = bumper.color;
       ctx.beginPath();
       ctx.arc(bumper.x, bumper.y, bumper.radius, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = "rgba(255,255,255,0.22)";
+      ctx.strokeStyle = "rgba(255,255,255,0.24)";
       ctx.lineWidth = 3;
       ctx.stroke();
+    });
+
+    state.posts.forEach((post) => {
+      ctx.fillStyle = "#f7f5ff";
+      ctx.beginPath();
+      ctx.arc(post.x, post.y, post.radius, 0, Math.PI * 2);
+      ctx.fill();
     });
 
     state.targets.forEach((target) => {
       ctx.fillStyle = target.active ? target.color : "rgba(255,255,255,0.12)";
       ctx.fillRect(target.x, target.y, target.width, target.height);
     });
+
+    ctx.strokeStyle = "rgba(255,255,255,0.16)";
+    ctx.beginPath();
+    ctx.moveTo(54, 438);
+    ctx.lineTo(118, 596);
+    ctx.moveTo(320, 438);
+    ctx.lineTo(258, 596);
+    ctx.moveTo(96, 432);
+    ctx.lineTo(160, 482);
+    ctx.moveTo(278, 432);
+    ctx.lineTo(222, 482);
+    ctx.stroke();
 
     flippers().forEach((flipper) => {
       const tipX = flipper.pivotX + Math.cos(flipper.angle) * flipper.length;
@@ -294,9 +326,9 @@ if (canvas) {
     });
 
     ctx.fillStyle = "#ff5fb2";
-    ctx.fillRect(42, 470, 18, 96);
-    ctx.fillRect(312, 470, 18, 96);
-    ctx.fillStyle = "rgba(255,255,255,0.22)";
+    ctx.fillRect(44, 470, 18, 98);
+    ctx.fillRect(310, 470, 18, 98);
+    ctx.fillStyle = "rgba(255,255,255,0.25)";
     ctx.fillRect(370, 500, 14, 42);
   }
 
@@ -312,7 +344,7 @@ if (canvas) {
     ctx.fillStyle = "rgba(247,245,255,0.92)";
     ctx.font = "22px 'Courier New'";
     ctx.textAlign = "center";
-    ctx.fillText("Press Launch or Space", state.width / 2 - 16, state.height / 2);
+    ctx.fillText("Press Launch or Space", state.width / 2 - 14, state.height / 2);
   }
 
   function draw() {
@@ -349,22 +381,20 @@ if (canvas) {
   actionButtons.forEach((button) => {
     const action = button.dataset.action;
     if (action === "left") {
-      const start = () => { state.leftActive = true; };
-      const stop = () => { state.leftActive = false; };
-      button.addEventListener("mousedown", start);
-      button.addEventListener("touchstart", start, { passive: true });
-      button.addEventListener("mouseup", stop);
-      button.addEventListener("mouseleave", stop);
-      button.addEventListener("touchend", stop);
+      const start = (event) => { event?.preventDefault?.(); state.leftActive = true; };
+      const stop = (event) => { event?.preventDefault?.(); state.leftActive = false; };
+      button.addEventListener("pointerdown", start);
+      button.addEventListener("pointerup", stop);
+      button.addEventListener("pointercancel", stop);
+      button.addEventListener("pointerleave", stop);
     }
     if (action === "right") {
-      const start = () => { state.rightActive = true; };
-      const stop = () => { state.rightActive = false; };
-      button.addEventListener("mousedown", start);
-      button.addEventListener("touchstart", start, { passive: true });
-      button.addEventListener("mouseup", stop);
-      button.addEventListener("mouseleave", stop);
-      button.addEventListener("touchend", stop);
+      const start = (event) => { event?.preventDefault?.(); state.rightActive = true; };
+      const stop = (event) => { event?.preventDefault?.(); state.rightActive = false; };
+      button.addEventListener("pointerdown", start);
+      button.addEventListener("pointerup", stop);
+      button.addEventListener("pointercancel", stop);
+      button.addEventListener("pointerleave", stop);
     }
     if (action === "launch") button.addEventListener("click", launchBall);
     if (action === "pause") button.addEventListener("click", togglePause);
@@ -372,7 +402,6 @@ if (canvas) {
 
   pauseButton.addEventListener("click", togglePause);
   restartButton.addEventListener("click", restartGame);
-
   restartGame();
   requestAnimationFrame(frame);
 }

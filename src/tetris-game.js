@@ -66,17 +66,11 @@ if (canvas) {
   function collides(piece, board, offsetX = 0, offsetY = 0, matrix = piece.matrix) {
     for (let y = 0; y < matrix.length; y += 1) {
       for (let x = 0; x < matrix[y].length; x += 1) {
-        if (!matrix[y][x]) {
-          continue;
-        }
+        if (!matrix[y][x]) continue;
         const boardX = piece.x + x + offsetX;
         const boardY = piece.y + y + offsetY;
-        if (boardX < 0 || boardX >= cols || boardY >= rows) {
-          return true;
-        }
-        if (boardY >= 0 && board[boardY][boardX]) {
-          return true;
-        }
+        if (boardX < 0 || boardX >= cols || boardY >= rows) return true;
+        if (boardY >= 0 && board[boardY][boardX]) return true;
       }
     }
     return false;
@@ -92,13 +86,20 @@ if (canvas) {
     });
   }
 
+  function collapseBoard() {
+    for (let y = rows - 1; y >= 0; y -= 1) {
+      if (state.board[y].every((cell) => cell === null)) {
+        state.board.splice(y, 1);
+        state.board.unshift(Array(cols).fill(null));
+      }
+    }
+  }
+
   function clearLines() {
     let cleared = 0;
     state.board = state.board.filter((row) => {
       const full = row.every(Boolean);
-      if (full) {
-        cleared += 1;
-      }
+      if (full) cleared += 1;
       return !full;
     });
     while (state.board.length < rows) {
@@ -107,11 +108,75 @@ if (canvas) {
     if (cleared > 0) {
       state.lines += cleared;
       state.score += [0, 100, 300, 500, 800][cleared] * state.level;
-      state.level = 1 + Math.floor(state.lines / 10);
-      scoreElement.textContent = String(state.score);
-      linesElement.textContent = String(state.lines);
-      levelElement.textContent = String(state.level);
     }
+    return cleared;
+  }
+
+  function clearColorClusters() {
+    const visited = Array.from({ length: rows }, () => Array(cols).fill(false));
+    const groups = [];
+
+    for (let y = 0; y < rows; y += 1) {
+      for (let x = 0; x < cols; x += 1) {
+        const color = state.board[y][x];
+        if (!color || visited[y][x]) continue;
+        const stack = [[x, y]];
+        const group = [];
+        visited[y][x] = true;
+        while (stack.length) {
+          const [cx, cy] = stack.pop();
+          group.push([cx, cy]);
+          [
+            [1, 0],
+            [-1, 0],
+            [0, 1],
+            [0, -1],
+          ].forEach(([dx, dy]) => {
+            const nx = cx + dx;
+            const ny = cy + dy;
+            if (nx < 0 || nx >= cols || ny < 0 || ny >= rows) return;
+            if (visited[ny][nx] || state.board[ny][nx] !== color) return;
+            visited[ny][nx] = true;
+            stack.push([nx, ny]);
+          });
+        }
+        if (group.length >= 4) groups.push(group);
+      }
+    }
+
+    if (!groups.length) return 0;
+
+    let clearedBlocks = 0;
+    groups.forEach((group) => {
+      group.forEach(([x, y]) => {
+        if (state.board[y][x]) {
+          state.board[y][x] = null;
+          clearedBlocks += 1;
+        }
+      });
+    });
+
+    for (let x = 0; x < cols; x += 1) {
+      const column = [];
+      for (let y = rows - 1; y >= 0; y -= 1) {
+        if (state.board[y][x]) column.push(state.board[y][x]);
+      }
+      for (let y = rows - 1; y >= 0; y -= 1) {
+        state.board[y][x] = column[rows - 1 - y] || null;
+      }
+    }
+
+    collapseBoard();
+    state.score += clearedBlocks * 35 * state.level;
+    state.lines += Math.floor(clearedBlocks / cols);
+    return clearedBlocks;
+  }
+
+  function syncHud() {
+    state.level = 1 + Math.floor(state.lines / 10);
+    scoreElement.textContent = String(state.score);
+    linesElement.textContent = String(state.lines);
+    levelElement.textContent = String(state.level);
   }
 
   function spawnPiece() {
@@ -139,20 +204,26 @@ if (canvas) {
   }
 
   function movePiece(direction) {
-    if (state.paused || state.gameOver) {
-      return;
-    }
+    if (state.paused || state.gameOver) return;
     if (!collides(state.piece, state.board, direction, 0)) {
       state.piece.x += direction;
     }
   }
 
   function rotatePiece() {
-    if (state.paused || state.gameOver) {
-      return;
-    }
+    if (state.paused || state.gameOver) return;
     const rotated = rotate(state.piece.matrix);
     if (!collides(state.piece, state.board, 0, 0, rotated)) {
+      state.piece.matrix = rotated;
+      return;
+    }
+    if (!collides(state.piece, state.board, -1, 0, rotated)) {
+      state.piece.x -= 1;
+      state.piece.matrix = rotated;
+      return;
+    }
+    if (!collides(state.piece, state.board, 1, 0, rotated)) {
+      state.piece.x += 1;
       state.piece.matrix = rotated;
     }
   }
@@ -160,13 +231,13 @@ if (canvas) {
   function lockPiece() {
     mergePiece();
     clearLines();
+    clearColorClusters();
+    syncHud();
     spawnPiece();
   }
 
   function dropPiece() {
-    if (state.paused || state.gameOver) {
-      return;
-    }
+    if (state.paused || state.gameOver) return;
     if (!collides(state.piece, state.board, 0, 1)) {
       state.piece.y += 1;
     } else {
@@ -176,9 +247,7 @@ if (canvas) {
   }
 
   function hardDrop() {
-    if (state.paused || state.gameOver) {
-      return;
-    }
+    if (state.paused || state.gameOver) return;
     while (!collides(state.piece, state.board, 0, 1)) {
       state.piece.y += 1;
     }
@@ -186,9 +255,7 @@ if (canvas) {
   }
 
   function togglePause() {
-    if (state.gameOver) {
-      return;
-    }
+    if (state.gameOver) return;
     state.paused = !state.paused;
     pauseButton.textContent = state.paused ? "Resume" : "Pause";
   }
@@ -203,9 +270,7 @@ if (canvas) {
   function drawBoard() {
     state.board.forEach((row, y) => {
       row.forEach((cell, x) => {
-        if (cell) {
-          drawCell(x, y, colors[cell]);
-        }
+        if (cell) drawCell(x, y, colors[cell]);
       });
     });
   }
@@ -247,18 +312,12 @@ if (canvas) {
     drawBoard();
     drawPiece();
 
-    if (state.paused) {
-      drawOverlay("Paused", "Press pause again to resume");
-    }
-    if (state.gameOver) {
-      drawOverlay("Game Over", "Press Restart to play again");
-    }
+    if (state.paused) drawOverlay("Paused", "Press pause again to resume");
+    if (state.gameOver) drawOverlay("Game Over", "Press Restart to play again");
   }
 
   function update(delta) {
-    if (state.paused || state.gameOver) {
-      return;
-    }
+    if (state.paused || state.gameOver) return;
     state.dropCounter += delta;
     const interval = Math.max(0.12, 0.8 - (state.level - 1) * 0.06);
     if (state.dropCounter >= interval) {
@@ -276,18 +335,10 @@ if (canvas) {
 
   document.addEventListener("keydown", (event) => {
     const key = event.key.toLowerCase();
-    if (key === "arrowleft" || key === "a") {
-      movePiece(-1);
-    }
-    if (key === "arrowright" || key === "d") {
-      movePiece(1);
-    }
-    if (key === "arrowup" || key === "w") {
-      rotatePiece();
-    }
-    if (key === "arrowdown" || key === "s") {
-      dropPiece();
-    }
+    if (key === "arrowleft" || key === "a") movePiece(-1);
+    if (key === "arrowright" || key === "d") movePiece(1);
+    if (key === "arrowup" || key === "w") rotatePiece();
+    if (key === "arrowdown" || key === "s") dropPiece();
     if (key === " ") {
       event.preventDefault();
       togglePause();
@@ -297,18 +348,10 @@ if (canvas) {
   controlButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const move = button.dataset.move;
-      if (move === "left") {
-        movePiece(-1);
-      }
-      if (move === "right") {
-        movePiece(1);
-      }
-      if (move === "rotate") {
-        rotatePiece();
-      }
-      if (move === "drop") {
-        hardDrop();
-      }
+      if (move === "left") movePiece(-1);
+      if (move === "right") movePiece(1);
+      if (move === "rotate") rotatePiece();
+      if (move === "drop") hardDrop();
     });
   });
 
