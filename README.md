@@ -27,7 +27,6 @@ Statische Browser-Spieleseite mit Arcade-Styling, optionalem Nutzerkonto, persis
 
 - `account.html` für Registrierung und Login
 - `src/site-ui.js` für Header-Status, Cookie-Banner und Scoreboard-Widgets
-- `src/i18n.js` für die Sprachumschaltung im Header
 - `functions/api/*.js` für Registrierung, Login, Logout, Session-Status, Highscore-Feed und Score-Submit
 - Die Kontaktseiten/-API bleiben als vorbereitete Struktur im Repo, sind aber aktuell nicht in der Oberfläche verlinkt.
 
@@ -42,7 +41,7 @@ Statische Browser-Spieleseite mit Arcade-Styling, optionalem Nutzerkonto, persis
 ## Tests
 
 - `node src/snake-game.test.js`
-- `node --input-type=module -e "await import('./src/i18n.js'); await import('./src/site-ui.js'); await import('./src/ads.js'); await import('./functions/api/contact.js'); console.log('imports ok')"`
+- `node --input-type=module -e "await import('./src/site-ui.js'); await import('./src/ads.js'); console.log('imports ok')"`
 
 ## Monitoring
 
