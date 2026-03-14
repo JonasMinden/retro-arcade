@@ -106,18 +106,18 @@ if (canvas) {
   function update(delta) {
     if (state.paused || state.gameOver) return;
 
-    state.speed = Math.min(0.62, state.speed + delta * 0.012);
+    state.speed = Math.min(0.56, state.speed + delta * 0.009);
     state.score += Math.round(18 + state.speed * 45);
     scoreElement.textContent = String(state.score);
     speedElement.textContent = `${(state.speed / 0.34).toFixed(1)}x`;
 
-    state.playerLane += (state.targetLane - state.playerLane) * Math.min(1, delta * 10);
+    state.playerLane += (state.targetLane - state.playerLane) * Math.min(1, delta * 14);
     state.jumpTimer = Math.max(0, state.jumpTimer - delta);
     state.slideTimer = Math.max(0, state.slideTimer - delta);
     state.stride += delta * (7 + state.speed * 8);
 
     state.spawnTimer += delta;
-    if (state.spawnTimer > Math.max(0.7, 1.45 - state.speed * 1.15)) {
+    if (state.spawnTimer > Math.max(0.95, 1.9 - state.speed * 1.35)) {
       state.spawnTimer = 0;
       spawnObstacle();
     }
@@ -141,7 +141,7 @@ if (canvas) {
     const sliding = isSliding();
 
     state.obstacles.forEach((obstacle) => {
-      if (obstacle.depth > 0.79 && obstacle.depth < 0.93 && Math.abs(obstacle.lane - state.playerLane) < 0.42) {
+      if (obstacle.depth > 0.86 && obstacle.depth < 0.95 && Math.abs(obstacle.lane - state.playerLane) < 0.28) {
         const safeJump = (obstacle.type === 'crate' || obstacle.type === 'cart') && jump > 42;
         const safeSlide = obstacle.type === 'arch' && sliding;
         if (!safeJump && !safeSlide) {
@@ -314,3 +314,4 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
