@@ -1,75 +1,240 @@
-﻿const canvas = typeof document !== "undefined" ? document.querySelector("#game-canvas") : null;
+﻿const canvas = typeof document !== 'undefined' ? document.querySelector('#game-canvas') : null;
 if (canvas) {
-  const ctx = canvas.getContext("2d");
-  const scoreElement = document.querySelector("#score");
-  const citiesElement = document.querySelector("#cities");
-  const waveElement = document.querySelector("#wave");
-  const pauseButton = document.querySelector("#pause-button");
-  const restartButton = document.querySelector("#restart-button");
-  const actionButtons = Array.from(document.querySelectorAll("[data-action]"));
+  const ctx = canvas.getContext('2d');
+  const scoreElement = document.querySelector('#score');
+  const citiesElement = document.querySelector('#cities');
+  const waveElement = document.querySelector('#wave');
+  const pauseButton = document.querySelector('#pause-button');
+  const restartButton = document.querySelector('#restart-button');
+  const actionButtons = Array.from(document.querySelectorAll('[data-action]'));
 
-  const silos = [120, 320, 520];
-  const state = { score: 0, wave: 1, paused: false, gameOver: false, selectedSilo: 1, cities: [], missiles: [], enemyMissiles: [], explosions: [], spawnTimer: 0, remainingEnemy: 0, lastTime: 0 };
+  const siloPositions = [110, 320, 530];
+  const state = { score: 0, wave: 1, paused: false, gameOver: false, preferredSilo: 1, cities: [], enemyMissiles: [], defenseMissiles: [], explosions: [], spawnTimer: 0, missilesLeft: 0, lastTime: 0 };
 
-  function setupCities() { state.cities = [70, 150, 250, 390, 490, 570].map((x) => ({ x, alive: true })); }
-  function restartGame() { state.score = 0; state.wave = 1; state.paused = false; state.gameOver = false; state.selectedSilo = 1; state.missiles = []; state.enemyMissiles = []; state.explosions = []; state.spawnTimer = 0; scoreElement.textContent = '0'; waveElement.textContent = '1'; setupCities(); startWave(); pauseButton.textContent = 'Pause'; }
-  function startWave() { state.remainingEnemy = 8 + state.wave * 3; state.enemyMissiles = []; state.missiles = []; state.explosions = []; citiesElement.textContent = String(state.cities.filter((c) => c.alive).length); }
-  function launchAt(x, y) { if (state.gameOver || state.paused) return; const siloX = silos[state.selectedSilo]; state.missiles.push({ x: siloX, y: 360, tx: x, ty: y, speed: 320 }); }
-  function togglePause() { if (state.gameOver) return; state.paused = !state.paused; pauseButton.textContent = state.paused ? 'Resume' : 'Pause'; }
-  function spawnEnemy() { const aliveCities = state.cities.filter((c) => c.alive); if (!aliveCities.length) { state.gameOver = true; return; } const targets = [...aliveCities.map((c) => c.x), ...silos]; const targetX = targets[Math.floor(Math.random() * targets.length)]; state.enemyMissiles.push({ x: 40 + Math.random() * 560, y: -10, tx: targetX, ty: 380, speed: 42 + state.wave * 7 }); state.remainingEnemy -= 1; }
-  function explode(x, y, radius = 0) { state.explosions.push({ x, y, radius, maxRadius: 48, life: 0.6 }); }
+  function resetCities() {
+    state.cities = [70, 160, 250, 390, 480, 570].map((x) => ({ x, alive: true }));
+    citiesElement.textContent = String(state.cities.length);
+  }
 
-  function updateMissile(missile, delta) { const dx = missile.tx - missile.x; const dy = missile.ty - missile.y; const distance = Math.hypot(dx, dy) || 1; missile.x += (dx / distance) * missile.speed * delta; missile.y += (dy / distance) * missile.speed * delta; return distance < 10; }
+  function startWave() {
+    state.enemyMissiles = [];
+    state.defenseMissiles = [];
+    state.explosions = [];
+    state.spawnTimer = 0;
+    state.missilesLeft = 8 + state.wave * 3;
+  }
+
+  function restartGame() {
+    state.score = 0;
+    state.wave = 1;
+    state.paused = false;
+    state.gameOver = false;
+    state.preferredSilo = 1;
+    scoreElement.textContent = '0';
+    waveElement.textContent = '1';
+    pauseButton.textContent = 'Pause';
+    resetCities();
+    startWave();
+  }
+
+  function togglePause() {
+    if (state.gameOver) return;
+    state.paused = !state.paused;
+    pauseButton.textContent = state.paused ? 'Resume' : 'Pause';
+  }
+
+  function pickLaunchSilo(targetX) {
+    const alive = siloPositions.map((x, index) => ({ x, index, distance: Math.abs(targetX - x) })).sort((a, b) => a.distance - b.distance);
+    return alive[0]?.index ?? state.preferredSilo;
+  }
+
+  function launchDefense(targetX, targetY) {
+    if (state.gameOver || state.paused) return;
+    const siloIndex = pickLaunchSilo(targetX);
+    const startX = siloPositions[siloIndex];
+    state.defenseMissiles.push({ x: startX, y: 356, tx: targetX, ty: targetY, speed: 340 });
+    state.preferredSilo = siloIndex;
+  }
+
+  function spawnEnemy() {
+    const aliveCities = state.cities.filter((city) => city.alive);
+    if (!aliveCities.length) {
+      state.gameOver = true;
+      return;
+    }
+    const targets = [...aliveCities.map((city) => city.x), ...siloPositions];
+    const tx = targets[Math.floor(Math.random() * targets.length)];
+    state.enemyMissiles.push({ x: 32 + Math.random() * (canvas.width - 64), y: -20, tx, ty: 372, speed: 64 + state.wave * 9 });
+    state.missilesLeft -= 1;
+  }
+
+  function triggerExplosion(x, y, maxRadius = 46) {
+    state.explosions.push({ x, y, radius: 0, maxRadius, age: 0, life: 0.7 });
+  }
+
+  function advanceMissile(missile, delta) {
+    const dx = missile.tx - missile.x;
+    const dy = missile.ty - missile.y;
+    const distance = Math.hypot(dx, dy) || 1;
+    missile.x += dx / distance * missile.speed * delta;
+    missile.y += dy / distance * missile.speed * delta;
+    return distance < 12;
+  }
+
+  function destroyCityAt(x) {
+    const city = state.cities.find((entry) => entry.alive && Math.abs(entry.x - x) < 26);
+    if (city) {
+      city.alive = false;
+      citiesElement.textContent = String(state.cities.filter((entry) => entry.alive).length);
+    }
+    if (!state.cities.some((entry) => entry.alive)) state.gameOver = true;
+  }
 
   function update(delta) {
     if (state.paused || state.gameOver) return;
-    state.spawnTimer += delta;
-    if (state.remainingEnemy > 0 && state.spawnTimer > Math.max(0.25, 0.85 - state.wave * 0.06)) { state.spawnTimer = 0; spawnEnemy(); }
 
-    state.missiles = state.missiles.filter((missile) => { if (updateMissile(missile, delta)) { explode(missile.tx, missile.ty, 8); return false; } return true; });
-    state.enemyMissiles = state.enemyMissiles.filter((missile) => {
-      if (updateMissile(missile, delta)) {
-        const city = state.cities.find((entry) => entry.alive && Math.abs(entry.x - missile.tx) < 28);
-        if (city) city.alive = false;
-        citiesElement.textContent = String(state.cities.filter((c) => c.alive).length);
-        explode(missile.tx, missile.ty, 16);
-        if (!state.cities.some((c) => c.alive)) state.gameOver = true;
+    state.spawnTimer += delta;
+    if (state.missilesLeft > 0 && state.spawnTimer >= Math.max(0.26, 0.88 - state.wave * 0.05)) {
+      state.spawnTimer = 0;
+      spawnEnemy();
+    }
+
+    state.defenseMissiles = state.defenseMissiles.filter((missile) => {
+      if (advanceMissile(missile, delta)) {
+        triggerExplosion(missile.tx, missile.ty, 52);
         return false;
       }
       return true;
     });
 
-    state.explosions.forEach((explosion) => { explosion.life -= delta; explosion.radius = Math.min(explosion.maxRadius, explosion.radius + 120 * delta); });
-    state.explosions = state.explosions.filter((explosion) => explosion.life > 0);
+    state.enemyMissiles = state.enemyMissiles.filter((missile) => {
+      if (advanceMissile(missile, delta)) {
+        destroyCityAt(missile.tx);
+        triggerExplosion(missile.tx, missile.ty, 40);
+        return false;
+      }
+      return true;
+    });
+
+    state.explosions.forEach((explosion) => {
+      explosion.age += delta;
+      const progress = explosion.age / explosion.life;
+      explosion.radius = progress < 0.45 ? explosion.maxRadius * (progress / 0.45) : explosion.maxRadius * (1 - (progress - 0.45) / 0.55);
+    });
+    state.explosions = state.explosions.filter((explosion) => explosion.age < explosion.life);
 
     state.explosions.forEach((explosion) => {
       state.enemyMissiles.forEach((missile) => {
-        if (Math.hypot(missile.x - explosion.x, missile.y - explosion.y) < explosion.radius) {
-          missile.y = 999;
+        if (!missile.destroyed && Math.hypot(missile.x - explosion.x, missile.y - explosion.y) < explosion.radius) {
+          missile.destroyed = true;
           state.score += 25;
           scoreElement.textContent = String(state.score);
-          explode(missile.x, missile.y - 999 + explosion.y, 8);
+          triggerExplosion(missile.x, missile.y, 26);
         }
       });
     });
-    state.enemyMissiles = state.enemyMissiles.filter((missile) => missile.y < 900);
+    state.enemyMissiles = state.enemyMissiles.filter((missile) => !missile.destroyed);
 
-    if (state.remainingEnemy <= 0 && state.enemyMissiles.length === 0) { state.wave += 1; waveElement.textContent = String(state.wave); startWave(); }
+    if (state.missilesLeft <= 0 && state.enemyMissiles.length === 0 && state.defenseMissiles.length === 0) {
+      state.wave += 1;
+      waveElement.textContent = String(state.wave);
+      startWave();
+    }
   }
 
   function draw() {
-    ctx.fillStyle = '#08101f'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#132845'; ctx.fillRect(0, 330, canvas.width, 90);
-    ctx.fillStyle = '#ff9b54'; state.cities.forEach((city) => { if (city.alive) { ctx.fillRect(city.x - 18, 350, 36, 24); ctx.fillRect(city.x - 10, 340, 20, 10); } });
-    silos.forEach((x, index) => { ctx.fillStyle = index === state.selectedSilo ? '#71e3ff' : '#87ff65'; ctx.beginPath(); ctx.moveTo(x - 18, 368); ctx.lineTo(x, 330); ctx.lineTo(x + 18, 368); ctx.closePath(); ctx.fill(); });
-    ctx.strokeStyle = '#f7f5ff'; state.missiles.forEach((missile) => { ctx.beginPath(); ctx.moveTo(missile.x, missile.y); ctx.lineTo(missile.tx, missile.ty); ctx.stroke(); });
-    ctx.strokeStyle = '#ff5fb2'; state.enemyMissiles.forEach((missile) => { ctx.beginPath(); ctx.moveTo(missile.x, missile.y); ctx.lineTo(missile.tx, missile.ty); ctx.stroke(); });
-    state.explosions.forEach((explosion) => { ctx.fillStyle = `rgba(255, 209, 102, ${Math.max(0.15, explosion.life)})`; ctx.beginPath(); ctx.arc(explosion.x, explosion.y, explosion.radius, 0, Math.PI * 2); ctx.fill(); });
-    if (state.paused || state.gameOver) { ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#f7f5ff'; ctx.font = "28px 'Courier New'"; ctx.textAlign='center'; ctx.fillText(state.gameOver ? 'Defeat' : 'Paused', canvas.width/2, canvas.height/2 - 10); ctx.font = "16px 'Courier New'"; ctx.fillText(state.gameOver ? 'Restart to defend again' : 'Press pause again to resume', canvas.width/2, canvas.height/2 + 18); }
+    const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    sky.addColorStop(0, '#050915');
+    sky.addColorStop(1, '#1e2340');
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (let i = 0; i < 70; i += 1) {
+      ctx.fillStyle = i % 5 === 0 ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.2)';
+      ctx.fillRect((i * 79) % canvas.width, (i * 43) % 180, 2, 2);
+    }
+
+    ctx.fillStyle = '#132845';
+    ctx.fillRect(0, 324, canvas.width, 96);
+
+    state.cities.forEach((city) => {
+      if (!city.alive) return;
+      ctx.fillStyle = '#ff9b54';
+      ctx.fillRect(city.x - 18, 350, 36, 24);
+      ctx.fillRect(city.x - 8, 338, 16, 12);
+    });
+
+    siloPositions.forEach((x, index) => {
+      ctx.fillStyle = index === state.preferredSilo ? '#71e3ff' : '#87ff65';
+      ctx.beginPath();
+      ctx.moveTo(x - 18, 370);
+      ctx.lineTo(x, 332);
+      ctx.lineTo(x + 18, 370);
+      ctx.closePath();
+      ctx.fill();
+    });
+
+    ctx.strokeStyle = '#f7f5ff';
+    ctx.lineWidth = 2;
+    state.defenseMissiles.forEach((missile) => {
+      ctx.beginPath();
+      ctx.moveTo(missile.x, missile.y);
+      ctx.lineTo(missile.tx, missile.ty);
+      ctx.stroke();
+    });
+
+    ctx.strokeStyle = '#ff5fb2';
+    state.enemyMissiles.forEach((missile) => {
+      ctx.beginPath();
+      ctx.moveTo(missile.x, missile.y);
+      ctx.lineTo(missile.tx, missile.ty);
+      ctx.stroke();
+    });
+
+    state.explosions.forEach((explosion) => {
+      ctx.fillStyle = `rgba(255, 209, 102, ${Math.max(0, 1 - explosion.age / explosion.life)})`;
+      ctx.beginPath();
+      ctx.arc(explosion.x, explosion.y, Math.max(0, explosion.radius), 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    if (state.paused || state.gameOver) {
+      ctx.fillStyle = 'rgba(0,0,0,0.5)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#f7f5ff';
+      ctx.font = "28px 'Courier New'";
+      ctx.textAlign = 'center';
+      ctx.fillText(state.gameOver ? 'Defeat' : 'Paused', canvas.width / 2, canvas.height / 2 - 10);
+      ctx.font = "16px 'Courier New'";
+      ctx.fillText(state.gameOver ? 'Restart to defend again' : 'Press pause again to resume', canvas.width / 2, canvas.height / 2 + 20);
+    }
   }
 
-  function frame(time) { const delta = Math.min((time - state.lastTime || 16) / 1000, 0.03); state.lastTime = time; update(delta); draw(); requestAnimationFrame(frame); }
-  canvas.addEventListener('pointerdown', (event) => { const rect = canvas.getBoundingClientRect(); launchAt((event.clientX - rect.left) * (canvas.width / rect.width), (event.clientY - rect.top) * (canvas.height / rect.height)); });
-  actionButtons.forEach((button) => button.addEventListener('click', () => { const action = button.dataset.action; if (action === 'left') state.selectedSilo = 0; if (action === 'center') state.selectedSilo = 1; if (action === 'right') state.selectedSilo = 2; if (action === 'pause') togglePause(); }));
-  pauseButton.addEventListener('click', togglePause); restartButton.addEventListener('click', restartGame); restartGame(); requestAnimationFrame(frame);
+  function frame(time) {
+    const delta = Math.min((time - state.lastTime || 16) / 1000, 0.03);
+    state.lastTime = time;
+    update(delta);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  canvas.addEventListener('pointerdown', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    launchDefense((event.clientX - rect.left) * (canvas.width / rect.width), (event.clientY - rect.top) * (canvas.height / rect.height));
+  });
+
+  actionButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const action = button.dataset.action;
+      if (action === 'left') state.preferredSilo = 0;
+      if (action === 'center') state.preferredSilo = 1;
+      if (action === 'right') state.preferredSilo = 2;
+      if (action === 'pause') togglePause();
+    });
+  });
+
+  pauseButton.addEventListener('click', togglePause);
+  restartButton.addEventListener('click', restartGame);
+  restartGame();
+  requestAnimationFrame(frame);
 }

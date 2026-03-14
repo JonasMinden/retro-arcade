@@ -37,13 +37,13 @@ if (canvas) {
       enemy.y += Math.cos(enemy.drift * 0.4 + index) * 12 * delta;
       enemy.cooldown -= delta;
       if (enemy.cooldown <= 0) {
-        enemy.cooldown = enemy.type === 'carrier' ? 1.45 : enemy.type === 'pulser' ? 0.95 : 0.7;
+        enemy.cooldown = enemy.type === 'carrier' ? 2.15 : enemy.type === 'pulser' ? 1.45 : 1.15;
         if (enemy.type === 'carrier') {
-          [-0.22, 0, 0.22].forEach((angle) => state.enemyBullets.push({ x: enemy.x, y: enemy.y + 20, vx: Math.sin(angle) * 130, vy: 200 }));
+          [-0.22, 0, 0.22].forEach((angle) => state.enemyBullets.push({ x: enemy.x, y: enemy.y + 20, vx: Math.sin(angle) * 130, vy: 170 }));
         } else if (enemy.type === 'pulser') {
-          state.enemyBullets.push({ x: enemy.x, y: enemy.y + 20, vx: Math.sin(enemy.drift) * 80, vy: 240 });
+          state.enemyBullets.push({ x: enemy.x, y: enemy.y + 20, vx: Math.sin(enemy.drift) * 80, vy: 195 });
         } else {
-          const dx = state.playerX - enemy.x; const dy = 352 - enemy.y; const distance = Math.hypot(dx, dy) || 1; state.enemyBullets.push({ x: enemy.x, y: enemy.y + 20, vx: dx / distance * 160, vy: dy / distance * 160 });
+          const dx = state.playerX - enemy.x; const dy = 352 - enemy.y; const distance = Math.hypot(dx, dy) || 1; state.enemyBullets.push({ x: enemy.x, y: enemy.y + 20, vx: dx / distance * 128, vy: dy / distance * 128 });
         }
       }
     });
@@ -83,3 +83,4 @@ if (canvas) {
   actionButtons.forEach((button) => button.addEventListener('click', () => { const action = button.dataset.action; if (action==='left') state.move = -1; if (action==='right') state.move = 1; if (action==='fire') fire(); if (action==='boost') state.boost = 1; setTimeout(() => { state.move = 0; }, 160); }));
   pauseButton.addEventListener('click', togglePause); restartButton.addEventListener('click', restartGame); restartGame(); requestAnimationFrame(frame);
 }
+
