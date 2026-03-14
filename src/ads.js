@@ -4,13 +4,12 @@ import { siteConfig } from "./site-config.js";
 initSiteUi();
 
 function loadAdSense(client) {
-  if (!client || document.querySelector('script[data-adsense-loader="true"]')) {
+  if (!client || document.querySelector('script[src*="pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]')) {
     return;
   }
 
   const script = document.createElement("script");
   script.async = true;
-  script.dataset.adsenseLoader = "true";
   script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`;
   script.crossOrigin = "anonymous";
   document.head.appendChild(script);
@@ -45,12 +44,8 @@ function upgradeSlot(element, slotId, client) {
   element.innerHTML = "";
   element.appendChild(createAdUnit(slotId, client));
 
-  if (window.adsbygoogle) {
-    window.adsbygoogle.push({});
-  } else {
-    window.adsbygoogle = window.adsbygoogle || [];
-    window.adsbygoogle.push({});
-  }
+  window.adsbygoogle = window.adsbygoogle || [];
+  window.adsbygoogle.push({});
 }
 
 function initAds() {
