@@ -1,0 +1,90 @@
+﻿<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pac-Man | Retro Arcade</title>
+    <meta name="description" content="Pac-Man Stilspiel im Browser auf einer Arcade-Spieleseite mit Keyboard- und Mobile-Steuerung.">
+    <link rel="stylesheet" href="../../styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell site-header__inner">
+        <a class="brand" href="../../index.html">Retro Arcade</a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <a href="../../index.html">Start</a>
+          <a href="./index.html" aria-current="page">Pac-Man</a>
+          <a href="../../impressum.html">Impressum</a>
+          <a href="../../privacy.html">Datenschutz</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell page arcade-page">
+      <section class="marquee">
+        <div class="marquee__lights" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <p class="kicker">Wave 2</p>
+        <h1>Pac-Man</h1>
+        <p>Runde um Runde durch das Labyrinth: Pellets fressen, Geister meiden, alle Punkte abräumen.</p>
+      </section>
+
+      <section class="arcade-layout">
+        <article class="arcade-frame">
+          <div class="arcade-frame__screen">
+            <div class="arcade-header">
+              <div>
+                <p class="eyebrow">Arcade Cabinet</p>
+                <h2 class="arcade-panel-title">Maze Chase</h2>
+              </div>
+              <div class="arcade-actions">
+                <button class="pixel-button" id="pause-button" type="button">Pause</button>
+                <button class="pixel-button pixel-button--secondary" id="restart-button" type="button">Restart</button>
+              </div>
+            </div>
+
+            <div class="arcade-stats" aria-live="polite">
+              <div class="arcade-stat"><span class="arcade-stat__label">Score</span><strong class="arcade-stat__value" id="score">0</strong></div>
+              <div class="arcade-stat"><span class="arcade-stat__label">Lives</span><strong class="arcade-stat__value" id="lives">3</strong></div>
+              <div class="arcade-stat"><span class="arcade-stat__label">Pellets</span><strong class="arcade-stat__value" id="pellets">0</strong></div>
+            </div>
+
+            <canvas id="game-canvas" class="game-canvas" width="560" height="560" aria-label="Pac-Man Labyrinth"></canvas>
+
+            <div class="arcade-controls" aria-label="Pac-Man Steuerung">
+              <button data-move="up" type="button">Up</button>
+              <button data-move="left" type="button">Left</button>
+              <button data-move="down" type="button">Down</button>
+              <button data-move="right" type="button">Right</button>
+            </div>
+
+            <p class="arcade-hint">Steuerung: <code>Pfeiltasten</code> oder <code>WASD</code>. Sammle alle Pellets, ohne erwischt zu werden.</p>
+          </div>
+        </article>
+
+        <aside class="arcade-sidebar">
+          <section>
+            <p class="eyebrow">Spielziel</p>
+            <ul class="game-rules">
+              <li>Sammle alle Pellets im Labyrinth.</li>
+              <li>Triff keinen Geist, sonst verlierst du ein Leben.</li>
+              <li>Nach einem Treffer setzt die Runde an den Startpunkten fort.</li>
+            </ul>
+          </section>
+          <section class="ad-slot" data-ad-slot-key="snakeSidebar" aria-label="Werbeflaeche Platzhalter"><p class="ad-slot__label">Ad Slot</p><p>Fuer spaetere Anzeigen vorbereitet.</p></section>
+          <section>
+            <p class="eyebrow">Mehr Spiele</p>
+            <div class="arcade-buttons">
+              <a class="button-link" href="../space-invaders/index.html">Space Invaders</a>
+              <a class="button-link button-link--secondary" href="../asteroids/index.html">Asteroids</a>
+            </div>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div class="shell site-footer__inner"><p>Retro Arcade</p><nav class="site-nav" aria-label="Footer Navigation"><a href="../space-invaders/index.html">Space Invaders</a><a href="../asteroids/index.html">Asteroids</a><a href="../snake/index.html">Snake</a></nav></div></footer>
+
+    <script type="module" src="../../src/ads.js"></script>
+    <script type="module" src="../../src/pac-man-game.js"></script>
+  </body>
+</html>

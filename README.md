@@ -1,6 +1,6 @@
 ﻿# Retro Arcade
 
-Kleine statische Browser-Spieleseite mit einer Startseite, Arcade-Styling und der ersten Spielwelle aus Snake, Pong, Breakout und Tetris.
+Kleine statische Browser-Spieleseite mit einheitlichem Arcade-Styling und sieben spielbaren Klassikern: Snake, Pong, Breakout, Tetris, Space Invaders, Asteroids und Pac-Man.
 
 ## Lokal starten
 
@@ -10,18 +10,16 @@ Kleine statische Browser-Spieleseite mit einer Startseite, Arcade-Styling und de
 
 ## Struktur
 
-- `index.html` ist die Startseite der Spielesammlung.
-- `games/snake/index.html`, `games/pong/index.html`, `games/breakout/index.html` und `games/tetris/index.html` sind die spielbaren Seiten aus Wave 1.
-- `styles.css` enthaelt das gemeinsame Arcade-Styling mit Pixel-Look und Cabinet-Layouts.
-- `src/snake-game.js`, `src/pong-game.js`, `src/breakout-game.js` und `src/tetris-game.js` enthalten die Spiellogik.
-- `src/ads.js` bereitet Werbeslots vor und aktiviert echte Anzeigen erst nach bewusster Freigabe.
-- `src/site-config.js` ist die zentrale Schaltstelle fuer Publisher-ID und Ad-Slot-IDs.
+- `index.html` ist die Startseite der kompletten Arcade-Sammlung.
+- `games/snake/index.html`, `games/pong/index.html`, `games/breakout/index.html`, `games/tetris/index.html`, `games/space-invaders/index.html`, `games/asteroids/index.html` und `games/pac-man/index.html` sind die spielbaren Seiten.
+- `styles.css` enthaelt das gemeinsame Arcade-Styling mit Cabinet-Look, Pixel-Art-Karten und Spielseiten-Rahmen.
+- `src/*.js` enthaelt die Spielmodule fuer alle sieben Titel sowie die Werbevorbereitung.
 - `privacy.html` und `impressum.html` enthalten die Rechtsseiten.
 
 ## Tests
 
 - `node src/snake-game.test.js`
-- `node --input-type=module -e "await import('./src/pong-game.js'); await import('./src/breakout-game.js'); await import('./src/tetris-game.js'); await import('./src/snake-game.js'); console.log('imports ok')"`
+- `node --input-type=module -e "await import('./src/pong-game.js'); await import('./src/breakout-game.js'); await import('./src/tetris-game.js'); await import('./src/space-invaders-game.js'); await import('./src/asteroids-game.js'); await import('./src/pac-man-game.js'); await import('./src/snake-game.js'); console.log('imports ok')"`
 
 ## Cloudflare Pages
 
@@ -41,10 +39,10 @@ Fuer dieses Projekt brauchst du keinen Build-Schritt:
 
 ## Manuell pruefen
 
-- Startseite laedt im neuen Arcade-Look.
-- Snake, Pong, Breakout und Tetris sind jeweils erreichbar.
-- Snake laesst sich mit Pfeiltasten, `WASD` und On-Screen-Buttons steuern.
-- Pong reagiert auf `W/S`, Pfeiltasten, Serve und Pause.
-- Breakout reagiert auf `A/D`, Pfeiltasten, Launch und Pause.
-- Tetris reagiert auf Pfeile beziehungsweise `A/D/W/S`, Rotation, Drop und Pause.
+- Startseite zeigt alle sieben Spiele im Arcade-Look.
+- Snake, Pong, Breakout, Tetris, Space Invaders, Asteroids und Pac-Man sind erreichbar.
+- Wave-1-Steuerung funktioniert weiter.
+- Space Invaders: Bewegung, Schiessen, Lebensverlust und neue Wellen funktionieren.
+- Asteroids: Drehen, Schub, Schuesse und Asteroiden-Splits funktionieren.
+- Pac-Man: Pellets zaehlen runter, Geister bewegen sich, Leben werden bei Treffer abgezogen.
 - Impressum, Datenschutz und Werbe-Platzhalter sind weiterhin erreichbar.
