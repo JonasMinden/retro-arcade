@@ -22,17 +22,16 @@ const pageMeta = {
   "/": { de: ["Retro Arcade", "Retro Arcade ist eine Arcade-Spielesammlung mit Snake, Pong, Breakout, Tetris, Space Invaders, Asteroids, Pac-Man, Pinball und weiteren Browser-Klassikern."], en: ["Retro Arcade", "Retro Arcade is an arcade collection with Snake, Pong, Breakout, Tetris, Space Invaders, Asteroids, Pac-Man, Pinball and more browser classics."], es: ["Retro Arcade", "Retro Arcade es una colección arcade con Snake, Pong, Breakout, Tetris, Space Invaders, Asteroids, Pac-Man, Pinball y más clásicos del navegador."], fr: ["Retro Arcade", "Retro Arcade est une collection de jeux d'arcade avec Snake, Pong, Breakout, Tetris, Space Invaders, Asteroids, Pac-Man, Pinball et d'autres classiques du navigateur."], zh: ["Retro Arcade", "Retro Arcade 是一个街机游戏合集，包含 Snake、Pong、Breakout、Tetris、Space Invaders、Asteroids、Pac-Man、Pinball 等经典浏览器游戏。"], ru: ["Retro Arcade", "Retro Arcade — это коллекция аркадных игр со Snake, Pong, Breakout, Tetris, Space Invaders, Asteroids, Pac-Man, Pinball и другими классическими браузерными играми。"] },
   "/index.html": "same",
   "/account.html": { de: ["Account | Retro Arcade", "Registrierung und Login für Retro Arcade, optional für Scoreboards und gespeicherte Spielestände."], en: ["Account | Retro Arcade", "Sign up and login for Retro Arcade, optional for scoreboards and saved scores."], es: ["Cuenta | Retro Arcade", "Registro e inicio de sesión para Retro Arcade, opcional para marcadores y puntuaciones guardadas."], fr: ["Compte | Retro Arcade", "Inscription et connexion pour Retro Arcade, optionnelles pour les classements et scores enregistrés."], zh: ["账户 | Retro Arcade", "Retro Arcade 的注册与登录，可选用于排行榜和分数保存。"], ru: ["Аккаунт | Retro Arcade", "Регистрация и вход в Retro Arcade, опционально для таблиц лидеров и сохранения очков."] },
-  "/contact.html": { de: ["Kontakt | Retro Arcade", "Kontaktseite für Retro Arcade mit Vorschlägen, Feedback und sonstigen Anfragen."], en: ["Contact | Retro Arcade", "Contact page for Retro Arcade with suggestions, feedback and other requests."], es: ["Contacto | Retro Arcade", "Página de contacto de Retro Arcade con sugerencias, comentarios y otras consultas."], fr: ["Contact | Retro Arcade", "Page de contact Retro Arcade pour les suggestions, retours et autres demandes."], zh: ["联系 | Retro Arcade", "Retro Arcade 联系页面，可用于建议、反馈和其他咨询。"], ru: ["Контакты | Retro Arcade", "Страница контактов Retro Arcade для предложений, отзывов и других запросов."] },
 };
 
 const pageSelectors = {
   "/": {
-    de: [[".hero__copy .eyebrow", "Full Floor"],[".hero__copy h1", "Die Arcade-Halle ist jetzt komplett offen."],[".hero__copy .lead", "Von Snake und Pong bis zu Space Invaders, Asteroids, Pac-Man, Pinball und der neuen Jump-&-Run-Welle: jede Maschine hat ihren eigenen Cabinet-Look, aber dieselbe Seite als Zuhause."],['.hero__actions a[href="#games"]', "Alle Spiele"],['.hero__actions a[href="./account.html"]', "Account & Scoreboards"],["#games .section__heading .eyebrow", "Playable Line-up"],["#games .section__heading h2", "Alle Automaten"],["#games .section__text", "Zwölf spielbare Seiten, optionale Accounts und persistente Scoreboards für eingeloggte Nutzer."],[".floating-scores .eyebrow", "Letzte Highscores"],[".floating-scores h2", "Neue Einträge"]],
-    en: [[".hero__copy .eyebrow", "Full Floor"],[".hero__copy h1", "The arcade hall is fully open now."],[".hero__copy .lead", "From Snake and Pong to Space Invaders, Asteroids, Pac-Man, Pinball and the new jumping wave: every machine has its own cabinet look, but the same home."],['.hero__actions a[href="#games"]', "All games"],['.hero__actions a[href="./account.html"]', "Account & scoreboards"],["#games .section__heading .eyebrow", "Playable Line-up"],["#games .section__heading h2", "All machines"],["#games .section__text", "Twelve playable pages, optional accounts and persistent scoreboards for signed-in players."],[".floating-scores .eyebrow", "Latest highscores"],[".floating-scores h2", "New entries"]],
-    es: [[".hero__copy .eyebrow", "Sala completa"],[".hero__copy h1", "La sala arcade ya está completamente abierta."],[".hero__copy .lead", "Desde Snake y Pong hasta Space Invaders, Asteroids, Pac-Man, Pinball y la nueva ola de saltos: cada máquina tiene su propio estilo, pero el mismo hogar."],['.hero__actions a[href="#games"]', "Todos los juegos"],['.hero__actions a[href="./account.html"]', "Cuenta y marcadores"],["#games .section__heading .eyebrow", "Cartel jugable"],["#games .section__heading h2", "Todas las máquinas"],["#games .section__text", "Doce páginas jugables, cuentas opcionales y marcadores persistentes para usuarios conectados."],[".floating-scores .eyebrow", "Últimas puntuaciones"],[".floating-scores h2", "Nuevas entradas"]],
-    fr: [[".hero__copy .eyebrow", "Salle complète"],[".hero__copy h1", "La salle d'arcade est maintenant entièrement ouverte."],[".hero__copy .lead", "De Snake et Pong à Space Invaders, Asteroids, Pac-Man, Pinball et la nouvelle vague de sauts: chaque borne a son style, mais le même foyer."],['.hero__actions a[href="#games"]', "Tous les jeux"],['.hero__actions a[href="./account.html"]', "Compte et classements"],["#games .section__heading .eyebrow", "Programmation jouable"],["#games .section__heading h2", "Toutes les bornes"],["#games .section__text", "Douze pages jouables, des comptes optionnels et des classements persistants pour les joueurs connectés."],[".floating-scores .eyebrow", "Derniers scores"],[".floating-scores h2", "Nouvelles entrées"]],
-    zh: [[".hero__copy .eyebrow", "全场开放"],[".hero__copy h1", "街机大厅现已全面开放。"],[".hero__copy .lead", "从 Snake 和 Pong 到 Space Invaders、Asteroids、Pac-Man、Pinball 以及新的跳跃系列：每台机器都有自己的柜机风格，但共享同一个家。"],['.hero__actions a[href="#games"]', "全部游戏"],['.hero__actions a[href="./account.html"]', "账户与排行榜"],["#games .section__heading .eyebrow", "可玩阵容"],["#games .section__heading h2", "全部机器"],["#games .section__text", "十二个可玩页面、可选账户以及为已登录玩家保留的持久排行榜。"],[".floating-scores .eyebrow", "最新高分"],[".floating-scores h2", "新记录"]],
-    ru: [[".hero__copy .eyebrow", "Полный зал"],[".hero__copy h1", "Аркадный зал теперь полностью открыт."],[".hero__copy .lead", "От Snake и Pong до Space Invaders, Asteroids, Pac-Man, Pinball и новой волны прыжковых игр: у каждого автомата свой стиль, но один общий дом."],['.hero__actions a[href="#games"]', "Все игры"],['.hero__actions a[href="./account.html"]', "Аккаунт и таблицы"],["#games .section__heading .eyebrow", "Игровая линейка"],["#games .section__heading h2", "Все автоматы"],["#games .section__text", "Двенадцать игровых страниц, опциональные аккаунты и постоянные таблицы лидеров для вошедших пользователей."],[".floating-scores .eyebrow", "Последние рекорды"],[".floating-scores h2", "Новые записи"]],
+    de: [[".hero__copy .eyebrow", "Full Floor"],[".hero__copy h1", "Die Arcade-Halle ist jetzt komplett offen."],[".hero__copy .lead", "Von Snake und Pong bis zu Space Invaders, Asteroids, Pac-Man, Pinball und der neuen Jump-&-Run-Welle: jede Maschine hat ihren eigenen Cabinet-Look, aber dieselbe Seite als Zuhause."],["#games .section__heading .eyebrow", "Playable Line-up"],["#games .section__heading h2", "Alle Automaten"],["#games .section__text", "Zwölf spielbare Seiten, optionale Accounts und persistente Scoreboards für eingeloggte Nutzer."],[".floating-scores .eyebrow", "Letzte Highscores"],[".floating-scores h2", "Neue Einträge"]],
+    en: [[".hero__copy .eyebrow", "Full Floor"],[".hero__copy h1", "The arcade hall is fully open now."],[".hero__copy .lead", "From Snake and Pong to Space Invaders, Asteroids, Pac-Man, Pinball and the new jumping wave: every machine has its own cabinet look, but the same home."],["#games .section__heading .eyebrow", "Playable Line-up"],["#games .section__heading h2", "All machines"],["#games .section__text", "Twelve playable pages, optional accounts and persistent scoreboards for signed-in players."],[".floating-scores .eyebrow", "Latest highscores"],[".floating-scores h2", "New entries"]],
+    es: [[".hero__copy .eyebrow", "Sala completa"],[".hero__copy h1", "La sala arcade ya está completamente abierta."],[".hero__copy .lead", "Desde Snake y Pong hasta Space Invaders, Asteroids, Pac-Man, Pinball y la nueva ola de saltos: cada máquina tiene su propio estilo, pero el mismo hogar."],["#games .section__heading .eyebrow", "Cartel jugable"],["#games .section__heading h2", "Todas las máquinas"],["#games .section__text", "Doce páginas jugables, cuentas opcionales y marcadores persistentes para usuarios conectados."],[".floating-scores .eyebrow", "Últimas puntuaciones"],[".floating-scores h2", "Nuevas entradas"]],
+    fr: [[".hero__copy .eyebrow", "Salle complète"],[".hero__copy h1", "La salle d'arcade est maintenant entièrement ouverte."],[".hero__copy .lead", "De Snake et Pong à Space Invaders, Asteroids, Pac-Man, Pinball et la nouvelle vague de sauts: chaque borne a son style, mais le même foyer."],["#games .section__heading .eyebrow", "Programmation jouable"],["#games .section__heading h2", "Toutes les bornes"],["#games .section__text", "Douze pages jouables, des comptes optionnels et des classements persistants pour les joueurs connectés."],[".floating-scores .eyebrow", "Derniers scores"],[".floating-scores h2", "Nouvelles entrées"]],
+    zh: [[".hero__copy .eyebrow", "全场开放"],[".hero__copy h1", "街机大厅现已全面开放。"],[".hero__copy .lead", "从 Snake 和 Pong 到 Space Invaders、Asteroids、Pac-Man、Pinball 以及新的跳跃系列：每台机器都有自己的柜机风格，但共享同一个家。"],["#games .section__heading .eyebrow", "可玩阵容"],["#games .section__heading h2", "全部机器"],["#games .section__text", "十二个可玩页面、可选账户以及为已登录玩家保留的持久排行榜。"],[".floating-scores .eyebrow", "最新高分"],[".floating-scores h2", "新记录"]],
+    ru: [[".hero__copy .eyebrow", "Полный зал"],[".hero__copy h1", "Аркадный зал теперь полностью открыт."],[".hero__copy .lead", "От Snake и Pong до Space Invaders, Asteroids, Pac-Man, Pinball и новой волны прыжковых игр: у каждого автомата свой стиль, но один общий дом."],["#games .section__heading .eyebrow", "Игровая линейка"],["#games .section__heading h2", "Все автоматы"],["#games .section__text", "Двенадцать игровых страниц, опциональные аккаунты и постоянные таблицы лидеров для вошедших пользователей."],[".floating-scores .eyebrow", "Последние рекорды"],[".floating-scores h2", "Новые записи"]],
   },
   "/account.html": {
     de: [[".marquee .kicker", "Player Account"],[".marquee h1", "Optional anmelden, weiter frei spielen."],[".marquee p:not(.kicker)", "Ohne Login kannst du alle Spiele weiter direkt starten. Mit Account bekommst du gespeicherte Scores und Scoreboards unter deinem Nutzernamen."]],
@@ -41,14 +40,6 @@ const pageSelectors = {
     fr: [[".marquee .kicker", "Compte joueur"],[".marquee h1", "Connecte-toi si tu veux et continue à jouer librement."],[".marquee p:not(.kicker)", "Sans connexion, tu peux lancer tous les jeux immédiatement. Avec un compte, tu obtiens des scores enregistrés et des classements sous ton nom d'utilisateur."]],
     zh: [[".marquee .kicker", "玩家账户"],[".marquee h1", "可选登录，继续自由游玩。"],[".marquee p:not(.kicker)", "不登录也可以直接开始所有游戏。使用账户后，你的分数和排行榜记录会保存在用户名下。"]],
     ru: [[".marquee .kicker", "Аккаунт игрока"],[".marquee h1", "Вход по желанию, играть можно и без него."],[".marquee p:not(.kicker)", "Без входа можно сразу запускать все игры. С аккаунтом ваши очки и места в таблицах будут сохраняться под вашим именем."]],
-  },
-  "/contact.html": {
-    de: [[".marquee .kicker", "Kontakt"],[".marquee h1", "Schreib uns direkt aus der Spielhalle."],[".marquee p:not(.kicker)", "Für Vorschläge, Fehlerberichte, geschäftliche Anfragen oder allgemeines Feedback kannst du hier direkt eine Nachricht senden."],[".arcade-panel-title", "Nachricht senden"]],
-    en: [[".marquee .kicker", "Contact"],[".marquee h1", "Write to us directly from the arcade."],[".marquee p:not(.kicker)", "Use this form for suggestions, bug reports, business requests or general feedback."],[".arcade-panel-title", "Send message"]],
-    es: [[".marquee .kicker", "Contacto"],[".marquee h1", "Escríbenos directamente desde la sala arcade."],[".marquee p:not(.kicker)", "Usa este formulario para sugerencias, errores, consultas comerciales o comentarios generales."],[".arcade-panel-title", "Enviar mensaje"]],
-    fr: [[".marquee .kicker", "Contact"],[".marquee h1", "Écris-nous directement depuis la salle d'arcade."],[".marquee p:not(.kicker)", "Utilise ce formulaire pour des suggestions, des bugs, des demandes professionnelles ou un retour général."],[".arcade-panel-title", "Envoyer un message"]],
-    zh: [[".marquee .kicker", "联系"],[".marquee h1", "直接从街机大厅给我们留言。"],[".marquee p:not(.kicker)", "你可以在这里提交建议、错误报告、商务咨询或一般反馈。"],[".arcade-panel-title", "发送消息"]],
-    ru: [[".marquee .kicker", "Контакты"],[".marquee h1", "Напишите нам прямо из аркадного зала."],[".marquee p:not(.kicker)", "Эта форма подходит для предложений, сообщений об ошибках, деловых запросов и общего отзыва."],[".arcade-panel-title", "Отправить сообщение"]],
   },
 };
 
@@ -80,13 +71,31 @@ function updateMeta() {
   document.documentElement.lang = currentLanguage;
 }
 
-function updateStaticText() {
-  document.querySelectorAll('.site-nav a[href$="index.html"]').forEach((node) => { if (!node.closest('.auth-nav')) node.textContent = t('navHome'); });
-  document.querySelectorAll('.site-nav a[href$="account.html"]').forEach((node) => { if (node.closest('.auth-nav')) return; node.textContent = t('navAccount'); });
-  document.querySelectorAll('.site-nav a[href$="contact.html"]').forEach((node) => { node.textContent = t('navContact'); });
-  document.querySelectorAll('.site-nav a[href$="impressum.html"]').forEach((node) => { node.textContent = t('navLegal'); });
-  document.querySelectorAll('.site-nav a[href$="privacy.html"]').forEach((node) => { node.textContent = t('navPrivacy'); });
+function updateHeaderNavText() {
+  const headerLinks = Array.from(document.querySelectorAll('.site-header .site-nav > a'));
+  const isHomePage = currentPath() === '/' || currentPath() === '/index.html';
+  headerLinks.forEach((link) => {
+    const href = link.getAttribute('href') || '';
+    if ((href === './index.html' || href === '../../index.html') && (!link.hasAttribute('aria-current') || isHomePage)) {
+      link.textContent = t('navHome');
+      return;
+    }
+    if ((href === './account.html' || href === '/account.html' || href === '../../account.html') && !link.hasAttribute('aria-current')) {
+      link.textContent = t('navAccount');
+      return;
+    }
+    if ((href === './impressum.html' || href === '../../impressum.html')) {
+      link.textContent = t('navLegal');
+      return;
+    }
+    if ((href === './privacy.html' || href === '../../privacy.html')) {
+      link.textContent = t('navPrivacy');
+    }
+  });
+}
 
+function updateStaticText() {
+  updateHeaderNavText();
   const pageCopy = pageSelectors[currentPath()];
   if (!pageCopy || !pageCopy[currentLanguage]) return;
   pageCopy[currentLanguage].forEach(([selector, value]) => {
@@ -132,4 +141,3 @@ export function initI18n() {
   updateStaticText();
   renderLanguageSwitch();
 }
-
