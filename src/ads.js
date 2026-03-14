@@ -1,8 +1,6 @@
-﻿import { initI18n } from "./i18n.js";
-import { initSiteUi } from "./site-ui.js";
+﻿import { initSiteUi } from "./site-ui.js";
 import { siteConfig } from "./site-config.js";
 
-initI18n();
 initSiteUi();
 
 function loadAdSense(client) {
