@@ -117,7 +117,7 @@ if (canvas) {
     state.stride += delta * (7 + state.speed * 8);
 
     state.spawnTimer += delta;
-    if (state.spawnTimer > Math.max(0.95, 1.9 - state.speed * 1.35)) {
+    if (state.spawnTimer > Math.max(1.25, 2.3 - state.speed * 1.35)) {
       state.spawnTimer = 0;
       spawnObstacle();
     }
@@ -129,10 +129,10 @@ if (canvas) {
     }
 
     state.obstacles.forEach((obstacle) => {
-      obstacle.depth -= state.speed * delta;
+      obstacle.depth -= state.speed * 0.24 * delta;
     });
     state.coinsOnTrack.forEach((coin) => {
-      coin.depth -= (state.speed + 0.02) * delta;
+      coin.depth -= (state.speed + 0.02) * 0.24 * delta;
     });
     state.obstacles = state.obstacles.filter((obstacle) => obstacle.depth > -0.05);
     state.coinsOnTrack = state.coinsOnTrack.filter((coin) => coin.depth > 0 && !coin.collected);
@@ -141,7 +141,7 @@ if (canvas) {
     const sliding = isSliding();
 
     state.obstacles.forEach((obstacle) => {
-      if (obstacle.depth > 0.86 && obstacle.depth < 0.95 && Math.abs(obstacle.lane - state.playerLane) < 0.28) {
+      if (obstacle.depth > 0.84 && obstacle.depth < 0.89 && Math.abs(obstacle.lane - state.playerLane) < 0.24) {
         const safeJump = (obstacle.type === 'crate' || obstacle.type === 'cart') && jump > 42;
         const safeSlide = obstacle.type === 'arch' && sliding;
         if (!safeJump && !safeSlide) {
@@ -314,4 +314,5 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
 

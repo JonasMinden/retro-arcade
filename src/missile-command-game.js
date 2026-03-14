@@ -9,7 +9,22 @@ if (canvas) {
   const actionButtons = Array.from(document.querySelectorAll('[data-action]'));
 
   const siloPositions = [110, 320, 530];
-  const state = { score: 0, wave: 1, paused: false, gameOver: false, preferredSilo: 1, cities: [], enemyMissiles: [], defenseMissiles: [], explosions: [], spawnTimer: 0, missilesLeft: 0, lastTime: 0 };
+  const state = {
+    score: 0,
+    wave: 1,
+    paused: false,
+    gameOver: false,
+    preferredSilo: 1,
+    cities: [],
+    enemyMissiles: [],
+    defenseMissiles: [],
+    explosions: [],
+    spawnTimer: 0,
+    missilesLeft: 0,
+    introTimer: 6,
+    crosshair: { x: 320, y: 160 },
+    lastTime: 0,
+  };
 
   function resetCities() {
     state.cities = [70, 160, 250, 390, 480, 570].map((x) => ({ x, alive: true }));
@@ -20,8 +35,8 @@ if (canvas) {
     state.enemyMissiles = [];
     state.defenseMissiles = [];
     state.explosions = [];
-    state.spawnTimer = 0;
-    state.missilesLeft = 8 + state.wave * 3;
+    state.spawnTimer = -0.8;
+    state.missilesLeft = 7 + state.wave * 2;
   }
 
   function restartGame() {
@@ -30,6 +45,8 @@ if (canvas) {
     state.paused = false;
     state.gameOver = false;
     state.preferredSilo = 1;
+    state.introTimer = 6;
+    state.crosshair = { x: 320, y: 160 };
     scoreElement.textContent = '0';
     waveElement.textContent = '1';
     pauseButton.textContent = 'Pause';
@@ -52,8 +69,10 @@ if (canvas) {
     if (state.gameOver || state.paused) return;
     const siloIndex = pickLaunchSilo(targetX);
     const startX = siloPositions[siloIndex];
-    state.defenseMissiles.push({ x: startX, y: 356, tx: targetX, ty: targetY, speed: 340 });
+    state.defenseMissiles.push({ x: startX, y: 356, tx: targetX, ty: targetY, speed: 300 });
     state.preferredSilo = siloIndex;
+    state.crosshair = { x: targetX, y: targetY };
+    if (state.introTimer > 0) state.introTimer = 0;
   }
 
   function spawnEnemy() {
@@ -64,12 +83,12 @@ if (canvas) {
     }
     const targets = [...aliveCities.map((city) => city.x), ...siloPositions];
     const tx = targets[Math.floor(Math.random() * targets.length)];
-    state.enemyMissiles.push({ x: 32 + Math.random() * (canvas.width - 64), y: -20, tx, ty: 372, speed: 64 + state.wave * 9 });
+    state.enemyMissiles.push({ x: 32 + Math.random() * (canvas.width - 64), y: -20, tx, ty: 372, speed: 48 + state.wave * 7 });
     state.missilesLeft -= 1;
   }
 
-  function triggerExplosion(x, y, maxRadius = 46) {
-    state.explosions.push({ x, y, radius: 0, maxRadius, age: 0, life: 0.7 });
+  function triggerExplosion(x, y, maxRadius = 58) {
+    state.explosions.push({ x, y, radius: 0, maxRadius, age: 0, life: 0.9 });
   }
 
   function advanceMissile(missile, delta) {
@@ -78,7 +97,7 @@ if (canvas) {
     const distance = Math.hypot(dx, dy) || 1;
     missile.x += dx / distance * missile.speed * delta;
     missile.y += dy / distance * missile.speed * delta;
-    return distance < 12;
+    return distance < 10;
   }
 
   function destroyCityAt(x) {
@@ -92,16 +111,17 @@ if (canvas) {
 
   function update(delta) {
     if (state.paused || state.gameOver) return;
+    state.introTimer = Math.max(0, state.introTimer - delta);
 
     state.spawnTimer += delta;
-    if (state.missilesLeft > 0 && state.spawnTimer >= Math.max(0.26, 0.88 - state.wave * 0.05)) {
+    if (state.missilesLeft > 0 && state.spawnTimer >= Math.max(0.55, 1.15 - state.wave * 0.05)) {
       state.spawnTimer = 0;
       spawnEnemy();
     }
 
     state.defenseMissiles = state.defenseMissiles.filter((missile) => {
       if (advanceMissile(missile, delta)) {
-        triggerExplosion(missile.tx, missile.ty, 52);
+        triggerExplosion(missile.tx, missile.ty, 64);
         return false;
       }
       return true;
@@ -110,7 +130,7 @@ if (canvas) {
     state.enemyMissiles = state.enemyMissiles.filter((missile) => {
       if (advanceMissile(missile, delta)) {
         destroyCityAt(missile.tx);
-        triggerExplosion(missile.tx, missile.ty, 40);
+        triggerExplosion(missile.tx, missile.ty, 42);
         return false;
       }
       return true;
@@ -140,6 +160,30 @@ if (canvas) {
       waveElement.textContent = String(state.wave);
       startWave();
     }
+  }
+
+  function drawCrosshair() {
+    ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(state.crosshair.x - 12, state.crosshair.y);
+    ctx.lineTo(state.crosshair.x + 12, state.crosshair.y);
+    ctx.moveTo(state.crosshair.x, state.crosshair.y - 12);
+    ctx.lineTo(state.crosshair.x, state.crosshair.y + 12);
+    ctx.stroke();
+  }
+
+  function drawInstructions() {
+    if (state.introTimer <= 0) return;
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fillRect(118, 34, 404, 72);
+    ctx.strokeStyle = 'rgba(113,227,255,0.4)';
+    ctx.strokeRect(118, 34, 404, 72);
+    ctx.fillStyle = '#f7f5ff';
+    ctx.font = "16px 'Courier New'";
+    ctx.textAlign = 'center';
+    ctx.fillText('Tippe oder klicke in den Himmel.', canvas.width / 2, 62);
+    ctx.fillText('Deine Rakete fliegt dorthin und die Explosion fängt Feindraketen ab.', canvas.width / 2, 86);
   }
 
   function draw() {
@@ -198,6 +242,9 @@ if (canvas) {
       ctx.fill();
     });
 
+    drawCrosshair();
+    drawInstructions();
+
     if (state.paused || state.gameOver) {
       ctx.fillStyle = 'rgba(0,0,0,0.5)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -217,6 +264,12 @@ if (canvas) {
     draw();
     requestAnimationFrame(frame);
   }
+
+  canvas.addEventListener('pointermove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    state.crosshair.x = (event.clientX - rect.left) * (canvas.width / rect.width);
+    state.crosshair.y = (event.clientY - rect.top) * (canvas.height / rect.height);
+  });
 
   canvas.addEventListener('pointerdown', (event) => {
     const rect = canvas.getBoundingClientRect();
