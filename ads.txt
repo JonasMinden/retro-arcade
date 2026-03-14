@@ -1,4 +1,1 @@
-﻿# Replace this placeholder with your real AdSense entry after approval.
-# Official format example:
-# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
-# Keep this file at /ads.txt after deployment.
+﻿google.com, pub-2209130474600172, DIRECT, f08c47fec0942fa0
