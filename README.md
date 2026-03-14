@@ -1,4 +1,4 @@
-# Retro Arcade
+﻿# Retro Arcade
 
 Kleine statische Browser-Spieleseite mit einer Startseite, einer Spielesammlung und dem ersten integrierten Game: Classic Snake.
 
@@ -14,8 +14,10 @@ Kleine statische Browser-Spieleseite mit einer Startseite, einer Spielesammlung 
 - `games/snake/index.html` ist die Spieleseite fuer Snake.
 - `styles.css` enthaelt das gemeinsame Styling fuer Portal und Spieleseiten.
 - `src/snake-game.js` enthaelt die deterministische Spiellogik und den DOM-Controller.
+- `src/ads.js` bereitet Werbeslots vor und aktiviert echte Anzeigen erst nach bewusster Freigabe.
+- `src/site-config.js` ist die zentrale Schaltstelle fuer Publisher-ID und Ad-Slot-IDs.
 - `src/snake-game.test.js` prueft die Kernregeln ohne Test-Framework.
-- `privacy.html` ist eine einfache Datenschutz-Vorlage fuer spaetere Erweiterungen.
+- `privacy.html` und `impressum.html` enthalten die Rechtsseiten.
 
 ## Tests
 
@@ -26,9 +28,16 @@ Kleine statische Browser-Spieleseite mit einer Startseite, einer Spielesammlung 
 Fuer dieses Projekt brauchst du keinen Build-Schritt:
 
 - Build command: leer lassen
-- Build output directory: `/`
+- Build output directory: `.`
 
-Du kannst entweder Git-Integration oder Direct Upload nutzen. Fuer spaetere automatische Deployments ist Git-Integration die bessere Wahl.
+## Werbung spaeter aktivieren
+
+1. AdSense-Konto freischalten lassen.
+2. In `src/site-config.js` `adsenseClient` eintragen.
+3. `enableAds` auf `true` setzen.
+4. Pro Slot eine echte AdSense Slot-ID in `adSlots` eintragen.
+5. `ads.txt` mit der echten Google-Zeile ersetzen.
+6. Vor Aktivierung fuer EEA/UK/Schweiz ein passendes Consent-Setup einbauen.
 
 ## Manuell pruefen
 
@@ -38,4 +47,4 @@ Du kannst entweder Git-Integration oder Direct Upload nutzen. Fuer spaetere auto
 - Restart setzt Score, Snake und Food sauber zurueck.
 - Kollision mit Wand oder eigenem Koerper fuehrt zu Game Over.
 - Werbe-Platzhalter sind auf Startseite und Spieleseite sichtbar.
-- Datenschutz-Seite ist erreichbar.
+- Datenschutz-Seite und Impressum sind erreichbar.
