@@ -35,14 +35,26 @@ export async function onRequestPost(context) {
     "INSERT INTO users (username, password_hash, password_salt, created_at) VALUES (?1, ?2, ?3, ?4)"
   ).bind(username, passwordHash, salt, createdAt).run();
 
+  if (!result.success) {
+    return json({ error: "Could not create account." }, 500);
+  }
+
+  const insertedUser = await context.env.DB.prepare(
+    "SELECT id, username FROM users WHERE username = ?1 LIMIT 1"
+  ).bind(username).first();
+
+  if (!insertedUser?.id) {
+    return json({ error: "Could not load newly created account." }, 500);
+  }
+
   const token = randomHex(24);
   const tokenHash = await sha256(token);
   await context.env.DB.prepare(
     "INSERT INTO sessions (user_id, session_hash, expires_at, created_at) VALUES (?1, ?2, ?3, ?4)"
-  ).bind(result.meta.last_row_id, tokenHash, futureIso(), createdAt).run();
+  ).bind(insertedUser.id, tokenHash, futureIso(), createdAt).run();
 
   return json(
-    { ok: true, user: { id: result.meta.last_row_id, username } },
+    { ok: true, user: { id: insertedUser.id, username: insertedUser.username } },
     201,
     { "set-cookie": sessionCookie(token, context.request.url) },
   );
