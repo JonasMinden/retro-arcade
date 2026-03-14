@@ -1,0 +1,81 @@
+﻿<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kontakt | Retro Arcade</title>
+    <meta name="description" content="Kontaktseite für Retro Arcade mit Vorschlägen, Feedback und sonstigen Anfragen.">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell site-header__inner">
+        <a class="brand" href="./index.html">Retro Arcade</a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <a href="./index.html">Start</a>
+          <a href="./account.html">Account</a>
+          <a href="./contact.html" aria-current="page">Kontakt</a>
+          <a href="./impressum.html">Impressum</a>
+          <a href="./privacy.html">Datenschutz</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell page arcade-page">
+      <section class="marquee">
+        <div class="marquee__lights" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <p class="kicker">Kontakt</p>
+        <h1>Schreib uns direkt aus der Spielhalle.</h1>
+        <p>Für Vorschläge, Fehlerberichte, geschäftliche Anfragen oder allgemeines Feedback kannst du hier direkt eine Nachricht senden.</p>
+      </section>
+
+      <section class="arcade-layout">
+        <article class="arcade-frame">
+          <div class="arcade-frame__screen">
+            <div class="arcade-header">
+              <div>
+                <p class="eyebrow">Kontaktformular</p>
+                <h2 class="arcade-panel-title">Nachricht senden</h2>
+              </div>
+            </div>
+            <form id="contact-form" class="auth-form">
+              <label>Name<input id="contact-name" name="name" maxlength="80" required></label>
+              <label>Anliegen
+                <select id="contact-topic" name="topic">
+                  <option value="suggestion">Vorschlag</option>
+                  <option value="bug">Fehler melden</option>
+                  <option value="business">Geschäftliche Anfrage</option>
+                  <option value="feedback">Feedback</option>
+                  <option value="other">Sonstiges</option>
+                </select>
+              </label>
+              <label>Reply-To E-Mail<input id="contact-reply-to" name="replyTo" type="email" autocomplete="email" required></label>
+              <label>Nachricht<textarea id="contact-message" name="message" rows="8" maxlength="4000" required></textarea></label>
+              <button class="pixel-button" type="submit">Nachricht senden</button>
+              <p id="contact-message-status" class="form-message"></p>
+            </form>
+          </div>
+        </article>
+
+        <aside class="arcade-sidebar">
+          <section>
+            <p class="eyebrow">Hinweise</p>
+            <ul class="game-rules">
+              <li>Bitte hinterlege eine gültige Reply-To-Adresse.</li>
+              <li>Deine Nachricht wird serverseitig gespeichert.</li>
+              <li>Wenn der Mail-Versand aktiv ist, geht sie zusätzlich direkt per E-Mail an den Betreiber.</li>
+            </ul>
+          </section>
+          <section class="ad-slot" data-ad-slot-key="homeSidebar" aria-label="Werbefläche Platzhalter">
+            <p class="ad-slot__label">Ad Slot</p>
+            <p>Für spätere Werbeeinbindung vorbereitet, ohne bereits Anzeigen zu laden.</p>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div class="shell site-footer__inner"><p>Retro Arcade</p><nav class="site-nav" aria-label="Footer Navigation"><a href="./index.html">Start</a><a href="./account.html">Account</a><a href="./privacy.html">Datenschutz</a></nav></div></footer>
+
+    <script type="module" src="./src/ads.js"></script>
+  </body>
+</html>

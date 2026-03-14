@@ -710,3 +710,34 @@ button,
   gap: 12px;
   flex-wrap: wrap;
 }
+
+.auth-form select,
+.auth-form textarea {
+  border: 1px solid rgba(111, 247, 221, 0.22);
+  background: #0c1020;
+  color: var(--text);
+  padding: 10px 12px;
+  font: inherit;
+}
+
+.auth-form textarea {
+  resize: vertical;
+}
+
+.language-switch {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.language-switch__button {
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 209, 102, 0.24);
+  background: rgba(255, 209, 102, 0.08);
+}
+
+.language-switch__button[aria-pressed="true"] {
+  box-shadow: 0 0 12px rgba(255, 209, 102, 0.28);
+  background: rgba(255, 209, 102, 0.18);
+}

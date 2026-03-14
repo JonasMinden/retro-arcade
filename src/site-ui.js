@@ -16,6 +16,38 @@
 const COOKIE_CONSENT_KEY = "retro_arcade_cookie_consent_v1";
 let currentUser = null;
 
+function translate(key, vars = {}) {
+  if (window.retroArcadeI18n?.t) {
+    return window.retroArcadeI18n.t(key, vars);
+  }
+  const fallback = {
+    accountLink: "Account",
+    cookieTitle: "Deine Auswahl für Cookies und ähnliche Speicherungen",
+    cookieBody: "Notwendige Cookies sind für Login und sichere Sessions aktiv. Analyse und Marketing bleiben aus, bis du sie erlaubst.",
+    cookieNecessary: "Notwendig",
+    cookieNecessaryBody: "Erforderlich für Sessions, Login und grundlegende Funktionen.",
+    cookieAnalytics: "Analyse",
+    cookieAnalyticsBody: "Für spätere Reichweitenmessung und Nutzungsstatistiken.",
+    cookieMarketing: "Marketing",
+    cookieMarketingBody: "Für spätere Werbeeinbindung und personalisierte Ad-Auslieferung.",
+    cookieOnlyNecessary: "Nur notwendige",
+    cookieSave: "Auswahl speichern",
+    cookieAll: "Alle akzeptieren",
+    loginRequired: "Bitte erst optional einloggen, um Scores zu speichern.",
+    playRound: "Spiele erst eine Runde mit gültigem Score.",
+    scoreSaved: "Score gespeichert.",
+    registerOk: "Registriert als {username}.",
+    loginOk: "Eingeloggt als {username}.",
+    contactSent: "Nachricht erfolgreich versendet.",
+    contactStored: "Anfrage gespeichert. E-Mail-Versand ist noch nicht vollständig konfiguriert.",
+  };
+  let text = fallback[key] || key;
+  Object.entries(vars).forEach(([name, value]) => {
+    text = text.replace("{" + name + "}", value);
+  });
+  return text;
+}
+
 function rootAsset(path) {
   return new URL(path, window.location.origin).toString();
 }
@@ -78,28 +110,28 @@ function createCookieBanner() {
   banner.dataset.cookieBanner = "true";
   banner.innerHTML = `
     <div class="cookie-banner__header">
-      <p class="eyebrow">Cookie-Einstellungen</p>
-      <h2>Deine Auswahl für Cookies und ähnliche Speicherungen</h2>
-      <p>Notwendige Cookies sind für Login und sichere Sessions aktiv. Analyse und Marketing bleiben aus, bis du sie erlaubst.</p>
+      <p class="eyebrow">Cookie</p>
+      <h2>${translate("cookieTitle")}</h2>
+      <p>${translate("cookieBody")}</p>
     </div>
     <div class="cookie-banner__grid">
       <label class="cookie-banner__option">
-        <strong><input type="checkbox" checked disabled>Notwendig</strong>
-        <span>Erforderlich für Sessions, Login und grundlegende Funktionen.</span>
+        <strong><input type="checkbox" checked disabled>${translate("cookieNecessary")}</strong>
+        <span>${translate("cookieNecessaryBody")}</span>
       </label>
       <label class="cookie-banner__option">
-        <strong><input type="checkbox" data-consent-analytics>Analyse</strong>
-        <span>Für spätere Reichweitenmessung und Nutzungsstatistiken.</span>
+        <strong><input type="checkbox" data-consent-analytics>${translate("cookieAnalytics")}</strong>
+        <span>${translate("cookieAnalyticsBody")}</span>
       </label>
       <label class="cookie-banner__option">
-        <strong><input type="checkbox" data-consent-marketing>Marketing</strong>
-        <span>Für spätere Werbeeinbindung und personalisierte Ad-Auslieferung.</span>
+        <strong><input type="checkbox" data-consent-marketing>${translate("cookieMarketing")}</strong>
+        <span>${translate("cookieMarketingBody")}</span>
       </label>
     </div>
     <div class="cookie-banner__actions">
-      <button class="pixel-button pixel-button--secondary" type="button" data-consent-necessary>Nur notwendige</button>
-      <button class="pixel-button" type="button" data-consent-save>Auswahl speichern</button>
-      <button class="pixel-button" type="button" data-consent-all>Alle akzeptieren</button>
+      <button class="pixel-button pixel-button--secondary" type="button" data-consent-necessary>${translate("cookieOnlyNecessary")}</button>
+      <button class="pixel-button" type="button" data-consent-save>${translate("cookieSave")}</button>
+      <button class="pixel-button" type="button" data-consent-all>${translate("cookieAll")}</button>
     </div>
   `;
   document.body.appendChild(banner);
@@ -154,7 +186,7 @@ function updateHeaderAuth() {
         refreshScoreboard();
       });
     } else {
-      wrapper.innerHTML = `<a href="/account.html">Account</a>`;
+      wrapper.innerHTML = `<a href="/account.html">${translate("accountLink")}</a>`;
     }
     nav.appendChild(wrapper);
   });
@@ -231,16 +263,16 @@ async function refreshScoreboard() {
       const score = Number(document.querySelector(GAME_CONFIG[gameKey].selector)?.textContent || "0");
       const message = panel.querySelector("[data-submit-message]");
       if (!currentUser) {
-        message.textContent = "Bitte erst optional einloggen, um Scores zu speichern.";
+        message.textContent = translate("loginRequired");
         return;
       }
       if (!Number.isFinite(score) || score <= 0) {
-        message.textContent = "Spiele erst eine Runde mit gültigem Score.";
+        message.textContent = translate("playRound");
         return;
       }
       try {
         await api("/api/submit-score", { method: "POST", body: JSON.stringify({ game: gameKey, score }) });
-        message.textContent = "Score gespeichert.";
+        message.textContent = translate("scoreSaved");
         loadScoreboard(gameKey, panel);
         loadRecentScores();
       } catch (error) {
@@ -267,7 +299,7 @@ function bindAccountForms() {
       try {
         const data = await api("/api/register", { method: "POST", body: JSON.stringify(payload) });
         currentUser = data.user;
-        message.textContent = `Registriert als ${data.user.username}.`;
+        message.textContent = translate("registerOk", { username: data.user.username });
         updateHeaderAuth();
       } catch (error) {
         message.textContent = error.message;
@@ -285,13 +317,36 @@ function bindAccountForms() {
       try {
         const data = await api("/api/login", { method: "POST", body: JSON.stringify(payload) });
         currentUser = data.user;
-        message.textContent = `Eingeloggt als ${data.user.username}.`;
+        message.textContent = translate("loginOk", { username: data.user.username });
         updateHeaderAuth();
       } catch (error) {
         message.textContent = error.message;
       }
     });
   }
+}
+
+function bindContactForm() {
+  const form = document.querySelector("#contact-form");
+  if (!form) return;
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const status = document.querySelector("#contact-message-status");
+    const payload = {
+      name: document.querySelector("#contact-name").value,
+      topic: document.querySelector("#contact-topic").value,
+      replyTo: document.querySelector("#contact-reply-to").value,
+      message: document.querySelector("#contact-message").value,
+      locale: window.retroArcadeI18n?.getLanguage?.() || "de",
+    };
+    try {
+      const data = await api("/api/contact", { method: "POST", body: JSON.stringify(payload) });
+      status.textContent = data.delivered ? translate("contactSent") : translate("contactStored");
+      if (data.ok) form.reset();
+    } catch (error) {
+      status.textContent = error.message;
+    }
+  });
 }
 
 async function initUser() {
@@ -308,8 +363,10 @@ export async function initSiteUi() {
   if (typeof document === "undefined" || typeof window === "undefined") return;
   ensureFavicon();
   createCookieBanner();
+  ensureContactLinks();
   await initUser();
   bindAccountForms();
+  bindContactForm();
   await Promise.all([refreshScoreboard(), loadRecentScores()]);
   const gameKey = detectGameKey();
   if (gameKey && GAME_CONFIG[gameKey]) {
@@ -321,3 +378,4 @@ export async function initSiteUi() {
     }, 500);
   }
 }
+

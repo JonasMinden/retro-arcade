@@ -63,6 +63,10 @@ export function validPassword(password) {
   return typeof password === "string" && password.length >= 8 && password.length <= 128;
 }
 
+export function validEmail(email) {
+  return typeof email === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 export function randomHex(length = 32) {
   const bytes = new Uint8Array(length);
   crypto.getRandomValues(bytes);
@@ -132,5 +136,3 @@ export function normalizeGameKey(game) {
   const allowed = ["snake", "pong", "breakout", "tetris", "space-invaders", "asteroids", "pac-man", "pinball", "doodle-jump", "helicopter", "crossy-road", "runner"];
   return allowed.includes(game) ? game : null;
 }
-
-
