@@ -20,30 +20,36 @@ if (canvas) {
     ball: null,
     lastTime: 0,
     bumpers: [
-      { x: 112, y: 156, radius: 24, color: "#ff5fb2", score: 40 },
-      { x: 208, y: 118, radius: 22, color: "#ffd166", score: 55 },
-      { x: 304, y: 164, radius: 24, color: "#71e3ff", score: 40 },
-      { x: 152, y: 258, radius: 16, color: "#87ff65", score: 80 },
-      { x: 260, y: 258, radius: 16, color: "#ff9b54", score: 80 },
+      { x: 110, y: 150, radius: 22, color: "#ff5fb2", score: 35 },
+      { x: 206, y: 114, radius: 20, color: "#ffd166", score: 50 },
+      { x: 302, y: 150, radius: 22, color: "#71e3ff", score: 35 },
+      { x: 150, y: 250, radius: 16, color: "#87ff65", score: 65 },
+      { x: 262, y: 250, radius: 16, color: "#ff9b54", score: 65 },
+      { x: 206, y: 324, radius: 14, color: "#f7f5ff", score: 90 },
     ],
     posts: [
       { x: 82, y: 326, radius: 9 },
       { x: 330, y: 326, radius: 9 },
-      { x: 208, y: 338, radius: 11 },
+      { x: 126, y: 392, radius: 8 },
+      { x: 290, y: 392, radius: 8 },
+      { x: 206, y: 372, radius: 10 },
+      { x: 206, y: 450, radius: 7 },
     ],
     targets: [
-      { x: 72, y: 236, width: 16, height: 58, color: "#ff9b54", score: 90, active: true },
-      { x: 332, y: 236, width: 16, height: 58, color: "#ff9b54", score: 90, active: true },
-      { x: 202, y: 210, width: 16, height: 52, color: "#87ff65", score: 120, active: true },
-      { x: 128, y: 86, width: 14, height: 46, color: "#ffd166", score: 110, active: true },
-      { x: 276, y: 86, width: 14, height: 46, color: "#ffd166", score: 110, active: true },
+      { x: 68, y: 224, width: 16, height: 54, color: "#ff9b54", score: 90, active: true },
+      { x: 332, y: 224, width: 16, height: 54, color: "#ff9b54", score: 90, active: true },
+      { x: 200, y: 204, width: 16, height: 46, color: "#87ff65", score: 110, active: true },
+      { x: 126, y: 84, width: 14, height: 44, color: "#ffd166", score: 110, active: true },
+      { x: 274, y: 84, width: 14, height: 44, color: "#ffd166", score: 110, active: true },
+      { x: 88, y: 146, width: 12, height: 40, color: "#71e3ff", score: 75, active: true },
+      { x: 312, y: 146, width: 12, height: 40, color: "#71e3ff", score: 75, active: true },
     ],
   };
 
   function createBall() {
     return {
       x: 377,
-      y: 520,
+      y: 518,
       vx: 0,
       vy: 0,
       radius: 8,
@@ -51,10 +57,14 @@ if (canvas) {
     };
   }
 
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
   function flippers() {
     return [
-      { pivotX: 146, pivotY: 546, length: 58, angle: state.leftActive ? -0.55 : 0.52, color: "#ff9b54" },
-      { pivotX: 270, pivotY: 546, length: 58, angle: state.rightActive ? Math.PI + 0.55 : Math.PI - 0.52, color: "#ffd166" },
+      { pivotX: 150, pivotY: 548, length: 64, angle: state.leftActive ? -0.72 : 0.4, color: "#ff9b54" },
+      { pivotX: 266, pivotY: 548, length: 64, angle: state.rightActive ? Math.PI + 0.72 : Math.PI - 0.4, color: "#ffd166" },
     ];
   }
 
@@ -77,7 +87,47 @@ if (canvas) {
     state.ball.vy *= boost;
   }
 
-  function circleCollision(circle, boost = 1.04, score = 0) {
+  function addScore(value) {
+    state.score += value;
+    scoreElement.textContent = String(state.score);
+  }
+
+  function resetBall() {
+    state.ball = createBall();
+    statusElement.textContent = "Ready";
+  }
+
+  function restartGame() {
+    state.score = 0;
+    state.lives = 3;
+    state.paused = false;
+    state.leftActive = false;
+    state.rightActive = false;
+    state.targets.forEach((target) => {
+      target.active = true;
+    });
+    scoreElement.textContent = "0";
+    livesElement.textContent = "3";
+    pauseButton.textContent = "Pause";
+    resetBall();
+  }
+
+  function launchBall() {
+    if (!state.ball.launched) {
+      state.ball.launched = true;
+      state.ball.vx = -24;
+      state.ball.vy = -900;
+      statusElement.textContent = "Live";
+    }
+  }
+
+  function togglePause() {
+    if (statusElement.textContent === "Game Over") return;
+    state.paused = !state.paused;
+    pauseButton.textContent = state.paused ? "Resume" : "Pause";
+  }
+
+  function circleCollision(circle, boost = 1.02, score = 0) {
     const dx = state.ball.x - circle.x;
     const dy = state.ball.y - circle.y;
     const distance = Math.hypot(dx, dy);
@@ -92,78 +142,44 @@ if (canvas) {
     }
   }
 
-  function resetBall() {
-    state.ball = createBall();
-    statusElement.textContent = "Ready";
-  }
-
-  function restartGame() {
-    state.score = 0;
-    state.lives = 3;
-    state.paused = false;
-    state.leftActive = false;
-    state.rightActive = false;
-    state.targets.forEach((target) => { target.active = true; });
-    scoreElement.textContent = "0";
-    livesElement.textContent = "3";
-    pauseButton.textContent = "Pause";
-    resetBall();
-  }
-
-  function launchBall() {
-    if (!state.ball.launched) {
-      state.ball.launched = true;
-      state.ball.vx = -48;
-      state.ball.vy = -760;
-      statusElement.textContent = "Live";
-    }
-  }
-
-  function togglePause() {
-    if (statusElement.textContent === "Game Over") return;
-    state.paused = !state.paused;
-    pauseButton.textContent = state.paused ? "Resume" : "Pause";
-  }
-
-  function addScore(value) {
-    state.score += value;
-    scoreElement.textContent = String(state.score);
-  }
-
   function handleWalls() {
     const ball = state.ball;
     if (ball.x - ball.radius < 24) {
       ball.x = 24 + ball.radius;
-      ball.vx = Math.abs(ball.vx) * 0.94;
+      ball.vx = Math.abs(ball.vx) * 0.9;
     }
     if (ball.y - ball.radius < 22) {
       ball.y = 22 + ball.radius;
-      ball.vy = Math.abs(ball.vy) * 0.96;
+      ball.vy = Math.abs(ball.vy) * 0.92;
     }
 
-    if (ball.x + ball.radius > 350 && ball.y < 560) {
+    if (ball.x + ball.radius > 350 && ball.y < 562) {
       ball.x = 350 - ball.radius;
-      ball.vx = -Math.abs(ball.vx) * 0.94;
+      ball.vx = -Math.abs(ball.vx) * 0.9;
     }
 
     const slopes = [
       [24, 94, 94, 28],
       [350, 94, 280, 28],
-      [54, 438, 118, 596],
-      [320, 438, 258, 596],
-      [96, 432, 160, 482],
-      [278, 432, 222, 482],
+      [58, 436, 122, 596],
+      [316, 436, 252, 596],
+      [94, 430, 166, 484],
+      [322, 430, 250, 484],
+      [82, 204, 124, 152],
+      [330, 204, 288, 152],
+      [122, 336, 168, 292],
+      [290, 336, 244, 292],
     ];
 
     slopes.forEach(([ax, ay, bx, by]) => {
       const collision = lineDistance(ball.x, ball.y, ax, ay, bx, by);
       const distance = Math.hypot(collision.dx, collision.dy);
-      if (distance < ball.radius + 3) {
+      if (distance < ball.radius + 4) {
         const nx = collision.dx / (distance || 1);
         const ny = collision.dy / (distance || 1);
-        ball.x = collision.x + nx * (ball.radius + 3);
-        ball.y = collision.y + ny * (ball.radius + 3);
-        reflect(nx, ny, 1.01);
+        ball.x = collision.x + nx * (ball.radius + 4);
+        ball.y = collision.y + ny * (ball.radius + 4);
+        reflect(nx, ny, 1);
       }
     });
   }
@@ -176,11 +192,13 @@ if (canvas) {
         state.ball.x - state.ball.radius < target.x + target.width &&
         state.ball.y + state.ball.radius > target.y &&
         state.ball.y - state.ball.radius < target.y + target.height;
-      if (hit) {
-        target.active = false;
-        state.ball.vx *= -1;
-        addScore(target.score);
-      }
+      if (!hit) return;
+
+      target.active = false;
+      const fromLeft = state.ball.x < target.x + target.width / 2;
+      state.ball.vx = fromLeft ? -Math.abs(state.ball.vx || 160) : Math.abs(state.ball.vx || 160);
+      state.ball.vy *= 0.92;
+      addScore(target.score);
     });
   }
 
@@ -190,62 +208,78 @@ if (canvas) {
       const tipY = flipper.pivotY + Math.sin(flipper.angle) * flipper.length;
       const collision = lineDistance(state.ball.x, state.ball.y, flipper.pivotX, flipper.pivotY, tipX, tipY);
       const distance = Math.hypot(collision.dx, collision.dy);
-      if (distance < state.ball.radius + 7 && state.ball.vy > -120) {
+      const active = index === 0 ? state.leftActive : state.rightActive;
+      if (distance < state.ball.radius + 8 && state.ball.y < flipper.pivotY + 10) {
         const nx = collision.dx / (distance || 1);
         const ny = collision.dy / (distance || 1);
-        state.ball.x = collision.x + nx * (state.ball.radius + 7);
-        state.ball.y = collision.y + ny * (state.ball.radius + 7);
-        state.ball.vy = -Math.max(360, Math.abs(state.ball.vy) + (index === 0 ? 280 : 280));
-        state.ball.vx += index === 0 ? -150 : 150;
-        addScore(12);
+        state.ball.x = collision.x + nx * (state.ball.radius + 8);
+        state.ball.y = collision.y + ny * (state.ball.radius + 8);
+        const sideKick = active ? 185 : 70;
+        state.ball.vy = -Math.max(active ? 560 : 360, Math.abs(state.ball.vy) * 0.7 + (active ? 140 : 80));
+        state.ball.vx = clamp(state.ball.vx + (index === 0 ? -sideKick : sideKick), -360, 360);
+        addScore(active ? 18 : 8);
       }
     });
+  }
+
+  function handleDrain() {
+    const drainLeft = 190;
+    const drainRight = 226;
+    if (state.ball.y > 556 && state.ball.x > drainLeft && state.ball.x < drainRight) {
+      state.lives -= 1;
+      livesElement.textContent = String(state.lives);
+      if (state.lives <= 0) {
+        statusElement.textContent = "Game Over";
+        state.paused = true;
+      } else {
+        resetBall();
+      }
+      return true;
+    }
+
+    if (state.ball.y > state.height + 24) {
+      state.lives -= 1;
+      livesElement.textContent = String(state.lives);
+      if (state.lives <= 0) {
+        statusElement.textContent = "Game Over";
+        state.paused = true;
+      } else {
+        resetBall();
+      }
+      return true;
+    }
+    return false;
+  }
+
+  function stabilizeBall() {
+    state.ball.vx *= 0.997;
+    state.ball.vy *= 0.999;
+    const speed = Math.hypot(state.ball.vx, state.ball.vy);
+    if (speed > 760) {
+      const scale = 760 / speed;
+      state.ball.vx *= scale;
+      state.ball.vy *= scale;
+    }
+    if (speed < 190 && state.ball.launched) {
+      state.ball.vy -= 18;
+    }
   }
 
   function updateBall(delta) {
     if (!state.ball.launched || state.paused) return;
 
-    state.ball.vy += 700 * delta;
+    state.ball.vy += 610 * delta;
     state.ball.x += state.ball.vx * delta;
     state.ball.y += state.ball.vy * delta;
 
     handleWalls();
-    state.bumpers.forEach((bumper) => circleCollision(bumper, 1.08, bumper.score));
-    state.posts.forEach((post) => circleCollision(post, 1.03, 15));
+    state.bumpers.forEach((bumper, index) => circleCollision(bumper, index < 3 ? 1.025 : 1.015, bumper.score));
+    state.posts.forEach((post) => circleCollision(post, 1, 12));
     handleTargets();
     handleFlippers();
+    stabilizeBall();
 
-    const drainLeft = 182;
-    const drainRight = 234;
-    if (state.ball.y > 554 && state.ball.x > drainLeft && state.ball.x < drainRight) {
-      state.lives -= 1;
-      livesElement.textContent = String(state.lives);
-      if (state.lives <= 0) {
-        statusElement.textContent = "Game Over";
-        state.paused = true;
-      } else {
-        resetBall();
-      }
-      return;
-    }
-
-    if (state.ball.y > state.height + 20) {
-      state.lives -= 1;
-      livesElement.textContent = String(state.lives);
-      if (state.lives <= 0) {
-        statusElement.textContent = "Game Over";
-        state.paused = true;
-      } else {
-        resetBall();
-      }
-      return;
-    }
-
-    const speed = Math.hypot(state.ball.vx, state.ball.vy);
-    if (speed > 820) {
-      state.ball.vx *= 0.985;
-      state.ball.vy *= 0.985;
-    }
+    if (handleDrain()) return;
   }
 
   function drawTable() {
@@ -273,7 +307,9 @@ if (canvas) {
     ctx.strokeRect(360, 48, 34, 512);
 
     ctx.fillStyle = "rgba(255,255,255,0.06)";
-    ctx.fillRect(72, 54, 210, 86);
+    ctx.fillRect(70, 52, 214, 90);
+    ctx.fillRect(88, 178, 238, 26);
+    ctx.fillRect(116, 286, 180, 18);
 
     state.bumpers.forEach((bumper) => {
       ctx.fillStyle = bumper.color;
@@ -298,22 +334,31 @@ if (canvas) {
     });
 
     ctx.strokeStyle = "rgba(255,255,255,0.16)";
+    ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.moveTo(54, 438);
-    ctx.lineTo(118, 596);
-    ctx.moveTo(320, 438);
-    ctx.lineTo(258, 596);
-    ctx.moveTo(96, 432);
-    ctx.lineTo(160, 482);
-    ctx.moveTo(278, 432);
-    ctx.lineTo(222, 482);
+    ctx.moveTo(58, 436);
+    ctx.lineTo(122, 596);
+    ctx.moveTo(316, 436);
+    ctx.lineTo(252, 596);
+    ctx.moveTo(94, 430);
+    ctx.lineTo(166, 484);
+    ctx.moveTo(322, 430);
+    ctx.lineTo(250, 484);
+    ctx.moveTo(82, 204);
+    ctx.lineTo(124, 152);
+    ctx.moveTo(330, 204);
+    ctx.lineTo(288, 152);
+    ctx.moveTo(122, 336);
+    ctx.lineTo(168, 292);
+    ctx.moveTo(290, 336);
+    ctx.lineTo(244, 292);
     ctx.stroke();
 
     flippers().forEach((flipper) => {
       const tipX = flipper.pivotX + Math.cos(flipper.angle) * flipper.length;
       const tipY = flipper.pivotY + Math.sin(flipper.angle) * flipper.length;
       ctx.strokeStyle = flipper.color;
-      ctx.lineWidth = 14;
+      ctx.lineWidth = 15;
       ctx.lineCap = "round";
       ctx.beginPath();
       ctx.moveTo(flipper.pivotX, flipper.pivotY);

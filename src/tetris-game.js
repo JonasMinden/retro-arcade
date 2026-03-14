@@ -77,20 +77,28 @@ if (canvas) {
   }
 
   function mergePiece() {
+    const placedCells = [];
     state.piece.matrix.forEach((row, y) => {
       row.forEach((value, x) => {
         if (value && state.piece.y + y >= 0) {
-          state.board[state.piece.y + y][state.piece.x + x] = state.piece.type;
+          const boardY = state.piece.y + y;
+          const boardX = state.piece.x + x;
+          state.board[boardY][boardX] = state.piece.type;
+          placedCells.push([boardX, boardY]);
         }
       });
     });
+    return placedCells;
   }
 
   function collapseBoard() {
-    for (let y = rows - 1; y >= 0; y -= 1) {
-      if (state.board[y].every((cell) => cell === null)) {
-        state.board.splice(y, 1);
-        state.board.unshift(Array(cols).fill(null));
+    for (let x = 0; x < cols; x += 1) {
+      const column = [];
+      for (let y = rows - 1; y >= 0; y -= 1) {
+        if (state.board[y][x]) column.push(state.board[y][x]);
+      }
+      for (let y = rows - 1; y >= 0; y -= 1) {
+        state.board[y][x] = column[rows - 1 - y] || null;
       }
     }
   }
@@ -112,37 +120,55 @@ if (canvas) {
     return cleared;
   }
 
-  function clearColorClusters() {
-    const visited = Array.from({ length: rows }, () => Array(cols).fill(false));
-    const groups = [];
-
-    for (let y = 0; y < rows; y += 1) {
-      for (let x = 0; x < cols; x += 1) {
-        const color = state.board[y][x];
-        if (!color || visited[y][x]) continue;
-        const stack = [[x, y]];
-        const group = [];
-        visited[y][x] = true;
-        while (stack.length) {
-          const [cx, cy] = stack.pop();
-          group.push([cx, cy]);
-          [
-            [1, 0],
-            [-1, 0],
-            [0, 1],
-            [0, -1],
-          ].forEach(([dx, dy]) => {
-            const nx = cx + dx;
-            const ny = cy + dy;
-            if (nx < 0 || nx >= cols || ny < 0 || ny >= rows) return;
-            if (visited[ny][nx] || state.board[ny][nx] !== color) return;
-            visited[ny][nx] = true;
-            stack.push([nx, ny]);
-          });
-        }
-        if (group.length >= 4) groups.push(group);
+  function clearColorClusters(placedCells) {
+    const queued = [];
+    const queuedKeys = new Set();
+    placedCells.forEach(([x, y]) => {
+      if (x < 0 || x >= cols || y < 0 || y >= rows) return;
+      if (!state.board[y][x]) return;
+      const key = `${x},${y}`;
+      if (!queuedKeys.has(key)) {
+        queued.push([x, y]);
+        queuedKeys.add(key);
       }
-    }
+    });
+
+    if (!queued.length) return 0;
+
+    const visited = new Set();
+    const groups = [];
+    queued.forEach(([seedX, seedY]) => {
+      const originType = state.board[seedY][seedX];
+      if (!originType) return;
+      const seedKey = `${seedX},${seedY}`;
+      if (visited.has(seedKey)) return;
+
+      const stack = [[seedX, seedY]];
+      const group = [];
+      visited.add(seedKey);
+
+      while (stack.length) {
+        const [cx, cy] = stack.pop();
+        group.push([cx, cy]);
+        [
+          [1, 0],
+          [-1, 0],
+          [0, 1],
+          [0, -1],
+        ].forEach(([dx, dy]) => {
+          const nx = cx + dx;
+          const ny = cy + dy;
+          if (nx < 0 || nx >= cols || ny < 0 || ny >= rows) return;
+          if (state.board[ny][nx] !== originType) return;
+          const key = `${nx},${ny}`;
+          if (visited.has(key)) return;
+          visited.add(key);
+          stack.push([nx, ny]);
+        });
+      }
+
+      if (group.length >= 6) groups.push(group);
+    });
 
     if (!groups.length) return 0;
 
@@ -156,19 +182,8 @@ if (canvas) {
       });
     });
 
-    for (let x = 0; x < cols; x += 1) {
-      const column = [];
-      for (let y = rows - 1; y >= 0; y -= 1) {
-        if (state.board[y][x]) column.push(state.board[y][x]);
-      }
-      for (let y = rows - 1; y >= 0; y -= 1) {
-        state.board[y][x] = column[rows - 1 - y] || null;
-      }
-    }
-
     collapseBoard();
-    state.score += clearedBlocks * 35 * state.level;
-    state.lines += Math.floor(clearedBlocks / cols);
+    state.score += clearedBlocks * 18 * state.level;
     return clearedBlocks;
   }
 
@@ -229,9 +244,9 @@ if (canvas) {
   }
 
   function lockPiece() {
-    mergePiece();
+    const placedCells = mergePiece();
+    clearColorClusters(placedCells);
     clearLines();
-    clearColorClusters();
     syncHud();
     spawnPiece();
   }

@@ -1022,3 +1022,26 @@ button,
     font-size: 0.92rem;
   }
 }
+
+@media (max-width: 760px) {
+  .controls [data-direction="left"] { order: 1; }
+  .controls [data-direction="right"] { order: 2; }
+  .controls [data-direction="up"] { order: 3; }
+  .controls [data-direction="down"] { order: 4; }
+
+  .controls .control {
+    width: 100%;
+  }
+
+  .arcade-controls button[data-move="left"],
+  .arcade-controls button[data-move="right"],
+  .arcade-controls button[data-move="up"],
+  .arcade-controls button[data-move="down"] {
+    width: 100%;
+  }
+
+  .arcade-controls button[data-move="left"] { order: 1; }
+  .arcade-controls button[data-move="right"] { order: 2; }
+  .arcade-controls button[data-move="up"] { order: 3; }
+  .arcade-controls button[data-move="down"] { order: 4; }
+}
