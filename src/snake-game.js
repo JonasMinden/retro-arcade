@@ -183,6 +183,7 @@ function createGameController(options) {
   }
 
   function render() {
+    window.__retroArcadeGameState = state;
     renderBoard();
     syncStatus();
   }
@@ -312,4 +313,6 @@ if (typeof document !== "undefined") {
     });
   }
 }
+
+
 

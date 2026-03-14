@@ -45,6 +45,7 @@ if (canvas) {
       { x: 312, y: 146, width: 12, height: 40, color: "#71e3ff", score: 75, active: true },
     ],
   };
+  window.__retroArcadeGameState = state;
 
   function createBall() {
     return {
@@ -443,3 +444,4 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+

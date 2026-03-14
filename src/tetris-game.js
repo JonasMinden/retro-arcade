@@ -43,6 +43,7 @@ if (canvas) {
     dropCounter: 0,
     lastTime: 0,
   };
+  window.__retroArcadeGameState = state;
 
   function createBoard() {
     return Array.from({ length: rows }, () => Array(cols).fill(null));
@@ -375,3 +376,4 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+

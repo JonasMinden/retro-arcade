@@ -50,6 +50,7 @@ if (canvas) {
     ghostTimer: 0,
     mouthTimer: 0,
   };
+  window.__retroArcadeGameState = state;
 
   function makeBoard() {
     return layout.map((row) => row.split(""));
@@ -376,3 +377,4 @@ if (canvas) {
   startLevel(true);
   requestAnimationFrame(frame);
 }
+

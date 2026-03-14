@@ -8,7 +8,8 @@ if (canvas) {
   const restartButton = document.querySelector('#restart-button');
   const actionButtons = Array.from(document.querySelectorAll('[data-action]'));
   const gravity = 900;
-  const state = { paused: false, gameOver: false, time: 60, home: 0, away: 0, input: { left: false, right: false }, player: null, ai: null, ball: null, lastTime: 0 };
+  
+  window.__retroArcadeGameState = state;
 
   function resetPositions() {
     state.player = { x: 150, y: 320, vx: 0, vy: 0, kick: 0 };
@@ -227,3 +228,5 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
+

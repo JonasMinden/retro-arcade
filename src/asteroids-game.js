@@ -25,6 +25,7 @@ if (canvas) {
     turn: 0,
     lastTime: 0,
   };
+  window.__retroArcadeGameState = state;
 
   function wrapPosition(body) {
     if (body.x < 0) body.x += state.width;
@@ -304,3 +305,4 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+

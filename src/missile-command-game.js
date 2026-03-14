@@ -25,6 +25,7 @@ if (canvas) {
     crosshair: { x: 320, y: 160 },
     lastTime: 0,
   };
+  window.__retroArcadeGameState = state;
 
   function resetCities() {
     state.cities = [70, 160, 250, 390, 480, 570].map((x) => ({ x, alive: true }));
@@ -312,3 +313,4 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+

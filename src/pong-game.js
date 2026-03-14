@@ -26,6 +26,7 @@ if (canvas) {
     lastTime: 0,
     ball: null,
   };
+  window.__retroArcadeGameState = state;
 
   function setStatus(text) {
     roundStatus.textContent = text;
@@ -256,3 +257,4 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+

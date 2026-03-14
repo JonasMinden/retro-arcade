@@ -247,17 +247,42 @@ function writeLastSubmittedScore(gameKey, score) {
   }
 }
 
+function gameHasEnded(gameKey) {
+  const state = window.__retroArcadeGameState;
+  if (!state) return false;
+  if (gameKey === "snake") return state.status === "game-over";
+  if (gameKey === "pong") return Boolean(state.winner);
+  if (typeof state.gameOver === "boolean") return state.gameOver;
+  if (typeof state.status === "string") return state.status === "game-over";
+  return false;
+}
 function syncSubmitButtonState(gameKey, panel, score) {
   const button = panel.querySelector("[data-submit-score]");
   const message = panel.querySelector("[data-submit-message]");
   if (!button) return;
+  const ended = gameHasEnded(gameKey);
   const lastSubmitted = readLastSubmittedScore(gameKey);
-  const locked = Number.isFinite(score) && score > 0 && score === lastSubmitted;
-  button.disabled = locked;
-  if (locked && message && !message.textContent) {
+  const validScore = Number.isFinite(score) && score > 0;
+  const locked = ended && validScore && score === lastSubmitted;
+  button.disabled = !currentUser || !ended || !validScore || locked;
+  if (!message) return;
+  const helperMessages = new Set([
+    "Bitte erst optional einloggen, um Scores zu speichern.",
+    "Spiele erst eine Runde mit gültigem Score.",
+    "Score lässt sich erst nach Game Over speichern.",
+    "Diesen Score hast du in dieser Runde bereits gespeichert."
+  ]);
+  if (locked) {
     message.textContent = "Diesen Score hast du in dieser Runde bereits gespeichert.";
+    return;
   }
-  if (!locked && message && message.textContent === "Diesen Score hast du in dieser Runde bereits gespeichert.") {
+  if (!ended) {
+    if (!message.textContent || helperMessages.has(message.textContent)) {
+      message.textContent = "Score lässt sich erst nach Game Over speichern.";
+    }
+    return;
+  }
+  if (message.textContent === "Diesen Score hast du in dieser Runde bereits gespeichert." || message.textContent === "Score lässt sich erst nach Game Over speichern.") {
     message.textContent = "";
   }
 }
@@ -316,6 +341,18 @@ async function loadScoreboard(gameKey, panel) {
   renderScoreList(panel.querySelector("[data-scoreboard-list]"), data.entries || []);
 }
 
+function syncLiveScoreboardPanel() {
+  const gameKey = detectGameKey();
+  if (!gameKey || !GAME_CONFIG[gameKey]) return;
+  const panel = document.querySelector("[data-scoreboard-mounted]");
+  if (!panel) return;
+  const scoreElement = document.querySelector(GAME_CONFIG[gameKey].selector);
+  const currentScore = panel.querySelector("[data-current-score]");
+  if (!scoreElement || !currentScore) return;
+  const score = Number(scoreElement.textContent.trim() || "0");
+  currentScore.textContent = String(score);
+  syncSubmitButtonState(gameKey, panel, score);
+}
 async function refreshScoreboard() {
   const gameKey = detectGameKey();
   if (!gameKey || !GAME_CONFIG[gameKey]) return;
@@ -333,6 +370,10 @@ async function refreshScoreboard() {
       const message = panel.querySelector("[data-submit-message]");
       if (!currentUser) {
         message.textContent = "Bitte erst optional einloggen, um Scores zu speichern.";
+        return;
+      }
+      if (!gameHasEnded(gameKey)) {
+        message.textContent = "Score lässt sich erst nach Game Over speichern.";
         return;
       }
       if (!Number.isFinite(score) || score <= 0) {
@@ -353,13 +394,7 @@ async function refreshScoreboard() {
     });
   }
 
-  const scoreElement = document.querySelector(GAME_CONFIG[gameKey].selector);
-  const currentScore = panel.querySelector("[data-current-score]");
-  if (scoreElement && currentScore) {
-    const score = Number(scoreElement.textContent.trim() || "0");
-    currentScore.textContent = String(score);
-    syncSubmitButtonState(gameKey, panel, score);
-  }
+  syncLiveScoreboardPanel();
   await loadScoreboard(gameKey, panel);
 }
 
@@ -379,8 +414,18 @@ async function initSiteUi() {
   syncFooterLegalLinks();
   await loadCurrentUser();
   await Promise.allSettled([loadPopularGames(), loadRecentScores(), refreshScoreboard()]);
+  if (detectGameKey()) {
+    window.setInterval(() => {
+      syncLiveScoreboardPanel();
+    }, 500);
+  }
 }
 
 export { initSiteUi, detectGameKey };
+
+
+
+
+
 
 

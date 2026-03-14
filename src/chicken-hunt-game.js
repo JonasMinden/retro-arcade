@@ -14,7 +14,8 @@ if (canvas) {
     { x: 502, y: 304, w: 116, h: 64, type: 'crate' },
   ];
 
-  const state = { score: 0, hits: 0, time: 45, paused: false, gameOver: false, birds: [], spawnTimer: 0, muzzle: 0, lastTime: 0, aimX: 320, aimY: 210 };
+  
+  window.__retroArcadeGameState = state;
 
   function restartGame() {
     state.score = 0;
@@ -254,3 +255,5 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
+

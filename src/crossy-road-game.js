@@ -22,6 +22,7 @@ if (canvas) {
     scroll: 0,
     player: { x: 3, y: startLocalRow },
   };
+  window.__retroArcadeGameState = state;
 
   function randomChoice(list) {
     return list[Math.floor(Math.random() * list.length)];
@@ -297,3 +298,4 @@ if (canvas) {
   resetGame();
   requestAnimationFrame(frame);
 }
+

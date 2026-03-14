@@ -25,6 +25,7 @@ if (canvas) {
     stage: 1,
     lastTime: 0,
   };
+  window.__retroArcadeGameState = state;
 
   const brickPalette = ["#ff5fb2", "#ffd166", "#71e3ff", "#87ff65", "#ff9b54"];
 
@@ -284,3 +285,4 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+

@@ -29,6 +29,7 @@ if (canvas) {
     won: false,
     lastTime: 0,
   };
+  window.__retroArcadeGameState = state;
 
   function createWave() {
     const enemies = [];
@@ -281,3 +282,4 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+

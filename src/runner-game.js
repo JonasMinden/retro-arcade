@@ -24,6 +24,7 @@ if (canvas) {
     spawnCooldown: 1.8,
     skylineOffset: 0,
   };
+  window.__retroArcadeGameState = state;
 
   function random(min, max) {
     return Math.random() * (max - min) + min;
@@ -294,3 +295,4 @@ if (canvas) {
   resetGame();
   requestAnimationFrame(frame);
 }
+

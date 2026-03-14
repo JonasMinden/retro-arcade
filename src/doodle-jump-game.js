@@ -26,6 +26,7 @@ if (canvas) {
     monsters: [],
     clouds: [],
   };
+  window.__retroArcadeGameState = state;
 
   function random(min, max) {
     return Math.random() * (max - min) + min;
@@ -402,3 +403,4 @@ if (canvas) {
   resetGame();
   requestAnimationFrame(frame);
 }
+

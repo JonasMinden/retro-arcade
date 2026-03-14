@@ -8,7 +8,8 @@ if (canvas) {
   const restartButton = document.querySelector('#restart-button');
   const actionButtons = Array.from(document.querySelectorAll('[data-action]'));
 
-  const state = { score: 0, shield: 100, wave: 1, paused: false, gameOver: false, playerX: 320, bullets: [], enemyBullets: [], enemies: [], move: 0, boost: 0, lastTime: 0 };
+  
+  window.__retroArcadeGameState = state;
 
   function spawnWave() {
     state.enemies = [];
@@ -83,4 +84,6 @@ if (canvas) {
   actionButtons.forEach((button) => button.addEventListener('click', () => { const action = button.dataset.action; if (action==='left') state.move = -1; if (action==='right') state.move = 1; if (action==='fire') fire(); if (action==='boost') state.boost = 1; setTimeout(() => { state.move = 0; }, 160); }));
   pauseButton.addEventListener('click', togglePause); restartButton.addEventListener('click', restartGame); restartGame(); requestAnimationFrame(frame);
 }
+
+
 

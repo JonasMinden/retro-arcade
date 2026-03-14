@@ -28,6 +28,7 @@ if (canvas) {
     lastSpawnLane: null,
     lastTime: 0,
   };
+  window.__retroArcadeGameState = state;
 
   function restartGame() {
     state.score = 0;
@@ -324,3 +325,4 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+

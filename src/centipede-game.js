@@ -8,7 +8,8 @@ if (canvas) {
   const restartButton = document.querySelector('#restart-button');
   const actionButtons = Array.from(document.querySelectorAll('[data-action]'));
 
-  const state = { score: 0, lives: 3, wave: 1, paused: false, gameOver: false, player: { x: 320, y: 370 }, move: { x: 0, y: 0 }, bullets: [], mushrooms: [], centipede: [], spider: null, lastTime: 0 };
+  
+  window.__retroArcadeGameState = state;
 
   function makeMushrooms() { state.mushrooms = []; for (let i = 0; i < 28; i += 1) { state.mushrooms.push({ x: 40 + Math.random() * 560, y: 70 + Math.random() * 250, hp: 3 }); } }
   function makeCentipede() { state.centipede = []; for (let i = 0; i < 10 + state.wave; i += 1) { state.centipede.push({ x: 40 + i * 24, y: 50, dir: 1, alive: true }); } }
@@ -87,3 +88,5 @@ if (canvas) {
   actionButtons.forEach((button) => button.addEventListener('click', () => { const action = button.dataset.action; if (action === 'left') state.move.x = -1; if (action === 'right') state.move.x = 1; if (action === 'up') state.move.y = -1; if (action === 'down') state.move.y = 1; if (action === 'fire') fire(); if (action === 'pause') togglePause(); setTimeout(() => { state.move.x = 0; state.move.y = 0; }, 140); }));
   pauseButton.addEventListener('click', togglePause); restartButton.addEventListener('click', restartGame); restartGame(); requestAnimationFrame(frame);
 }
+
+
