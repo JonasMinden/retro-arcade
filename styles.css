@@ -1045,3 +1045,66 @@ button,
   .arcade-controls button[data-move="up"] { order: 3; }
   .arcade-controls button[data-move="down"] { order: 4; }
 }
+
+.pixel-art--metro-run {
+  background:
+    linear-gradient(180deg, #0c1732 0 24%, #1f3a65 24% 40%, #101221 40% 100%),
+    linear-gradient(90deg, transparent 0 18%, #71e3ff 18% 26%, transparent 26% 40%, #ff5fb2 40% 48%, transparent 48% 62%, #ffd166 62% 70%, transparent 70%),
+    linear-gradient(180deg, transparent 0 62%, #2f2b42 62% 100%);
+}
+
+.pixel-art--missile {
+  background:
+    linear-gradient(180deg, #040812 0 58%, #1f355c 58% 100%),
+    radial-gradient(circle at 22% 22%, #ff5fb2 0 6px, transparent 7px),
+    radial-gradient(circle at 54% 18%, #ffd166 0 6px, transparent 7px),
+    radial-gradient(circle at 76% 28%, #71e3ff 0 6px, transparent 7px),
+    linear-gradient(135deg, transparent 0 48%, rgba(255,255,255,0.7) 49% 50%, transparent 51%),
+    linear-gradient(45deg, transparent 0 48%, rgba(255,255,255,0.7) 49% 50%, transparent 51%);
+}
+
+.pixel-art--centipede {
+  background:
+    linear-gradient(180deg, #07111c 0 100%),
+    radial-gradient(circle at 22% 28%, #87ff65 0 10px, transparent 11px),
+    radial-gradient(circle at 44% 58%, #87ff65 0 10px, transparent 11px),
+    radial-gradient(circle at 66% 36%, #ffd166 0 10px, transparent 11px),
+    radial-gradient(circle at 78% 66%, #ff9b54 0 10px, transparent 11px),
+    linear-gradient(90deg, transparent 0 12%, #ff5fb2 12% 18%, transparent 18% 24%, #71e3ff 24% 30%, transparent 30% 36%, #71e3ff 36% 42%, transparent 42% 48%, #71e3ff 48% 54%, transparent 54%);
+}
+
+.pixel-art--astro-blaster {
+  background:
+    radial-gradient(circle at 20% 24%, rgba(255,255,255,0.9) 0 2px, transparent 3px),
+    radial-gradient(circle at 74% 18%, rgba(255,255,255,0.8) 0 2px, transparent 3px),
+    radial-gradient(circle at 66% 58%, #ff5fb2 0 12px, transparent 13px),
+    radial-gradient(circle at 34% 42%, #ffd166 0 12px, transparent 13px),
+    linear-gradient(135deg, transparent 0 42%, #71e3ff 42% 48%, transparent 48%),
+    linear-gradient(180deg, #040812 0 100%);
+}
+
+.pixel-art--tank {
+  background:
+    linear-gradient(180deg, #0b1020 0 100%),
+    linear-gradient(90deg, transparent 0 12%, #4d7cff 12% 22%, transparent 22% 34%, #4d7cff 34% 44%, transparent 44% 56%, #4d7cff 56% 66%, transparent 66%),
+    linear-gradient(180deg, transparent 0 22%, #87ff65 22% 34%, transparent 34% 46%, #ff5fb2 46% 58%, transparent 58% 70%, #ffd166 70% 82%, transparent 82%),
+    linear-gradient(180deg, transparent 0 70%, #26314d 70% 100%);
+}
+
+.pixel-art--chicken {
+  background:
+    linear-gradient(180deg, #7ad2ff 0 64%, #67c65f 64% 100%),
+    radial-gradient(circle at 28% 42%, #ff9b54 0 14px, transparent 15px),
+    radial-gradient(circle at 64% 34%, #ffd166 0 12px, transparent 13px),
+    linear-gradient(135deg, transparent 0 46%, #f7f5ff 46% 52%, transparent 52%),
+    linear-gradient(225deg, transparent 0 46%, #f7f5ff 46% 52%, transparent 52%);
+}
+
+.pixel-art--head-soccer {
+  background:
+    linear-gradient(180deg, #10203d 0 68%, #2ccf8f 68% 100%),
+    radial-gradient(circle at 28% 42%, #71e3ff 0 18px, transparent 19px),
+    radial-gradient(circle at 72% 42%, #ff5fb2 0 18px, transparent 19px),
+    radial-gradient(circle at 50% 60%, #ffd166 0 10px, transparent 11px),
+    linear-gradient(90deg, transparent 0 49%, rgba(255,255,255,0.7) 49% 51%, transparent 51%);
+}

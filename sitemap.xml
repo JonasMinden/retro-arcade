@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://retro-arcade-4cj.pages.dev/</loc>
@@ -48,4 +48,25 @@
   <url>
     <loc>https://retro-arcade-4cj.pages.dev/games/runner/</loc>
   </url>
-</urlset>
+  <url>
+    <loc>https://retro-arcade-4cj.pages.dev/games/metro-run/</loc>
+  </url>
+  <url>
+    <loc>https://retro-arcade-4cj.pages.dev/games/missile-command/</loc>
+  </url>
+  <url>
+    <loc>https://retro-arcade-4cj.pages.dev/games/centipede/</loc>
+  </url>
+  <url>
+    <loc>https://retro-arcade-4cj.pages.dev/games/astro-blaster/</loc>
+  </url>
+  <url>
+    <loc>https://retro-arcade-4cj.pages.dev/games/tank-battle/</loc>
+  </url>
+  <url>
+    <loc>https://retro-arcade-4cj.pages.dev/games/chicken-hunt/</loc>
+  </url>
+  <url>
+    <loc>https://retro-arcade-4cj.pages.dev/games/head-soccer/</loc>
+  </url></urlset>
+

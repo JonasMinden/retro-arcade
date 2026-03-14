@@ -1,0 +1,19 @@
+﻿<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Metro Run | Retro Arcade</title>
+    <meta name="description" content="Ein schneller Endless Runner im Stil von Temple Run und Subway Surfers, direkt im Browser.">
+    <link rel="stylesheet" href="../../styles.css">
+  </head>
+  <body>
+    <header class="site-header"><div class="shell site-header__inner"><a class="brand" href="../../index.html">Retro Arcade</a><nav class="site-nav" aria-label="Hauptnavigation"><a href="../../index.html">Start</a><a href="./index.html" aria-current="page">Metro Run</a><a href="../../impressum.html">Impressum</a><a href="../../privacy.html">Datenschutz</a></nav></div></header>
+    <main class="shell page arcade-page">
+      <section class="marquee"><div class="marquee__lights" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><p class="kicker">Wave 3</p><h1>Metro Run</h1><p>Drei Spuren, Sprünge, Slides und Münzen in einer Neon-Megacity.</p></section>
+      <section class="arcade-layout"><article class="arcade-frame"><div class="arcade-frame__screen"><div class="arcade-header"><div><p class="eyebrow">Arcade Cabinet</p><h2 class="arcade-panel-title">Neon Chase</h2></div><div class="arcade-actions"><button class="pixel-button" id="pause-button" type="button">Pause</button><button class="pixel-button pixel-button--secondary" id="restart-button" type="button">Restart</button></div></div><div class="arcade-stats" aria-live="polite"><div class="arcade-stat"><span class="arcade-stat__label">Score</span><strong class="arcade-stat__value" id="score">0</strong></div><div class="arcade-stat"><span class="arcade-stat__label">Coins</span><strong class="arcade-stat__value" id="coins">0</strong></div><div class="arcade-stat"><span class="arcade-stat__label">Speed</span><strong class="arcade-stat__value" id="speed">1x</strong></div></div><canvas id="game-canvas" class="game-canvas" width="640" height="420" aria-label="Metro Run Spielfeld"></canvas><div class="arcade-controls" aria-label="Metro Run Steuerung"><button data-action="left" type="button">Left</button><button data-action="jump" type="button">Jump</button><button data-action="right" type="button">Right</button><button data-action="slide" type="button">Slide</button></div><p class="arcade-hint">Steuerung: <code>A/D</code> oder <code>Pfeile</code> wechseln die Spur, <code>W</code>/<code>Leertaste</code> springt, <code>S</code> slidet.</p></div></article><aside class="arcade-sidebar"><section><p class="eyebrow">Spielziel</p><ul class="game-rules"><li>Weiche Zügen, Schranken und Barrieren aus.</li><li>Sammle Münzen für Bonuspunkte.</li><li>Je länger du überlebst, desto schneller wird die Strecke.</li></ul></section><section class="ad-slot" data-ad-slot-key="snakeSidebar" aria-label="Werbefläche Platzhalter"><p class="ad-slot__label">Ad Slot</p><p>Für spätere Anzeigen vorbereitet.</p></section></aside></section>
+    </main>
+    <footer class="site-footer"><div class="shell site-footer__inner"><p>Retro Arcade</p><nav class="site-nav" aria-label="Footer Navigation"><a href="../missile-command/index.html">Missile Command</a><a href="../centipede/index.html">Centipede</a><a href="../astro-blaster/index.html">Astro Blaster</a></nav></div></footer>
+    <script type="module" src="../../src/ads.js"></script><script type="module" src="../../src/metro-run-game.js"></script>
+  </body>
+</html>
