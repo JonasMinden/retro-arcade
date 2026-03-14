@@ -83,7 +83,15 @@ if (canvas) {
     }
     const targets = [...aliveCities.map((city) => city.x), ...siloPositions];
     const tx = targets[Math.floor(Math.random() * targets.length)];
-    state.enemyMissiles.push({ x: 32 + Math.random() * (canvas.width - 64), y: -24, tx, ty: 372, speed: 48 + state.wave * 7, radius: 10 + Math.random() * 6, spin: Math.random() * Math.PI * 2 });
+    state.enemyMissiles.push({
+      x: 32 + Math.random() * (canvas.width - 64),
+      y: -24,
+      tx,
+      ty: 372,
+      speed: 48 + state.wave * 7,
+      radius: 10 + Math.random() * 6,
+      spin: Math.random() * Math.PI * 2,
+    });
     state.missilesLeft -= 1;
   }
 
@@ -182,8 +190,8 @@ if (canvas) {
     ctx.fillStyle = '#f7f5ff';
     ctx.font = "16px 'Courier New'";
     ctx.textAlign = 'center';
-    ctx.fillText('Tippe oder klicke in den Himmel.', canvas.width / 2, 62);
-    ctx.fillText('Deine Rakete fliegt dorthin und die Explosion fängt Feindraketen ab.', canvas.width / 2, 86);
+    ctx.fillText('Tippe oder klicke auf einen Punkt im Himmel.', canvas.width / 2, 62);
+    ctx.fillText('Deine Abwehrrakete detoniert dort und sprengt Meteoriten in der Nähe.', canvas.width / 2, 86);
   }
 
   function draw() {
@@ -227,12 +235,25 @@ if (canvas) {
       ctx.stroke();
     });
 
-    ctx.strokeStyle = '#ff5fb2';
-    state.enemyMissiles.forEach((missile) => {
+    state.enemyMissiles.forEach((meteor) => {
+      ctx.strokeStyle = 'rgba(255,140,94,0.38)';
       ctx.beginPath();
-      ctx.moveTo(missile.x, missile.y);
-      ctx.lineTo(missile.tx, missile.ty);
+      ctx.moveTo(meteor.x, meteor.y);
+      ctx.lineTo(meteor.x - 18, meteor.y - 28);
       ctx.stroke();
+      ctx.save();
+      ctx.translate(meteor.x, meteor.y);
+      ctx.rotate(meteor.spin + meteor.y * 0.02);
+      ctx.fillStyle = '#ff9b54';
+      ctx.beginPath();
+      ctx.moveTo(0, -meteor.radius);
+      ctx.lineTo(meteor.radius * 0.8, -meteor.radius * 0.15);
+      ctx.lineTo(meteor.radius * 0.4, meteor.radius);
+      ctx.lineTo(-meteor.radius * 0.7, meteor.radius * 0.5);
+      ctx.lineTo(-meteor.radius, -meteor.radius * 0.3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
     });
 
     state.explosions.forEach((explosion) => {
@@ -291,4 +312,3 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
-

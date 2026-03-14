@@ -14,16 +14,18 @@ if (canvas) {
     coins: 0,
     paused: false,
     gameOver: false,
-    speed: 0.34,
+    speed: 0.28,
     playerLane: 0,
     targetLane: 0,
     jumpTimer: 0,
     slideTimer: 0,
     stride: 0,
+    safeTimer: 3,
     obstacles: [],
     coinsOnTrack: [],
     spawnTimer: 0,
     coinTimer: 0,
+    lastSpawnLane: null,
     lastTime: 0,
   };
 
@@ -32,16 +34,18 @@ if (canvas) {
     state.coins = 0;
     state.paused = false;
     state.gameOver = false;
-    state.speed = 0.34;
+    state.speed = 0.28;
     state.playerLane = 0;
     state.targetLane = 0;
     state.jumpTimer = 0;
     state.slideTimer = 0;
     state.stride = 0;
+    state.safeTimer = 3;
     state.obstacles = [];
     state.coinsOnTrack = [];
     state.spawnTimer = 0;
     state.coinTimer = 0;
+    state.lastSpawnLane = null;
     scoreElement.textContent = '0';
     coinsElement.textContent = '0';
     speedElement.textContent = '1.0x';
@@ -66,7 +70,7 @@ if (canvas) {
 
   function slide() {
     if (state.paused || state.gameOver) return;
-    state.slideTimer = 0.6;
+    state.slideTimer = 0.62;
   }
 
   function laneCenterAt(depth, lane) {
@@ -74,29 +78,34 @@ if (canvas) {
     const bottomY = canvas.height - 38;
     const t = 1 - depth;
     const y = horizonY + t * t * (bottomY - horizonY);
-    const boardWidth = 54 + t * 330;
+    const boardWidth = 64 + t * 320;
     const x = canvas.width / 2 + lane * boardWidth * 0.28;
-    return { x, y, scale: 0.28 + t * 1.24 };
+    return { x, y, scale: 0.28 + t * 1.22 };
   }
 
   function spawnObstacle() {
-    const lane = [-1, 0, 1][Math.floor(Math.random() * 3)];
+    const forbiddenLane = state.safeTimer > 0 ? state.targetLane : null;
+    const lanePool = [-1, 0, 1].filter((lane) => lane !== forbiddenLane && lane !== state.lastSpawnLane);
+    const fallbackPool = [-1, 0, 1].filter((lane) => lane !== forbiddenLane);
+    const source = lanePool.length ? lanePool : fallbackPool;
+    const lane = source[Math.floor(Math.random() * source.length)];
     const roll = Math.random();
-    const type = roll < 0.38 ? 'crate' : roll < 0.7 ? 'arch' : 'cart';
-    state.obstacles.push({ lane, depth: 1.02, type });
+    const type = roll < 0.4 ? 'crate' : roll < 0.7 ? 'arch' : 'cart';
+    state.obstacles.push({ lane, depth: 1.2, type });
+    state.lastSpawnLane = lane;
   }
 
   function spawnCoinLine() {
     const lane = [-1, 0, 1][Math.floor(Math.random() * 3)];
     for (let i = 0; i < 5; i += 1) {
-      state.coinsOnTrack.push({ lane, depth: 1.04 + i * 0.085, collected: false });
+      state.coinsOnTrack.push({ lane, depth: 1.1 + i * 0.11, collected: false });
     }
   }
 
   function jumpHeight() {
     if (state.jumpTimer <= 0) return 0;
     const progress = 1 - state.jumpTimer / 0.72;
-    return Math.sin(progress * Math.PI) * 86;
+    return Math.sin(progress * Math.PI) * 92;
   }
 
   function isSliding() {
@@ -107,52 +116,52 @@ if (canvas) {
     if (state.paused || state.gameOver) return;
 
     state.safeTimer = Math.max(0, state.safeTimer - delta);
-    state.speed = Math.min(0.56, state.speed + delta * 0.009);
-    state.score += Math.round(18 + state.speed * 45);
+    state.speed = Math.min(0.42, state.speed + delta * 0.006);
+    state.score += Math.round(14 + state.speed * 26);
     scoreElement.textContent = String(state.score);
-    speedElement.textContent = `${(state.speed / 0.34).toFixed(1)}x`;
+    speedElement.textContent = `${(state.speed / 0.28).toFixed(1)}x`;
 
-    state.playerLane += (state.targetLane - state.playerLane) * Math.min(1, delta * 14);
+    state.playerLane += (state.targetLane - state.playerLane) * Math.min(1, delta * 16);
     state.jumpTimer = Math.max(0, state.jumpTimer - delta);
     state.slideTimer = Math.max(0, state.slideTimer - delta);
-    state.stride += delta * (7 + state.speed * 8);
+    state.stride += delta * (6 + state.speed * 7);
 
     state.spawnTimer += delta;
-    if (state.spawnTimer > Math.max(1.25, 2.3 - state.speed * 1.35)) {
+    if (state.spawnTimer > Math.max(1.45, 2.8 - state.speed * 1.8)) {
       state.spawnTimer = 0;
       spawnObstacle();
     }
 
     state.coinTimer += delta;
-    if (state.coinTimer > 1.55) {
+    if (state.coinTimer > 1.7) {
       state.coinTimer = 0;
       spawnCoinLine();
     }
 
     state.obstacles.forEach((obstacle) => {
-      obstacle.depth -= state.speed * 0.24 * delta;
+      obstacle.depth -= state.speed * 0.18 * delta;
     });
     state.coinsOnTrack.forEach((coin) => {
-      coin.depth -= (state.speed + 0.02) * 0.24 * delta;
+      coin.depth -= (state.speed + 0.03) * 0.18 * delta;
     });
-    state.obstacles = state.obstacles.filter((obstacle) => obstacle.depth > -0.05);
+    state.obstacles = state.obstacles.filter((obstacle) => obstacle.depth > -0.08);
     state.coinsOnTrack = state.coinsOnTrack.filter((coin) => coin.depth > 0 && !coin.collected);
 
     const jump = jumpHeight();
     const sliding = isSliding();
 
     state.obstacles.forEach((obstacle) => {
-      if (obstacle.depth > 0.84 && obstacle.depth < 0.89 && Math.abs(obstacle.lane - state.playerLane) < 0.24) {
-        const safeJump = (obstacle.type === 'crate' || obstacle.type === 'cart') && jump > 42;
+      if (obstacle.depth > 0.82 && obstacle.depth < 0.87 && Math.abs(obstacle.lane - state.playerLane) < 0.2) {
+        const safeJump = (obstacle.type === 'crate' || obstacle.type === 'cart') && jump > 48;
         const safeSlide = obstacle.type === 'arch' && sliding;
-        if (!safeJump && !safeSlide) {
+        if (!safeJump && !safeSlide && state.safeTimer <= 0) {
           state.gameOver = true;
         }
       }
     });
 
     state.coinsOnTrack.forEach((coin) => {
-      if (coin.depth > 0.82 && coin.depth < 0.93 && Math.abs(coin.lane - state.playerLane) < 0.38 && jump < 110) {
+      if (coin.depth > 0.8 && coin.depth < 0.9 && Math.abs(coin.lane - state.playerLane) < 0.28) {
         coin.collected = true;
         state.coins += 1;
         state.score += 40;
@@ -179,10 +188,10 @@ if (canvas) {
 
     ctx.fillStyle = '#0d1220';
     ctx.beginPath();
-    ctx.moveTo(228, 92);
-    ctx.lineTo(412, 92);
-    ctx.lineTo(canvas.width - 36, canvas.height);
-    ctx.lineTo(36, canvas.height);
+    ctx.moveTo(226, 92);
+    ctx.lineTo(414, 92);
+    ctx.lineTo(canvas.width - 30, canvas.height);
+    ctx.lineTo(30, canvas.height);
     ctx.closePath();
     ctx.fill();
 
@@ -191,7 +200,7 @@ if (canvas) {
     for (let i = 0; i < 16; i += 1) {
       const depth = i / 15;
       const near = laneCenterAt(depth, 0);
-      const width = 54 + (1 - depth) * 330;
+      const width = 64 + (1 - depth) * 320;
       ctx.beginPath();
       ctx.moveTo(canvas.width / 2 - width / 2, near.y);
       ctx.lineTo(canvas.width / 2 + width / 2, near.y);
@@ -211,19 +220,19 @@ if (canvas) {
     const { x, y, scale } = laneCenterAt(obstacle.depth, obstacle.lane);
     if (obstacle.type === 'crate') {
       ctx.fillStyle = '#ff9b54';
-      ctx.fillRect(x - 26 * scale, y - 40 * scale, 52 * scale, 40 * scale);
+      ctx.fillRect(x - 26 * scale, y - 38 * scale, 52 * scale, 38 * scale);
       ctx.strokeStyle = '#101221';
-      ctx.strokeRect(x - 26 * scale, y - 40 * scale, 52 * scale, 40 * scale);
+      ctx.strokeRect(x - 26 * scale, y - 38 * scale, 52 * scale, 38 * scale);
     } else if (obstacle.type === 'arch') {
       ctx.fillStyle = '#87ff65';
-      ctx.fillRect(x - 34 * scale, y - 68 * scale, 12 * scale, 68 * scale);
-      ctx.fillRect(x + 22 * scale, y - 68 * scale, 12 * scale, 68 * scale);
-      ctx.fillRect(x - 34 * scale, y - 68 * scale, 68 * scale, 16 * scale);
+      ctx.fillRect(x - 30 * scale, y - 64 * scale, 12 * scale, 64 * scale);
+      ctx.fillRect(x + 18 * scale, y - 64 * scale, 12 * scale, 64 * scale);
+      ctx.fillRect(x - 30 * scale, y - 64 * scale, 60 * scale, 14 * scale);
     } else {
       ctx.fillStyle = '#ff5fb2';
-      ctx.fillRect(x - 34 * scale, y - 58 * scale, 68 * scale, 58 * scale);
+      ctx.fillRect(x - 30 * scale, y - 54 * scale, 60 * scale, 54 * scale);
       ctx.fillStyle = 'rgba(255,255,255,0.22)';
-      ctx.fillRect(x - 20 * scale, y - 42 * scale, 40 * scale, 20 * scale);
+      ctx.fillRect(x - 18 * scale, y - 40 * scale, 36 * scale, 18 * scale);
     }
   }
 
@@ -232,7 +241,7 @@ if (canvas) {
       const { x, y, scale } = laneCenterAt(coin.depth, coin.lane);
       ctx.fillStyle = '#ffd166';
       ctx.beginPath();
-      ctx.arc(x, y - 22 * scale, 9 * scale, 0, Math.PI * 2);
+      ctx.arc(x, y - 22 * scale, 8 * scale, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = 'rgba(255,255,255,0.28)';
       ctx.stroke();
@@ -248,7 +257,7 @@ if (canvas) {
 
     ctx.fillStyle = '#ffd166';
     ctx.beginPath();
-    ctx.arc(lane.x, baseY - (sliding ? 58 : 72), 18, 0, Math.PI * 2);
+    ctx.arc(lane.x, baseY - (sliding ? 56 : 70), 18, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = '#71e3ff';
@@ -315,6 +324,3 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
-
-
-

@@ -103,9 +103,7 @@ if (canvas) {
     state.paused = false;
     state.leftActive = false;
     state.rightActive = false;
-    state.targets.forEach((target) => {
-      target.active = true;
-    });
+    state.targets.forEach((target) => { target.active = true; });
     scoreElement.textContent = "0";
     livesElement.textContent = "3";
     pauseButton.textContent = "Pause";
@@ -115,8 +113,8 @@ if (canvas) {
   function launchBall() {
     if (!state.ball.launched) {
       state.ball.launched = true;
-      state.ball.vx = -24;
-      state.ball.vy = -900;
+      state.ball.vx = -12;
+      state.ball.vy = -680;
       statusElement.textContent = "Live";
     }
   }
@@ -127,7 +125,7 @@ if (canvas) {
     pauseButton.textContent = state.paused ? "Resume" : "Pause";
   }
 
-  function circleCollision(circle, boost = 1.02, score = 0) {
+  function circleCollision(circle, boost = 1.01, score = 0) {
     const dx = state.ball.x - circle.x;
     const dy = state.ball.y - circle.y;
     const distance = Math.hypot(dx, dy);
@@ -150,7 +148,7 @@ if (canvas) {
     }
     if (ball.y - ball.radius < 22) {
       ball.y = 22 + ball.radius;
-      ball.vy = Math.abs(ball.vy) * 0.92;
+      ball.vy = Math.abs(ball.vy) * 0.78;
     }
 
     if (ball.x + ball.radius > 350 && ball.y < 562) {
@@ -179,7 +177,7 @@ if (canvas) {
         const ny = collision.dy / (distance || 1);
         ball.x = collision.x + nx * (ball.radius + 4);
         ball.y = collision.y + ny * (ball.radius + 4);
-        reflect(nx, ny, 1);
+        reflect(nx, ny, 0.98);
       }
     });
   }
@@ -193,11 +191,9 @@ if (canvas) {
         state.ball.y + state.ball.radius > target.y &&
         state.ball.y - state.ball.radius < target.y + target.height;
       if (!hit) return;
-
       target.active = false;
-      const fromLeft = state.ball.x < target.x + target.width / 2;
-      state.ball.vx = fromLeft ? -Math.abs(state.ball.vx || 160) : Math.abs(state.ball.vx || 160);
-      state.ball.vy *= 0.92;
+      state.ball.vx *= -0.92;
+      state.ball.vy *= 0.95;
       addScore(target.score);
     });
   }
@@ -209,14 +205,14 @@ if (canvas) {
       const collision = lineDistance(state.ball.x, state.ball.y, flipper.pivotX, flipper.pivotY, tipX, tipY);
       const distance = Math.hypot(collision.dx, collision.dy);
       const active = index === 0 ? state.leftActive : state.rightActive;
-      if (distance < state.ball.radius + 8 && state.ball.y < flipper.pivotY + 10) {
+      if (distance < state.ball.radius + 8 && state.ball.y < flipper.pivotY + 8) {
         const nx = collision.dx / (distance || 1);
         const ny = collision.dy / (distance || 1);
         state.ball.x = collision.x + nx * (state.ball.radius + 8);
         state.ball.y = collision.y + ny * (state.ball.radius + 8);
-        const sideKick = active ? 185 : 70;
-        state.ball.vy = -Math.max(active ? 560 : 360, Math.abs(state.ball.vy) * 0.7 + (active ? 140 : 80));
-        state.ball.vx = clamp(state.ball.vx + (index === 0 ? -sideKick : sideKick), -360, 360);
+        const sideKick = active ? 150 : 50;
+        state.ball.vy = -Math.max(active ? 460 : 320, Math.abs(state.ball.vy) * 0.55 + (active ? 90 : 50));
+        state.ball.vx = clamp(state.ball.vx + (index === 0 ? -sideKick : sideKick), -300, 300);
         addScore(active ? 18 : 8);
       }
     });
@@ -252,29 +248,26 @@ if (canvas) {
   }
 
   function stabilizeBall() {
-    state.ball.vx *= 0.997;
-    state.ball.vy *= 0.999;
+    state.ball.vx *= 0.994;
+    state.ball.vy *= 0.996;
     const speed = Math.hypot(state.ball.vx, state.ball.vy);
-    if (speed > 760) {
-      const scale = 760 / speed;
+    if (speed > 690) {
+      const scale = 690 / speed;
       state.ball.vx *= scale;
       state.ball.vy *= scale;
-    }
-    if (speed < 190 && state.ball.launched) {
-      state.ball.vy -= 18;
     }
   }
 
   function updateBall(delta) {
     if (!state.ball.launched || state.paused) return;
 
-    state.ball.vy += 760 * delta;
+    state.ball.vy += 820 * delta;
     state.ball.x += state.ball.vx * delta;
     state.ball.y += state.ball.vy * delta;
 
     handleWalls();
-    state.bumpers.forEach((bumper, index) => circleCollision(bumper, index < 3 ? 1.025 : 1.015, bumper.score));
-    state.posts.forEach((post) => circleCollision(post, 1, 12));
+    state.bumpers.forEach((bumper, index) => circleCollision(bumper, index < 3 ? 1.015 : 1.005, bumper.score));
+    state.posts.forEach((post) => circleCollision(post, 0.99, 12));
     handleTargets();
     handleFlippers();
     stabilizeBall();
@@ -450,5 +443,3 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
-
-

@@ -11,6 +11,13 @@
   helicopter: { title: "Helicopter Scores", selector: "#score" },
   "crossy-road": { title: "Crossy Road Scores", selector: "#score" },
   runner: { title: "Runner Scores", selector: "#score" },
+  "metro-run": { title: "Metro Run Scores", selector: "#score" },
+  "missile-command": { title: "Sky Shield Scores", selector: "#score" },
+  centipede: { title: "Centipede Scores", selector: "#score" },
+  "astro-blaster": { title: "Astro Blaster Scores", selector: "#score" },
+  "tank-battle": { title: "Panzerspiel Scores", selector: "#score" },
+  "chicken-hunt": { title: "Barn Blaster Scores", selector: "#score" },
+  "head-soccer": { title: "Head Soccer Scores", selector: "#home-score" },
 };
 
 const COOKIE_CONSENT_KEY = "retro_arcade_cookie_consent_v1";
@@ -150,11 +157,8 @@ function createCookieBanner() {
 function markCurrentLink(link) {
   const currentPath = window.location.pathname.replace(/index\.html$/, "/");
   const linkPath = new URL(link.href, window.location.origin).pathname.replace(/index\.html$/, "/");
-  if (currentPath === linkPath) {
-    link.setAttribute("aria-current", "page");
-  } else {
-    link.removeAttribute("aria-current");
-  }
+  if (currentPath === linkPath) link.setAttribute("aria-current", "page");
+  else link.removeAttribute("aria-current");
 }
 
 function buildNavLink(href, label, className = "") {
@@ -178,8 +182,7 @@ function syncFooterLegalLinks() {
 }
 
 function updateHeaderAuth() {
-  const navs = document.querySelectorAll(".site-header .site-nav");
-  navs.forEach((nav) => {
+  document.querySelectorAll(".site-header .site-nav").forEach((nav) => {
     const existing = nav.querySelector("[data-auth-slot]");
     if (existing) existing.remove();
     const wrapper = document.createElement("span");
@@ -205,16 +208,12 @@ function renderPopularGames(games) {
   document.querySelectorAll(".site-header .site-nav").forEach((nav) => {
     nav.querySelectorAll("[data-popular-game]").forEach((node) => node.remove());
     nav.querySelectorAll('a[href$="impressum.html"], a[href$="privacy.html"]').forEach((node) => node.remove());
-
     const authSlot = nav.querySelector("[data-auth-slot]");
     popularGames.forEach((game) => {
       const link = buildNavLink(gamePath(game.game_key), game.game_name, "popular-game-link");
       link.dataset.popularGame = "true";
-      if (authSlot) {
-        nav.insertBefore(link, authSlot);
-      } else {
-        nav.appendChild(link);
-      }
+      if (authSlot) nav.insertBefore(link, authSlot);
+      else nav.appendChild(link);
     });
   });
 }
@@ -317,79 +316,29 @@ async function refreshScoreboard() {
       }
     });
   }
+
   const scoreElement = document.querySelector(GAME_CONFIG[gameKey].selector);
-  panel.querySelector("[data-current-score]").textContent = scoreElement?.textContent?.trim() || "0";
+  const currentScore = panel.querySelector("[data-current-score]");
+  if (scoreElement && currentScore) currentScore.textContent = scoreElement.textContent.trim();
   await loadScoreboard(gameKey, panel);
 }
 
-function bindAccountForms() {
-  const registerForm = document.querySelector("#register-form");
-  const loginForm = document.querySelector("#login-form");
-  if (registerForm) {
-    registerForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const message = document.querySelector("#register-message");
-      const payload = {
-        username: document.querySelector("#register-username").value,
-        password: document.querySelector("#register-password").value,
-      };
-      try {
-        const data = await api("/api/register", { method: "POST", body: JSON.stringify(payload) });
-        currentUser = data.user;
-        message.textContent = `Registriert als ${data.user.username}.`;
-        updateHeaderAuth();
-      } catch (error) {
-        message.textContent = error.message;
-      }
-    });
-  }
-  if (loginForm) {
-    loginForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const message = document.querySelector("#login-message");
-      const payload = {
-        username: document.querySelector("#login-username").value,
-        password: document.querySelector("#login-password").value,
-      };
-      try {
-        const data = await api("/api/login", { method: "POST", body: JSON.stringify(payload) });
-        currentUser = data.user;
-        message.textContent = `Eingeloggt als ${data.user.username}.`;
-        updateHeaderAuth();
-      } catch (error) {
-        message.textContent = error.message;
-      }
-    });
-  }
-}
-
-async function initUser() {
+async function loadCurrentUser() {
   try {
-    const data = await api("/api/me", { headers: {} });
-    currentUser = data.user;
+    const data = await api("/api/me");
+    currentUser = data.user || null;
   } catch {
     currentUser = null;
   }
   updateHeaderAuth();
 }
 
-export async function initSiteUi() {
-  if (typeof document === "undefined" || typeof window === "undefined") return;
+async function initSiteUi() {
   ensureFavicon();
   createCookieBanner();
-  await initUser();
   syncFooterLegalLinks();
-  await loadPopularGames();
-  bindAccountForms();
-  await Promise.all([refreshScoreboard(), loadRecentScores()]);
-  const gameKey = detectGameKey();
-  if (gameKey && GAME_CONFIG[gameKey]) {
-    window.setInterval(() => {
-      const panel = document.querySelector("[data-scoreboard-mounted]");
-      if (panel) {
-        panel.querySelector("[data-current-score]").textContent = document.querySelector(GAME_CONFIG[gameKey].selector)?.textContent?.trim() || "0";
-      }
-    }, 500);
-  }
+  await loadCurrentUser();
+  await Promise.allSettled([loadPopularGames(), loadRecentScores(), refreshScoreboard()]);
 }
 
+export { initSiteUi, detectGameKey };
