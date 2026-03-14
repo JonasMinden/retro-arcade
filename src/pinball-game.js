@@ -268,7 +268,7 @@ if (canvas) {
   function updateBall(delta) {
     if (!state.ball.launched || state.paused) return;
 
-    state.ball.vy += 610 * delta;
+    state.ball.vy += 760 * delta;
     state.ball.x += state.ball.vx * delta;
     state.ball.y += state.ball.vy * delta;
 
@@ -450,3 +450,4 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
