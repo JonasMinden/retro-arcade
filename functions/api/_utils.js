@@ -133,6 +133,28 @@ export async function requireUser(context) {
 }
 
 export function normalizeGameKey(game) {
-  const allowed = ["snake", "pong", "breakout", "tetris", "space-invaders", "asteroids", "pac-man", "pinball", "doodle-jump", "helicopter", "crossy-road", "runner"];
+  const allowed = [
+    "snake",
+    "pong",
+    "breakout",
+    "tetris",
+    "space-invaders",
+    "asteroids",
+    "pac-man",
+    "pinball",
+    "doodle-jump",
+    "helicopter",
+    "crossy-road",
+    "runner",
+    "metro-run",
+    "missile-command",
+    "centipede",
+    "astro-blaster",
+    "tank-battle",
+    "chicken-hunt",
+    "head-soccer"
+  ];
   return allowed.includes(game) ? game : null;
 }
+
+

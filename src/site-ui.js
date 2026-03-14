@@ -341,7 +341,9 @@ async function refreshScoreboard() {
       }
       try {
         await api("/api/submit-score", { method: "POST", body: JSON.stringify({ game: gameKey, score }) });
+        writeLastSubmittedScore(gameKey, score);
         message.textContent = "Score gespeichert.";
+        syncSubmitButtonState(gameKey, panel, score);
         loadScoreboard(gameKey, panel);
         loadRecentScores();
         loadPopularGames();
@@ -353,7 +355,11 @@ async function refreshScoreboard() {
 
   const scoreElement = document.querySelector(GAME_CONFIG[gameKey].selector);
   const currentScore = panel.querySelector("[data-current-score]");
-  if (scoreElement && currentScore) currentScore.textContent = scoreElement.textContent.trim();
+  if (scoreElement && currentScore) {
+    const score = Number(scoreElement.textContent.trim() || "0");
+    currentScore.textContent = String(score);
+    syncSubmitButtonState(gameKey, panel, score);
+  }
   await loadScoreboard(gameKey, panel);
 }
 
@@ -376,4 +382,5 @@ async function initSiteUi() {
 }
 
 export { initSiteUi, detectGameKey };
+
 
