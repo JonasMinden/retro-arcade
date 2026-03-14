@@ -6,7 +6,7 @@
     <title>Retro Arcade</title>
     <meta
       name="description"
-      content="Retro Arcade ist eine kleine Browser-Spielesammlung. Starte mit Classic Snake und erweitere die Seite spaeter um weitere Games."
+      content="Retro Arcade ist eine Arcade-Spielesammlung mit Snake, Pong, Breakout und Tetris im Browser."
     >
     <link rel="stylesheet" href="./styles.css">
   </head>
@@ -15,96 +15,130 @@
       <div class="shell site-header__inner">
         <a class="brand" href="./index.html">Retro Arcade</a>
         <nav class="site-nav" aria-label="Hauptnavigation">
-          <a href="./index.html">Start</a>
-          <a href="./games/snake/index.html">Snake</a>
+          <a href="./index.html" aria-current="page">Start</a>
           <a href="./impressum.html">Impressum</a>
           <a href="./privacy.html">Datenschutz</a>
         </nav>
       </div>
     </header>
 
-    <main class="shell page">
-      <section class="hero card">
+    <main class="shell page arcade-page">
+      <section class="marquee">
+        <div class="marquee__lights" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
         <div class="hero__copy">
-          <p class="eyebrow">Browser Games</p>
-          <h1>Eine kleine Spieleseite, die wir spaeter erweitern koennen.</h1>
+          <p class="eyebrow">Pixel Night</p>
+          <h1>Dein Browser wird zur kleinen Arcade-Halle.</h1>
           <p class="lead">
-            Classic Snake ist der erste Baustein. Die Struktur ist jetzt so angelegt,
-            dass weitere Spiele nur noch als neue Unterseiten und Karten dazu kommen.
+            Neonlicht, Rasterbildschirm und schnelle Klassiker. Wave 1 bringt Snake, Pong,
+            Breakout und Tetris in denselben Retro-Raum.
           </p>
           <div class="hero__actions">
-            <a class="button-link" href="./games/snake/index.html">Snake spielen</a>
-            <a class="button-link button-link--secondary" href="#games">Zur Uebersicht</a>
+            <a class="button-link" href="#games">Spiele ansehen</a>
+            <a class="button-link button-link--secondary" href="./games/snake/index.html">Direkt zu Snake</a>
           </div>
         </div>
-        <aside class="ad-slot" data-ad-slot-key="homeSidebar" aria-label="Werbeflaeche Platzhalter">
-          <p class="ad-slot__label">Ad Slot</p>
-          <p>Hier kann spaeter ein 300 x 250 Werbeblock eingebunden werden.</p>
-        </aside>
       </section>
 
       <section id="games" class="section">
         <div class="section__heading">
           <div>
-            <p class="eyebrow">Spiele</p>
-            <h2>Aktuelle Sammlung</h2>
+            <p class="eyebrow">Wave 1</p>
+            <h2>Spielbare Automaten</h2>
           </div>
-          <p class="section__text">Neue Games kannst du als weitere Ordner unter <code>games/</code> anlegen.</p>
+          <p class="section__text">Jedes Spiel hat jetzt seine eigene Arcade-Seite mit passender Lichtstimmung und Direktsteuerung.</p>
         </div>
 
         <div class="game-grid">
-          <article class="game-card">
-            <div class="game-card__body">
+          <article class="game-card game-card--active">
+            <div>
               <p class="game-card__tag">Arcade</p>
               <h3>Classic Snake</h3>
-              <p>Das erste Spiel der Sammlung: gridbasiert, schnell, direkt und mobil bedienbar.</p>
+              <div class="game-card__art pixel-art--snake"></div>
+              <p>Grid-Bewegung, Food-Jagd und der klassische Score-Loop.</p>
             </div>
             <div class="game-card__footer">
-              <a class="button-link" href="./games/snake/index.html">Jetzt spielen</a>
+              <a class="button-link" href="./games/snake/index.html">Spielen</a>
+            </div>
+          </article>
+
+          <article class="game-card game-card--active">
+            <div>
+              <p class="game-card__tag">Arcade</p>
+              <h3>Pong</h3>
+              <div class="game-card__art pixel-art--pong"></div>
+              <p>Du gegen die Maschine. Reaktionsspiel mit klarer Neon-Arena.</p>
+            </div>
+            <div class="game-card__footer">
+              <a class="button-link" href="./games/pong/index.html">Spielen</a>
+            </div>
+          </article>
+
+          <article class="game-card game-card--active">
+            <div>
+              <p class="game-card__tag">Arcade</p>
+              <h3>Breakout</h3>
+              <div class="game-card__art pixel-art--breakout"></div>
+              <p>Zerstoere Brick-Reihen, halte den Ball im Spiel und jage den Highscore.</p>
+            </div>
+            <div class="game-card__footer">
+              <a class="button-link" href="./games/breakout/index.html">Spielen</a>
+            </div>
+          </article>
+
+          <article class="game-card game-card--active">
+            <div>
+              <p class="game-card__tag">Arcade</p>
+              <h3>Tetris</h3>
+              <div class="game-card__art pixel-art--tetris"></div>
+              <p>Drehende Steine, klare Reihen und steigendes Tempo.</p>
+            </div>
+            <div class="game-card__footer">
+              <a class="button-link" href="./games/tetris/index.html">Spielen</a>
             </div>
           </article>
 
           <article class="game-card game-card--placeholder">
-            <div class="game-card__body">
-              <p class="game-card__tag">Demnaechst</p>
-              <h3>Naechstes Spiel</h3>
-              <p>Hier ist Platz fuer ein zweites Browser-Game, damit die Seite organisch waechst.</p>
+            <div>
+              <p class="game-card__tag">Wave 2</p>
+              <h3>Space Invaders</h3>
+              <div class="game-card__art pixel-art--future"></div>
+              <p>Alien-Reihen, Deckung und klassischer Abwehrkampf.</p>
             </div>
             <div class="game-card__footer">
-              <span class="muted-note">Slot fuer spaetere Erweiterung</span>
+              <span class="muted-note">Kommt als naechstes</span>
             </div>
           </article>
 
           <article class="game-card game-card--placeholder">
-            <div class="game-card__body">
-              <p class="game-card__tag">Demnaechst</p>
-              <h3>Noch ein Titel</h3>
-              <p>Die Kartenstruktur bleibt gleich, egal ob Puzzle, Jump and Run oder Highscore-Spiel.</p>
+            <div>
+              <p class="game-card__tag">Wave 2</p>
+              <h3>Asteroids & Pac-Man</h3>
+              <div class="game-card__art pixel-art--future"></div>
+              <p>Die naechste Welle bringt noch mehr echte Automaten-Energie.</p>
             </div>
             <div class="game-card__footer">
-              <span class="muted-note">Weiteres Game-Modul</span>
+              <span class="muted-note">Bereits eingeplant</span>
             </div>
           </article>
         </div>
       </section>
 
       <section class="section section--split">
-        <article class="card">
-          <p class="eyebrow">Monetarisierung</p>
-          <h2>Werbung spaeter sauber einfuegen</h2>
+        <article class="card arcade-copy">
+          <p class="eyebrow">Arcade Room</p>
+          <h2>Mehr als nur einzelne Spiele</h2>
           <p>
-            Die Seite ist jetzt fuer spaetere AdSense-Einbindung vorbereitet. Aktiviert wird Werbung
-            erst, wenn eine Publisher-ID, echte Slot-IDs und ein passendes Consent-Setup vorhanden sind.
+            Die Startseite fuehlt sich jetzt wie ein Foyer an: Leuchtrahmen, Marquee-Lichter,
+            kleine Pixelgrafiken und ein einheitlicher Maschinen-Look fuer jede Spielseite.
           </p>
         </article>
 
-        <aside class="card">
-          <p class="eyebrow">Content</p>
-          <h2>Warum das besser ist</h2>
-          <p>
-            Statt nur einer einzelnen Spieleseite hast du jetzt eine kleine Startseite mit Sammlung,
-            Navigation und Raum fuer weitere Inhalte.
-          </p>
+        <aside class="ad-slot" data-ad-slot-key="homeSidebar" aria-label="Werbeflaeche Platzhalter">
+          <p class="ad-slot__label">Ad Slot</p>
+          <p>Fuer spaetere Werbeeinbindung vorbereitet, ohne bereits Anzeigen zu laden.</p>
         </aside>
       </section>
     </main>
@@ -114,8 +148,9 @@
         <p>Retro Arcade</p>
         <nav class="site-nav" aria-label="Footer Navigation">
           <a href="./games/snake/index.html">Snake</a>
-          <a href="./impressum.html">Impressum</a>
-          <a href="./privacy.html">Datenschutz</a>
+          <a href="./games/pong/index.html">Pong</a>
+          <a href="./games/breakout/index.html">Breakout</a>
+          <a href="./games/tetris/index.html">Tetris</a>
         </nav>
       </div>
     </footer>

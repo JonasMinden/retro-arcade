@@ -3,11 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Classic Snake | Retro Arcade</title>
-    <meta
-      name="description"
-      content="Spiele Classic Snake direkt im Browser. Steuere mit Pfeiltasten oder WASD und knacke deinen Highscore."
-    >
+    <title>Pong | Retro Arcade</title>
+    <meta name="description" content="Pong im Browser auf einer Arcade-Spieleseite mit Keyboard- und Mobile-Steuerung.">
     <link rel="stylesheet" href="../../styles.css">
   </head>
   <body>
@@ -16,7 +13,7 @@
         <a class="brand" href="../../index.html">Retro Arcade</a>
         <nav class="site-nav" aria-label="Hauptnavigation">
           <a href="../../index.html">Start</a>
-          <a href="./index.html" aria-current="page">Snake</a>
+          <a href="./index.html" aria-current="page">Pong</a>
           <a href="../../impressum.html">Impressum</a>
           <a href="../../privacy.html">Datenschutz</a>
         </nav>
@@ -30,8 +27,8 @@
           <span></span><span></span><span></span><span></span><span></span><span></span>
         </div>
         <p class="kicker">Wave 1</p>
-        <h1>Classic Snake</h1>
-        <p>Das Neon-Raster, die Jagd nach Food und nur eine Frage: Wie lange haeltst du die Linie?</p>
+        <h1>Pong</h1>
+        <p>Die linke Kelle gehoert dir, rechts spielt die Arcade-Maschine mit. Erster Spieler bis 7 gewinnt.</p>
       </section>
 
       <section class="arcade-layout">
@@ -40,7 +37,7 @@
             <div class="arcade-header">
               <div>
                 <p class="eyebrow">Arcade Cabinet</p>
-                <h2 class="arcade-panel-title">Grid Runner</h2>
+                <h2 class="arcade-panel-title">Pong Arena</h2>
               </div>
               <div class="arcade-actions">
                 <button class="pixel-button" id="pause-button" type="button">Pause</button>
@@ -49,28 +46,21 @@
             </div>
 
             <div class="arcade-stats" aria-live="polite">
-              <div class="arcade-stat"><span class="arcade-stat__label">Score</span><strong class="arcade-stat__value" id="score">0</strong></div>
-              <div class="arcade-stat"><span class="arcade-stat__label">Status</span><strong class="arcade-stat__value" id="status">Ready</strong></div>
-              <div class="arcade-stat"><span class="arcade-stat__label">Speed</span><strong class="arcade-stat__value">Classic</strong></div>
+              <div class="arcade-stat"><span class="arcade-stat__label">Du</span><strong class="arcade-stat__value" id="player-score">0</strong></div>
+              <div class="arcade-stat"><span class="arcade-stat__label">CPU</span><strong class="arcade-stat__value" id="cpu-score">0</strong></div>
+              <div class="arcade-stat"><span class="arcade-stat__label">Status</span><strong class="arcade-stat__value" id="round-status">Ready</strong></div>
             </div>
 
-            <div
-              id="game-board"
-              class="board"
-              role="grid"
-              aria-label="Snake game board"
-            ></div>
+            <canvas id="game-canvas" class="game-canvas" width="640" height="420" aria-label="Pong Spielfeld"></canvas>
 
-            <div class="controls" aria-label="On-screen controls">
-              <button class="control control--up" data-direction="up" type="button">Up</button>
-              <div class="controls__middle">
-                <button class="control" data-direction="left" type="button">Left</button>
-                <button class="control" data-direction="down" type="button">Down</button>
-                <button class="control" data-direction="right" type="button">Right</button>
-              </div>
+            <div class="arcade-controls" aria-label="Pong Steuerung">
+              <button data-move="up" type="button">Up</button>
+              <button data-move="down" type="button">Down</button>
+              <button data-action="serve" type="button">Serve</button>
+              <button data-action="pause" type="button">Pause</button>
             </div>
 
-            <p class="arcade-hint">Steuerung: <code>Pfeiltasten</code> oder <code>WASD</code>. <code>Leertaste</code> pausiert und setzt fort.</p>
+            <p class="arcade-hint">Steuerung: <code>W</code>/<code>S</code> oder <code>Pfeil hoch/runter</code>. <code>Leertaste</code> startet den Ball.</p>
           </div>
         </article>
 
@@ -78,21 +68,18 @@
           <section>
             <p class="eyebrow">Spielziel</p>
             <ul class="game-rules">
-              <li>Sammle Food und werde laenger.</li>
-              <li>Vermeide Waende und deinen eigenen Koerper.</li>
-              <li>Der Loop bleibt bewusst klassisch und direkt.</li>
+              <li>Halte den Ball mit deiner Kelle im Spiel.</li>
+              <li>Jeder Treffer hinter der CPU bringt einen Punkt.</li>
+              <li>Bei 7 Punkten gewinnst du die Runde.</li>
             </ul>
           </section>
-
           <section class="ad-slot" data-ad-slot-key="snakeSidebar" aria-label="Werbeflaeche Platzhalter">
             <p class="ad-slot__label">Ad Slot</p>
-            <p>Hier kann spaeter ein responsiver Werbeblock fuer Spieleseiten sitzen.</p>
+            <p>Fuer spaetere Anzeigen vorbereitet.</p>
           </section>
-
           <section>
-            <p class="eyebrow">Wave 1</p>
+            <p class="eyebrow">Mehr Spiele</p>
             <div class="arcade-buttons">
-              <a class="button-link" href="../pong/index.html">Pong</a>
               <a class="button-link" href="../breakout/index.html">Breakout</a>
               <a class="button-link button-link--secondary" href="../tetris/index.html">Tetris</a>
             </div>
@@ -105,7 +92,7 @@
       <div class="shell site-footer__inner">
         <p>Retro Arcade</p>
         <nav class="site-nav" aria-label="Footer Navigation">
-          <a href="../pong/index.html">Pong</a>
+          <a href="../snake/index.html">Snake</a>
           <a href="../breakout/index.html">Breakout</a>
           <a href="../tetris/index.html">Tetris</a>
         </nav>
@@ -113,6 +100,6 @@
     </footer>
 
     <script type="module" src="../../src/ads.js"></script>
-    <script type="module" src="../../src/snake-game.js"></script>
+    <script type="module" src="../../src/pong-game.js"></script>
   </body>
 </html>
