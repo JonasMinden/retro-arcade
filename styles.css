@@ -555,3 +555,54 @@ button,
     linear-gradient(225deg, transparent 0 44%, #ff9b54 44% 48%, transparent 48%),
     #0b0f1d;
 }
+
+.pixel-art--doodle {
+  background:
+    linear-gradient(180deg, #7fd8ff 0 62%, #4d8a3f 62% 68%, transparent 68%),
+    linear-gradient(90deg, transparent 0 18%, #87ff65 18% 36%, transparent 36% 58%, #87ff65 58% 76%, transparent 76%),
+    radial-gradient(circle at 42% 32%, #ffd166 0 10px, transparent 11px),
+    #101221;
+}
+
+.pixel-art--helicopter {
+  background:
+    linear-gradient(90deg, #0b0f1d 0 12%, #ff9b54 12% 14%, #0b0f1d 14% 58%, #ff9b54 58% 60%, #0b0f1d 60% 100%),
+    linear-gradient(180deg, transparent 0 26%, #71e3ff 26% 34%, transparent 34% 46%, #71e3ff 46% 54%, transparent 54% 66%, #71e3ff 66% 74%, transparent 74%),
+    linear-gradient(90deg, transparent 0 24%, #ffd166 24% 46%, transparent 46%),
+    #101221;
+}
+
+.pixel-art--crossy {
+  background:
+    linear-gradient(180deg, #6fd46d 0 24%, #4a4743 24% 44%, #71e3ff 44% 66%, #6fd46d 66% 100%),
+    linear-gradient(90deg, transparent 0 20%, #ffd166 20% 24%, transparent 24% 44%, #ff5fb2 44% 48%, transparent 48% 68%, #ffd166 68% 72%, transparent 72%),
+    #101221;
+}
+
+.pixel-art--runner {
+  background:
+    linear-gradient(180deg, #0e1730 0 70%, #ff9b54 70% 76%, #4a2f18 76% 100%),
+    linear-gradient(90deg, transparent 0 18%, #71e3ff 18% 28%, transparent 28% 46%, #ff5fb2 46% 56%, transparent 56% 74%, #87ff65 74% 84%, transparent 84%),
+    #101221;
+}
+
+.recent-scores {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 10px;
+  color: var(--muted);
+}
+
+.recent-scores li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 12px;
+}
+
+.recent-scores em {
+  grid-column: 1 / -1;
+  font-style: normal;
+  color: var(--accent-blue);
+  font-size: 0.9rem;
+}

@@ -1,12 +1,12 @@
 ﻿# Retro Arcade
 
-Statische Browser-Spieleseite mit Arcade-Styling, optionalem Nutzerkonto, persistenter Scoreboard-Schicht auf Cloudflare Pages Functions + D1 und acht spielbaren Klassikern.
+Statische Browser-Spieleseite mit Arcade-Styling, optionalem Nutzerkonto, persistenter Scoreboard-Schicht auf Cloudflare Pages Functions + D1 und zwölf spielbaren Klassikern.
 
 ## Lokal starten
 
-1. Im Ordner `C:\Dokumente\Code Projekte\Classic Snake` ein Terminal oeffnen.
-2. Fuer reine Frontend-Ansicht weiterhin `python -m http.server` ausfuehren.
-3. Fuer Login, Sessions und Scoreboards brauchst du Cloudflare Pages Functions + D1 im Deploy oder eine lokale Wrangler-Session.
+1. Im Ordner `C:\Dokumente\Code Projekte\Classic Snake` ein Terminal öffnen.
+2. Für die reine Frontend-Ansicht `python -m http.server` ausführen.
+3. Für Login, Sessions und persistente Scoreboards brauchst du den Cloudflare-Pages-Deploy mit D1-Binding.
 
 ## Spiele
 
@@ -18,39 +18,41 @@ Statische Browser-Spieleseite mit Arcade-Styling, optionalem Nutzerkonto, persis
 - Asteroids
 - Pac-Man
 - Pinball
+- Doodle Jump
+- Helicopter Game
+- Crossy Road
+- Runner Game
 
-## Backend fuer Accounts und Scoreboards
+## Backend für Accounts und Scoreboards
 
-Neue Bausteine:
-
-- `functions/api/*.js` fuer Registrierung, Login, Logout, aktuelle Session und Scoreboard-APIs
-- `migrations/0001_auth_and_scores.sql` fuer die D1-Tabellen
-- `wrangler.toml` als Grundlage fuer Pages Functions + D1 Binding
-- `account.html` fuer Registrierung und Login
-- `src/site-ui.js` fuer Header-Status, Scoreboard-Widgets und Account-Handling
+- `functions/api/*.js` für Registrierung, Login, Logout, Session-Status, Highscore-Feed und Score-Submit
+- `migrations/0001_auth_and_scores.sql` für die D1-Tabellen
+- `wrangler.toml` für Pages Functions und das D1-Binding `DB`
+- `account.html` für Registrierung und Login
+- `src/site-ui.js` für Header-Status, optionale Accounts, Scoreboard-Widgets und die Startseiten-Highscores
 
 ## D1 / Cloudflare Setup
 
 1. D1-Datenbank erstellen.
-2. Die SQL aus `migrations/0001_auth_and_scores.sql` ausfuehren.
+2. Die SQL aus `migrations/0001_auth_and_scores.sql` ausführen.
 3. In `wrangler.toml` die echte `database_id` eintragen.
-4. Sicherstellen, dass in Cloudflare Pages das D1 Binding `DB` gesetzt ist.
+4. In Cloudflare Pages das D1-Binding `DB` setzen.
+5. Danach neu deployen.
 
 ## Tests
 
 - `node src/snake-game.test.js`
-- `node --input-type=module -e "await import('./src/pong-game.js'); await import('./src/breakout-game.js'); await import('./src/tetris-game.js'); await import('./src/space-invaders-game.js'); await import('./src/asteroids-game.js'); await import('./src/pac-man-game.js'); await import('./src/pinball-game.js'); await import('./src/snake-game.js'); console.log('imports ok')"`
+- `node --input-type=module -e "await import('./src/snake-game.js'); await import('./src/pong-game.js'); await import('./src/breakout-game.js'); await import('./src/tetris-game.js'); await import('./src/space-invaders-game.js'); await import('./src/asteroids-game.js'); await import('./src/pac-man-game.js'); await import('./src/pinball-game.js'); await import('./src/doodle-jump-game.js'); await import('./src/helicopter-game.js'); await import('./src/crossy-road-game.js'); await import('./src/runner-game.js'); await import('./src/site-ui.js'); console.log('imports ok')"`
 
 ## Monitoring
 
-Fuer Besucherzahlen und Pageviews eignet sich Cloudflare Web Analytics gut. Fuer tiefere Events wie Sessiondauer, Registrierungen oder Score-Submits ist Workers Analytics Engine oder Zaraz sinnvoller, weil du damit eigene Events sauber messen kannst.
+Für Besucherzahlen und Pageviews eignet sich Cloudflare Web Analytics gut. Für tiefere Events wie Sitzungsdauer, Registrierungen, gespeicherte Scores oder Spielstarts ist Workers Analytics Engine oder Zaraz sinnvoller.
 
-## Manuell pruefen
+## Manuell prüfen
 
-- Startseite zeigt alle acht Spiele im Arcade-Look.
-- Account-Seite laedt und Formulare reagieren.
-- Scoreboards werden auf Spieleseiten geladen.
-- Pac-Man ist langsamer, nutzt ein groesseres Labyrinth und hat Power-Kugeln.
-- Asteroids hat ein klareres Raumschiff.
-- Pinball ist spielbar.
-- Favicon wird geladen.
+- Startseite zeigt zwölf Spiele und den Bereich `Letzte Highscores`.
+- Registrierung und Login funktionieren weiterhin.
+- Gäste können ohne Login spielen.
+- Eingeloggte Nutzer können Scores speichern.
+- Die neuen Spiele laden und reagieren auf Tastatur- sowie On-Screen-Steuerung.
+- Die Texte zeigen Umlaute korrekt an.

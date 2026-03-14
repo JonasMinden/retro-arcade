@@ -1,20 +1,54 @@
 ﻿import { json, normalizeGameKey } from "./_utils.js";
 
+const gameLabels = {
+  snake: "Snake",
+  pong: "Pong",
+  breakout: "Breakout",
+  tetris: "Tetris",
+  "space-invaders": "Space Invaders",
+  asteroids: "Asteroids",
+  "pac-man": "Pac-Man",
+  pinball: "Pinball",
+  "doodle-jump": "Doodle Jump",
+  helicopter: "Helicopter Game",
+  "crossy-road": "Crossy Road",
+  runner: "Runner Game",
+};
+
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
-  const game = normalizeGameKey(url.searchParams.get("game") || "");
-  if (!game) {
-    return json({ error: "Unknown game." }, 400);
+  const game = url.searchParams.get("game");
+
+  if (game) {
+    const normalized = normalizeGameKey(game);
+    if (!normalized) {
+      return json({ error: "Unknown game." }, 400);
+    }
+
+    const { results } = await context.env.DB.prepare(
+      `SELECT scores.score, scores.created_at, users.username
+       FROM scores
+       JOIN users ON users.id = scores.user_id
+       WHERE scores.game_key = ?1
+       ORDER BY scores.score DESC, scores.created_at ASC
+       LIMIT 10`
+    ).bind(normalized).all();
+
+    return json({ game: normalized, entries: results });
   }
 
   const { results } = await context.env.DB.prepare(
-    `SELECT scores.score, scores.created_at, users.username
+    `SELECT scores.score, scores.created_at, scores.game_key, users.username
      FROM scores
      JOIN users ON users.id = scores.user_id
-     WHERE scores.game_key = ?1
-     ORDER BY scores.score DESC, scores.created_at ASC
-     LIMIT 10`
-  ).bind(game).all();
+     ORDER BY scores.created_at DESC
+     LIMIT 12`
+  ).all();
 
-  return json({ game, entries: results });
+  return json({
+    entries: results.map((entry) => ({
+      ...entry,
+      game_name: gameLabels[entry.game_key] || entry.game_key,
+    })),
+  });
 }

@@ -6,7 +6,7 @@
     <title>Retro Arcade</title>
     <meta
       name="description"
-      content="Retro Arcade ist eine Arcade-Spielesammlung mit Snake, Pong, Breakout, Tetris, Space Invaders, Asteroids, Pac-Man und Pinball im Browser."
+      content="Retro Arcade ist eine Arcade-Spielesammlung mit Snake, Pong, Breakout, Tetris, Space Invaders, Asteroids, Pac-Man, Pinball und weiteren Browser-Klassikern."
     >
     <link rel="stylesheet" href="./styles.css">
   </head>
@@ -32,7 +32,7 @@
           <p class="eyebrow">Full Floor</p>
           <h1>Die Arcade-Halle ist jetzt komplett offen.</h1>
           <p class="lead">
-            Von Snake und Pong bis zu Space Invaders, Asteroids, Pac-Man und Pinball:
+            Von Snake und Pong bis zu Space Invaders, Asteroids, Pac-Man, Pinball und der neuen Jump-&-Run-Welle:
             jede Maschine hat ihren eigenen Cabinet-Look, aber dieselbe Seite als Zuhause.
           </p>
           <div class="hero__actions">
@@ -42,41 +42,63 @@
         </div>
       </section>
 
+      <section class="section section--split">
+        <article class="card arcade-copy">
+          <p class="eyebrow">Spielerbereich</p>
+          <h2>Optionaler Login für Scoreboards</h2>
+          <p>
+            Gastspiel bleibt komplett offen. Wenn du willst, kannst du dir jetzt einen Nutzernamen
+            sichern und Scores serverseitig in den jeweiligen Hall-of-Fame-Listen speichern.
+          </p>
+        </article>
+        <section class="card recent-scores-card">
+          <p class="eyebrow">Letzte Highscores</p>
+          <h2>Frische Einträge aus der Spielhalle</h2>
+          <ol class="recent-scores" data-recent-scores>
+            <li>Lädt …</li>
+          </ol>
+        </section>
+      </section>
+
       <section id="games" class="section">
         <div class="section__heading">
           <div>
             <p class="eyebrow">Playable Line-up</p>
             <h2>Alle Automaten</h2>
           </div>
-          <p class="section__text">Acht spielbare Seiten, optionale Accounts und persistente Scoreboards fuer eingeloggte Nutzer.</p>
+          <p class="section__text">Zwölf spielbare Seiten, optionale Accounts und persistente Scoreboards für eingeloggte Nutzer.</p>
         </div>
 
         <div class="game-grid">
           <article class="game-card game-card--active"><div><p class="game-card__tag">Arcade</p><h3>Classic Snake</h3><div class="game-card__art pixel-art--snake"></div><p>Grid-Bewegung, Food-Jagd und der klassische Score-Loop.</p></div><div class="game-card__footer"><a class="button-link" href="./games/snake/index.html">Spielen</a></div></article>
           <article class="game-card game-card--active"><div><p class="game-card__tag">Arcade</p><h3>Pong</h3><div class="game-card__art pixel-art--pong"></div><p>Du gegen die Maschine in einer klaren Neon-Arena.</p></div><div class="game-card__footer"><a class="button-link" href="./games/pong/index.html">Spielen</a></div></article>
-          <article class="game-card game-card--active"><div><p class="game-card__tag">Arcade</p><h3>Breakout</h3><div class="game-card__art pixel-art--breakout"></div><p>Zerstoere Brick-Reihen und halte den Ball im Spiel.</p></div><div class="game-card__footer"><a class="button-link" href="./games/breakout/index.html">Spielen</a></div></article>
+          <article class="game-card game-card--active"><div><p class="game-card__tag">Arcade</p><h3>Breakout</h3><div class="game-card__art pixel-art--breakout"></div><p>Zerstöre Brick-Reihen und halte den Ball im Spiel.</p></div><div class="game-card__footer"><a class="button-link" href="./games/breakout/index.html">Spielen</a></div></article>
           <article class="game-card game-card--active"><div><p class="game-card__tag">Arcade</p><h3>Tetris</h3><div class="game-card__art pixel-art--tetris"></div><p>Drehende Steine, klare Reihen und steigendes Tempo.</p></div><div class="game-card__footer"><a class="button-link" href="./games/tetris/index.html">Spielen</a></div></article>
-          <article class="game-card game-card--active"><div><p class="game-card__tag">Arcade</p><h3>Space Invaders</h3><div class="game-card__art pixel-art--invaders"></div><p>Alien-Wellen, Laserschuesse und die Verteidigung der Bodenlinie.</p></div><div class="game-card__footer"><a class="button-link" href="./games/space-invaders/index.html">Spielen</a></div></article>
+          <article class="game-card game-card--active"><div><p class="game-card__tag">Arcade</p><h3>Space Invaders</h3><div class="game-card__art pixel-art--invaders"></div><p>Alien-Wellen, Laserschüsse und die Verteidigung der Bodenlinie.</p></div><div class="game-card__footer"><a class="button-link" href="./games/space-invaders/index.html">Spielen</a></div></article>
           <article class="game-card game-card--active"><div><p class="game-card__tag">Arcade</p><h3>Asteroids</h3><div class="game-card__art pixel-art--asteroids"></div><p>Schub, Drehung und Asteroiden-Splits im offenen Raum.</p></div><div class="game-card__footer"><a class="button-link" href="./games/asteroids/index.html">Spielen</a></div></article>
-          <article class="game-card game-card--active"><div><p class="game-card__tag">Arcade</p><h3>Pac-Man</h3><div class="game-card__art pixel-art--pacman"></div><p>Groesseres Labyrinth, Pellets, Power-Kugeln und Geisterjagd.</p></div><div class="game-card__footer"><a class="button-link" href="./games/pac-man/index.html">Spielen</a></div></article>
+          <article class="game-card game-card--active"><div><p class="game-card__tag">Arcade</p><h3>Pac-Man</h3><div class="game-card__art pixel-art--pacman"></div><p>Größeres Labyrinth, Pellets, Power-Kugeln und Geisterjagd.</p></div><div class="game-card__footer"><a class="button-link" href="./games/pac-man/index.html">Spielen</a></div></article>
           <article class="game-card game-card--active"><div><p class="game-card__tag">Arcade</p><h3>Pinball</h3><div class="game-card__art pixel-art--pinball"></div><p>Flipper, Bumper und schnelle Reaktionen auf dem Silver-Ball-Tisch.</p></div><div class="game-card__footer"><a class="button-link" href="./games/pinball/index.html">Spielen</a></div></article>
+          <article class="game-card game-card--active"><div><p class="game-card__tag">Neu</p><h3>Doodle Jump</h3><div class="game-card__art pixel-art--doodle"></div><p>Federnde Plattformen, Gegner und Münzen auf dem Weg in den Neon-Himmel.</p></div><div class="game-card__footer"><a class="button-link" href="./games/doodle-jump/index.html">Spielen</a></div></article>
+          <article class="game-card game-card--active"><div><p class="game-card__tag">Neu</p><h3>Helicopter Game</h3><div class="game-card__art pixel-art--helicopter"></div><p>Halte den Schub fein dosiert und überlebe den engen Tunnel.</p></div><div class="game-card__footer"><a class="button-link" href="./games/helicopter/index.html">Spielen</a></div></article>
+          <article class="game-card game-card--active"><div><p class="game-card__tag">Neu</p><h3>Crossy Road</h3><div class="game-card__art pixel-art--crossy"></div><p>Springe über Straßen und Flüsse, ohne von Autos oder Wasser erwischt zu werden.</p></div><div class="game-card__footer"><a class="button-link" href="./games/crossy-road/index.html">Spielen</a></div></article>
+          <article class="game-card game-card--active"><div><p class="game-card__tag">Neu</p><h3>Runner Game</h3><div class="game-card__art pixel-art--runner"></div><p>Springe, rutsche und sammle Tempo in einem endlosen Sprint durch die Nacht.</p></div><div class="game-card__footer"><a class="button-link" href="./games/runner/index.html">Spielen</a></div></article>
         </div>
       </section>
 
       <section class="section section--split">
         <article class="card arcade-copy">
-          <p class="eyebrow">Player Layer</p>
-          <h2>Optionaler Login fuer Scoreboards</h2>
+          <p class="eyebrow">Arcade-Floor</p>
+          <h2>Die Sammlung wächst weiter</h2>
           <p>
-            Gastspiel bleibt komplett offen. Wenn du willst, kannst du dir jetzt einen Nutzernamen
-            sichern und Scores serverseitig in den jeweiligen Hall-of-Fame-Listen speichern.
+            Alle Spiele hängen an derselben Konto- und Scoreboard-Schicht. Die Highscores bleiben also
+            auch erhalten, wenn wir weitere Maschinen und Patches hinzufügen.
           </p>
         </article>
-        <aside class="ad-slot" data-ad-slot-key="homeSidebar" aria-label="Werbeflaeche Platzhalter"><p class="ad-slot__label">Ad Slot</p><p>Fuer spaetere Werbeeinbindung vorbereitet, ohne bereits Anzeigen zu laden.</p></aside>
+        <aside class="ad-slot" data-ad-slot-key="homeSidebar" aria-label="Werbefläche Platzhalter"><p class="ad-slot__label">Ad Slot</p><p>Für spätere Werbeeinbindung vorbereitet, ohne bereits Anzeigen zu laden.</p></aside>
       </section>
     </main>
 
-    <footer class="site-footer"><div class="shell site-footer__inner"><p>Retro Arcade</p><nav class="site-nav" aria-label="Footer Navigation"><a href="./games/space-invaders/index.html">Space Invaders</a><a href="./games/asteroids/index.html">Asteroids</a><a href="./games/pac-man/index.html">Pac-Man</a><a href="./games/pinball/index.html">Pinball</a></nav></div></footer>
+    <footer class="site-footer"><div class="shell site-footer__inner"><p>Retro Arcade</p><nav class="site-nav" aria-label="Footer Navigation"><a href="./games/doodle-jump/index.html">Doodle Jump</a><a href="./games/helicopter/index.html">Helicopter</a><a href="./games/crossy-road/index.html">Crossy Road</a><a href="./games/runner/index.html">Runner</a></nav></div></footer>
 
     <script type="module" src="./src/ads.js"></script>
   </body>

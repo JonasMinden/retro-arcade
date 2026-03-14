@@ -7,6 +7,10 @@
   asteroids: { title: "Asteroids Scores", selector: "#score" },
   "pac-man": { title: "Pac-Man Scores", selector: "#score" },
   pinball: { title: "Pinball Scores", selector: "#score" },
+  "doodle-jump": { title: "Doodle Jump Scores", selector: "#score" },
+  helicopter: { title: "Helicopter Scores", selector: "#score" },
+  "crossy-road": { title: "Crossy Road Scores", selector: "#score" },
+  runner: { title: "Runner Scores", selector: "#score" },
 };
 
 let currentUser = null;
@@ -72,7 +76,7 @@ function scoreboardMarkup(title) {
     <section class="scoreboard-panel">
       <p class="eyebrow">Scoreboard</p>
       <h2>${title}</h2>
-      <p class="scoreboard-panel__meta">Top 10 dieser Maschine. Gastspiel bleibt ohne Login moeglich.</p>
+      <p class="scoreboard-panel__meta">Top 10 dieser Maschine. Gastspiel bleibt ohne Login möglich.</p>
       <div class="scoreboard-panel__current">Aktueller Score: <strong data-current-score>0</strong></div>
       <button class="pixel-button" type="button" data-submit-score>Score speichern</button>
       <p class="form-message" data-submit-message></p>
@@ -84,7 +88,7 @@ function scoreboardMarkup(title) {
 function renderScoreList(container, entries) {
   container.innerHTML = "";
   if (!entries.length) {
-    container.innerHTML = "<li>Noch keine Eintraege.</li>";
+    container.innerHTML = "<li>Noch keine Einträge.</li>";
     return;
   }
   entries.forEach((entry) => {
@@ -92,6 +96,28 @@ function renderScoreList(container, entries) {
     item.innerHTML = `<span>${entry.username}</span><strong>${entry.score}</strong>`;
     container.appendChild(item);
   });
+}
+
+function renderRecentScores(entries) {
+  const container = document.querySelector("[data-recent-scores]");
+  if (!container) return;
+  container.innerHTML = "";
+  if (!entries.length) {
+    container.innerHTML = "<li>Noch keine Highscores gespeichert.</li>";
+    return;
+  }
+  entries.forEach((entry) => {
+    const item = document.createElement("li");
+    item.innerHTML = `<span>${entry.username}</span><strong>${entry.score}</strong><em>${entry.game_name}</em>`;
+    container.appendChild(item);
+  });
+}
+
+async function loadRecentScores() {
+  const container = document.querySelector("[data-recent-scores]");
+  if (!container) return;
+  const data = await api("/api/scoreboard");
+  renderRecentScores(data.entries || []);
 }
 
 async function loadScoreboard(gameKey, panel) {
@@ -119,13 +145,14 @@ async function refreshScoreboard() {
         return;
       }
       if (!Number.isFinite(score) || score <= 0) {
-        message.textContent = "Spiele erst eine Runde mit gueltigem Score.";
+        message.textContent = "Spiele erst eine Runde mit gültigem Score.";
         return;
       }
       try {
         await api("/api/submit-score", { method: "POST", body: JSON.stringify({ game: gameKey, score }) });
         message.textContent = "Score gespeichert.";
         loadScoreboard(gameKey, panel);
+        loadRecentScores();
       } catch (error) {
         message.textContent = error.message;
       }
@@ -192,7 +219,7 @@ export async function initSiteUi() {
   ensureFavicon();
   await initUser();
   bindAccountForms();
-  await refreshScoreboard();
+  await Promise.all([refreshScoreboard(), loadRecentScores()]);
   const gameKey = detectGameKey();
   if (gameKey && GAME_CONFIG[gameKey]) {
     window.setInterval(() => {
