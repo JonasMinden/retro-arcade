@@ -478,3 +478,80 @@ button,
   .site-nav { gap: 8px; }
   .arcade-stats { grid-template-columns: 1fr; }
 }
+
+.auth-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-nav__name {
+  color: var(--accent-yellow);
+}
+
+.auth-nav__button {
+  border: 1px solid rgba(255, 95, 178, 0.22);
+  background: linear-gradient(180deg, #27192e, #161121);
+  color: var(--text);
+  padding: 6px 10px;
+}
+
+.auth-form {
+  display: grid;
+  gap: 12px;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+}
+
+.auth-form input {
+  border: 1px solid rgba(111, 247, 221, 0.22);
+  background: #0c1020;
+  color: var(--text);
+  padding: 10px 12px;
+  font: inherit;
+}
+
+.form-message {
+  margin: 0;
+  min-height: 20px;
+  color: var(--accent-yellow);
+}
+
+.scoreboard-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.scoreboard-panel__meta,
+.scoreboard-panel__current {
+  margin: 0;
+  color: var(--muted);
+}
+
+.scoreboard-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.scoreboard-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pixel-art--pinball {
+  background:
+    radial-gradient(circle at 32% 26%, #ff5fb2 0 10px, transparent 11px),
+    radial-gradient(circle at 68% 32%, #71e3ff 0 10px, transparent 11px),
+    radial-gradient(circle at 50% 52%, #ffd166 0 12px, transparent 13px),
+    linear-gradient(135deg, transparent 0 44%, #ff9b54 44% 48%, transparent 48%),
+    linear-gradient(225deg, transparent 0 44%, #ff9b54 44% 48%, transparent 48%),
+    #0b0f1d;
+}

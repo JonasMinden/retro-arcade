@@ -1,48 +1,56 @@
 ﻿# Retro Arcade
 
-Kleine statische Browser-Spieleseite mit einheitlichem Arcade-Styling und sieben spielbaren Klassikern: Snake, Pong, Breakout, Tetris, Space Invaders, Asteroids und Pac-Man.
+Statische Browser-Spieleseite mit Arcade-Styling, optionalem Nutzerkonto, persistenter Scoreboard-Schicht auf Cloudflare Pages Functions + D1 und acht spielbaren Klassikern.
 
 ## Lokal starten
 
 1. Im Ordner `C:\Dokumente\Code Projekte\Classic Snake` ein Terminal oeffnen.
-2. `python -m http.server` ausfuehren.
-3. `http://localhost:8000/` im Browser oeffnen.
+2. Fuer reine Frontend-Ansicht weiterhin `python -m http.server` ausfuehren.
+3. Fuer Login, Sessions und Scoreboards brauchst du Cloudflare Pages Functions + D1 im Deploy oder eine lokale Wrangler-Session.
 
-## Struktur
+## Spiele
 
-- `index.html` ist die Startseite der kompletten Arcade-Sammlung.
-- `games/snake/index.html`, `games/pong/index.html`, `games/breakout/index.html`, `games/tetris/index.html`, `games/space-invaders/index.html`, `games/asteroids/index.html` und `games/pac-man/index.html` sind die spielbaren Seiten.
-- `styles.css` enthaelt das gemeinsame Arcade-Styling mit Cabinet-Look, Pixel-Art-Karten und Spielseiten-Rahmen.
-- `src/*.js` enthaelt die Spielmodule fuer alle sieben Titel sowie die Werbevorbereitung.
-- `privacy.html` und `impressum.html` enthalten die Rechtsseiten.
+- Snake
+- Pong
+- Breakout
+- Tetris
+- Space Invaders
+- Asteroids
+- Pac-Man
+- Pinball
+
+## Backend fuer Accounts und Scoreboards
+
+Neue Bausteine:
+
+- `functions/api/*.js` fuer Registrierung, Login, Logout, aktuelle Session und Scoreboard-APIs
+- `migrations/0001_auth_and_scores.sql` fuer die D1-Tabellen
+- `wrangler.toml` als Grundlage fuer Pages Functions + D1 Binding
+- `account.html` fuer Registrierung und Login
+- `src/site-ui.js` fuer Header-Status, Scoreboard-Widgets und Account-Handling
+
+## D1 / Cloudflare Setup
+
+1. D1-Datenbank erstellen.
+2. Die SQL aus `migrations/0001_auth_and_scores.sql` ausfuehren.
+3. In `wrangler.toml` die echte `database_id` eintragen.
+4. Sicherstellen, dass in Cloudflare Pages das D1 Binding `DB` gesetzt ist.
 
 ## Tests
 
 - `node src/snake-game.test.js`
-- `node --input-type=module -e "await import('./src/pong-game.js'); await import('./src/breakout-game.js'); await import('./src/tetris-game.js'); await import('./src/space-invaders-game.js'); await import('./src/asteroids-game.js'); await import('./src/pac-man-game.js'); await import('./src/snake-game.js'); console.log('imports ok')"`
+- `node --input-type=module -e "await import('./src/pong-game.js'); await import('./src/breakout-game.js'); await import('./src/tetris-game.js'); await import('./src/space-invaders-game.js'); await import('./src/asteroids-game.js'); await import('./src/pac-man-game.js'); await import('./src/pinball-game.js'); await import('./src/snake-game.js'); console.log('imports ok')"`
 
-## Cloudflare Pages
+## Monitoring
 
-Fuer dieses Projekt brauchst du keinen Build-Schritt:
-
-- Build command: leer lassen
-- Build output directory: `.`
-
-## Werbung spaeter aktivieren
-
-1. AdSense-Konto freischalten lassen.
-2. In `src/site-config.js` `adsenseClient` eintragen.
-3. `enableAds` auf `true` setzen.
-4. Pro Slot eine echte AdSense Slot-ID in `adSlots` eintragen.
-5. `ads.txt` mit der echten Google-Zeile ersetzen.
-6. Vor Aktivierung fuer EEA/UK/Schweiz ein passendes Consent-Setup einbauen.
+Fuer Besucherzahlen und Pageviews eignet sich Cloudflare Web Analytics gut. Fuer tiefere Events wie Sessiondauer, Registrierungen oder Score-Submits ist Workers Analytics Engine oder Zaraz sinnvoller, weil du damit eigene Events sauber messen kannst.
 
 ## Manuell pruefen
 
-- Startseite zeigt alle sieben Spiele im Arcade-Look.
-- Snake, Pong, Breakout, Tetris, Space Invaders, Asteroids und Pac-Man sind erreichbar.
-- Wave-1-Steuerung funktioniert weiter.
-- Space Invaders: Bewegung, Schiessen, Lebensverlust und neue Wellen funktionieren.
-- Asteroids: Drehen, Schub, Schuesse und Asteroiden-Splits funktionieren.
-- Pac-Man: Pellets zaehlen runter, Geister bewegen sich, Leben werden bei Treffer abgezogen.
-- Impressum, Datenschutz und Werbe-Platzhalter sind weiterhin erreichbar.
+- Startseite zeigt alle acht Spiele im Arcade-Look.
+- Account-Seite laedt und Formulare reagieren.
+- Scoreboards werden auf Spieleseiten geladen.
+- Pac-Man ist langsamer, nutzt ein groesseres Labyrinth und hat Power-Kugeln.
+- Asteroids hat ein klareres Raumschiff.
+- Pinball ist spielbar.
+- Favicon wird geladen.

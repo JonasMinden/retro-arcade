@@ -1,0 +1,9 @@
+﻿name = "retro-arcade"
+compatibility_date = "2026-03-14"
+pages_build_output_dir = "."
+
+# Add your real D1 database details before deploying the auth/scoreboard backend.
+[[d1_databases]]
+binding = "DB"
+database_name = "retro_arcade"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"

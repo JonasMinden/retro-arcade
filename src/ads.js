@@ -1,4 +1,7 @@
-﻿import { siteConfig } from "./site-config.js";
+﻿import { initSiteUi } from "./site-ui.js";
+import { siteConfig } from "./site-config.js";
+
+initSiteUi();
 
 function loadAdSense(client) {
   if (!client || document.querySelector('script[data-adsense-loader="true"]')) {

@@ -34,7 +34,7 @@ if (canvas) {
   }
 
   function createShip() {
-    return { x: state.width / 2, y: state.height / 2, vx: 0, vy: 0, angle: -Math.PI / 2, radius: 14 };
+    return { x: state.width / 2, y: state.height / 2, vx: 0, vy: 0, angle: -Math.PI / 2, radius: 16 };
   }
 
   function createAsteroid(size, x = Math.random() * state.width, y = Math.random() * state.height) {
@@ -55,7 +55,7 @@ if (canvas) {
     state.asteroids = [];
     for (let i = 0; i < state.wave + 2; i += 1) {
       let asteroid = createAsteroid(3);
-      while (Math.hypot(asteroid.x - state.width / 2, asteroid.y - state.height / 2) < 90) {
+      while (Math.hypot(asteroid.x - state.width / 2, asteroid.y - state.height / 2) < 100) {
         asteroid = createAsteroid(3);
       }
       state.asteroids.push(asteroid);
@@ -174,18 +174,27 @@ if (canvas) {
     ctx.strokeStyle = "#71e3ff";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(0, -16);
-    ctx.lineTo(12, 12);
-    ctx.lineTo(0, 6);
-    ctx.lineTo(-12, 12);
+    ctx.moveTo(0, -20);
+    ctx.lineTo(13, 10);
+    ctx.lineTo(6, 7);
+    ctx.lineTo(4, 16);
+    ctx.lineTo(-4, 16);
+    ctx.lineTo(-6, 7);
+    ctx.lineTo(-13, 10);
     ctx.closePath();
     ctx.stroke();
+    ctx.fillStyle = "rgba(113,227,255,0.12)";
+    ctx.fill();
+    ctx.fillStyle = "#ffd166";
+    ctx.beginPath();
+    ctx.arc(0, -2, 4, 0, Math.PI * 2);
+    ctx.fill();
     if (state.thrusting) {
       ctx.strokeStyle = "#ff9b54";
       ctx.beginPath();
-      ctx.moveTo(-5, 11);
-      ctx.lineTo(0, 22);
-      ctx.lineTo(5, 11);
+      ctx.moveTo(-5, 15);
+      ctx.lineTo(0, 28);
+      ctx.lineTo(5, 15);
       ctx.stroke();
     }
     ctx.restore();
@@ -205,11 +214,8 @@ if (canvas) {
         const radius = asteroid.radius * (0.8 + (i % 2) * 0.28);
         const px = Math.cos(angle) * radius;
         const py = Math.sin(angle) * radius;
-        if (i === 0) {
-          ctx.moveTo(px, py);
-        } else {
-          ctx.lineTo(px, py);
-        }
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
       }
       ctx.closePath();
       ctx.stroke();

@@ -1,0 +1,75 @@
+﻿<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Account | Retro Arcade</title>
+    <meta name="description" content="Registrierung und Login fuer Retro Arcade, optional fuer Scoreboards und gespeicherte Spielestaende.">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell site-header__inner">
+        <a class="brand" href="./index.html">Retro Arcade</a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <a href="./index.html">Start</a>
+          <a href="./account.html" aria-current="page">Account</a>
+          <a href="./impressum.html">Impressum</a>
+          <a href="./privacy.html">Datenschutz</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell page arcade-page">
+      <section class="marquee">
+        <div class="marquee__lights" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <p class="kicker">Player Account</p>
+        <h1>Optional anmelden, weiter frei spielen.</h1>
+        <p>Ohne Login kannst du alle Spiele weiter direkt starten. Mit Account bekommst du gespeicherte Scores und Scoreboards unter deinem Nutzernamen.</p>
+      </section>
+
+      <section class="arcade-layout">
+        <article class="arcade-frame">
+          <div class="arcade-frame__screen">
+            <div class="arcade-header">
+              <div>
+                <p class="eyebrow">Register</p>
+                <h2 class="arcade-panel-title">Neuen Spielernamen anlegen</h2>
+              </div>
+            </div>
+            <form id="register-form" class="auth-form">
+              <label>Nutzername<input id="register-username" name="username" minlength="3" maxlength="20" autocomplete="username" required></label>
+              <label>Passwort<input id="register-password" name="password" type="password" minlength="8" autocomplete="new-password" required></label>
+              <button class="pixel-button" type="submit">Registrieren</button>
+              <p id="register-message" class="form-message"></p>
+            </form>
+          </div>
+        </article>
+
+        <aside class="arcade-sidebar">
+          <section>
+            <p class="eyebrow">Login</p>
+            <form id="login-form" class="auth-form">
+              <label>Nutzername<input id="login-username" name="username" autocomplete="username" required></label>
+              <label>Passwort<input id="login-password" name="password" type="password" autocomplete="current-password" required></label>
+              <button class="pixel-button" type="submit">Einloggen</button>
+              <p id="login-message" class="form-message"></p>
+            </form>
+          </section>
+          <section>
+            <p class="eyebrow">Hinweis</p>
+            <ul class="game-rules">
+              <li>Jeder Nutzername darf nur einmal existieren.</li>
+              <li>Gastspiel bleibt weiter moeglich.</li>
+              <li>Scores werden nur fuer eingeloggte Nutzer dauerhaft gespeichert.</li>
+            </ul>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div class="shell site-footer__inner"><p>Retro Arcade</p><nav class="site-nav" aria-label="Footer Navigation"><a href="./index.html">Start</a><a href="./privacy.html">Datenschutz</a></nav></div></footer>
+
+    <script type="module" src="./src/ads.js"></script>
+  </body>
+</html>
