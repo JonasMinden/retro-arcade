@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   color-scheme: light;
   --bg: #f4f1e8;
   --panel: #fffdf7;
@@ -108,6 +108,12 @@ code {
 .card p,
 .prose-card p {
   color: var(--muted);
+}
+
+.callout {
+  padding: 14px 16px;
+  border: 2px solid rgba(47, 59, 47, 0.16);
+  background: #f7f2e4;
 }
 
 .hero {
