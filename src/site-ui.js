@@ -13,6 +13,7 @@
   runner: { title: "Runner Scores", selector: "#score" },
 };
 
+const COOKIE_CONSENT_KEY = "retro_arcade_cookie_consent_v1";
 let currentUser = null;
 
 function rootAsset(path) {
@@ -46,6 +47,94 @@ async function api(url, options = {}) {
     throw new Error(data.error || "Request failed.");
   }
   return data;
+}
+
+function readCookieConsent() {
+  try {
+    const raw = window.localStorage.getItem(COOKIE_CONSENT_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function applyCookieConsent(consent) {
+  if (!consent) return;
+  document.documentElement.dataset.cookieConsent = JSON.stringify(consent);
+  window.retroArcadeConsent = consent;
+}
+
+function saveCookieConsent(consent) {
+  window.localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(consent));
+  applyCookieConsent(consent);
+}
+
+function createCookieBanner() {
+  if (document.querySelector("[data-cookie-banner]")) return;
+
+  const banner = document.createElement("section");
+  banner.className = "cookie-banner";
+  banner.dataset.cookieBanner = "true";
+  banner.innerHTML = `
+    <div class="cookie-banner__header">
+      <p class="eyebrow">Cookie-Einstellungen</p>
+      <h2>Deine Auswahl für Cookies und ähnliche Speicherungen</h2>
+      <p>Notwendige Cookies sind für Login und sichere Sessions aktiv. Analyse und Marketing bleiben aus, bis du sie erlaubst.</p>
+    </div>
+    <div class="cookie-banner__grid">
+      <label class="cookie-banner__option">
+        <strong><input type="checkbox" checked disabled>Notwendig</strong>
+        <span>Erforderlich für Sessions, Login und grundlegende Funktionen.</span>
+      </label>
+      <label class="cookie-banner__option">
+        <strong><input type="checkbox" data-consent-analytics>Analyse</strong>
+        <span>Für spätere Reichweitenmessung und Nutzungsstatistiken.</span>
+      </label>
+      <label class="cookie-banner__option">
+        <strong><input type="checkbox" data-consent-marketing>Marketing</strong>
+        <span>Für spätere Werbeeinbindung und personalisierte Ad-Auslieferung.</span>
+      </label>
+    </div>
+    <div class="cookie-banner__actions">
+      <button class="pixel-button pixel-button--secondary" type="button" data-consent-necessary>Nur notwendige</button>
+      <button class="pixel-button" type="button" data-consent-save>Auswahl speichern</button>
+      <button class="pixel-button" type="button" data-consent-all>Alle akzeptieren</button>
+    </div>
+  `;
+  document.body.appendChild(banner);
+
+  const analytics = banner.querySelector("[data-consent-analytics]");
+  const marketing = banner.querySelector("[data-consent-marketing]");
+  const existing = readCookieConsent();
+  if (existing) {
+    analytics.checked = Boolean(existing.analytics);
+    marketing.checked = Boolean(existing.marketing);
+    banner.hidden = true;
+    applyCookieConsent(existing);
+  }
+
+  banner.querySelector("[data-consent-necessary]").addEventListener("click", () => {
+    saveCookieConsent({ necessary: true, analytics: false, marketing: false, updatedAt: new Date().toISOString() });
+    banner.hidden = true;
+  });
+
+  banner.querySelector("[data-consent-save]").addEventListener("click", () => {
+    saveCookieConsent({
+      necessary: true,
+      analytics: analytics.checked,
+      marketing: marketing.checked,
+      updatedAt: new Date().toISOString(),
+    });
+    banner.hidden = true;
+  });
+
+  banner.querySelector("[data-consent-all]").addEventListener("click", () => {
+    analytics.checked = true;
+    marketing.checked = true;
+    saveCookieConsent({ necessary: true, analytics: true, marketing: true, updatedAt: new Date().toISOString() });
+    banner.hidden = true;
+  });
 }
 
 function updateHeaderAuth() {
@@ -99,23 +188,24 @@ function renderScoreList(container, entries) {
 }
 
 function renderRecentScores(entries) {
-  const container = document.querySelector("[data-recent-scores]");
-  if (!container) return;
-  container.innerHTML = "";
-  if (!entries.length) {
-    container.innerHTML = "<li>Noch keine Highscores gespeichert.</li>";
-    return;
-  }
-  entries.forEach((entry) => {
-    const item = document.createElement("li");
-    item.innerHTML = `<span>${entry.username}</span><strong>${entry.score}</strong><em>${entry.game_name}</em>`;
-    container.appendChild(item);
+  const containers = document.querySelectorAll("[data-recent-scores]");
+  if (!containers.length) return;
+  containers.forEach((container) => {
+    container.innerHTML = "";
+    if (!entries.length) {
+      container.innerHTML = "<li>Noch keine Highscores gespeichert.</li>";
+      return;
+    }
+    entries.forEach((entry) => {
+      const item = document.createElement("li");
+      item.innerHTML = `<span>${entry.username}</span><strong>${entry.score}</strong><em>${entry.game_name}</em>`;
+      container.appendChild(item);
+    });
   });
 }
 
 async function loadRecentScores() {
-  const container = document.querySelector("[data-recent-scores]");
-  if (!container) return;
+  if (!document.querySelector("[data-recent-scores]")) return;
   const data = await api("/api/scoreboard");
   renderRecentScores(data.entries || []);
 }
@@ -217,6 +307,7 @@ async function initUser() {
 export async function initSiteUi() {
   if (typeof document === "undefined" || typeof window === "undefined") return;
   ensureFavicon();
+  createCookieBanner();
   await initUser();
   bindAccountForms();
   await Promise.all([refreshScoreboard(), loadRecentScores()]);

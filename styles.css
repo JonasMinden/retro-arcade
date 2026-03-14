@@ -48,6 +48,7 @@ a { color: inherit; }
 code { font-family: Consolas, "Courier New", monospace; }
 .shell { width: min(100% - 32px, 1160px); margin: 0 auto; }
 .page { padding: 28px 0 52px; }
+.home-page { padding-right: 320px; }
 .site-header,
 .site-footer {
   position: relative;
@@ -445,8 +446,15 @@ button,
   .game-grid,
   .game-layout,
   .arcade-layout { grid-template-columns: 1fr; }
+  .home-page { padding-right: 0; }
+  .floating-scores {
+    position: static;
+    width: auto;
+    margin: 0 16px 24px;
+  }
   .section__heading { align-items: start; flex-direction: column; }
   .arcade-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cookie-banner__grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
   .panel,
@@ -477,6 +485,13 @@ button,
   .button-link { flex: 1; }
   .site-nav { gap: 8px; }
   .arcade-stats { grid-template-columns: 1fr; }
+  .cookie-banner {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    padding: 16px;
+  }
+  .cookie-banner__actions { width: 100%; }
 }
 
 .auth-nav {
@@ -605,4 +620,93 @@ button,
   font-style: normal;
   color: var(--accent-blue);
   font-size: 0.9rem;
+}
+
+.floating-scores {
+  position: fixed;
+  top: 120px;
+  right: 24px;
+  width: min(280px, calc(100vw - 32px));
+  padding: 20px;
+  background: linear-gradient(180deg, rgba(28, 20, 9, 0.96), rgba(17, 12, 6, 0.96));
+  border: 2px solid rgba(255, 209, 102, 0.78);
+  box-shadow:
+    0 0 0 1px rgba(255, 209, 102, 0.24),
+    0 0 26px rgba(255, 209, 102, 0.34),
+    0 18px 45px rgba(0, 0, 0, 0.45);
+  z-index: 20;
+}
+
+.floating-scores::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.floating-scores h2 {
+  margin-bottom: 14px;
+  text-shadow: 0 0 12px rgba(255, 209, 102, 0.28);
+}
+
+.cookie-banner {
+  position: fixed;
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  display: grid;
+  gap: 14px;
+  padding: 18px 20px;
+  background: linear-gradient(180deg, rgba(13, 16, 29, 0.98), rgba(8, 10, 18, 0.98));
+  border: 1px solid rgba(111, 247, 221, 0.3);
+  box-shadow: var(--shadow);
+  z-index: 40;
+}
+
+.cookie-banner[hidden] {
+  display: none;
+}
+
+.cookie-banner__header {
+  display: grid;
+  gap: 6px;
+}
+
+.cookie-banner__header p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.cookie-banner__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.cookie-banner__option {
+  padding: 12px;
+  border: 1px solid rgba(111, 247, 221, 0.16);
+  background: rgba(111, 247, 221, 0.05);
+}
+
+.cookie-banner__option strong,
+.cookie-banner__option span {
+  display: block;
+}
+
+.cookie-banner__option span {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.cookie-banner__option input {
+  margin-right: 8px;
+}
+
+.cookie-banner__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }

@@ -10,62 +10,94 @@ if (canvas) {
   const controlButtons = Array.from(document.querySelectorAll("[data-move]"));
 
   const grid = { cols: 7, rows: 10, cell: 56 };
-  const types = ["grass", "road", "water"];
+  const startLocalRow = 8;
+  const scrollAnchor = 4;
+  const rowCache = new Map();
   const state = {
     score: 0,
-    rowsAdvanced: 0,
+    bestProgress: 0,
     paused: false,
     gameOver: false,
     lastTime: 0,
-    baseRowIndex: 0,
-    player: { x: 3, y: 8 },
-    rows: [],
+    scroll: 0,
+    player: { x: 3, y: startLocalRow },
   };
 
   function randomChoice(list) {
     return list[Math.floor(Math.random() * list.length)];
   }
 
+  function random(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function makeGrassRow(index) {
+    const shrubCount = index < 2 ? 0 : Math.random() < 0.5 ? 1 : 2;
+    return {
+      index,
+      type: "grass",
+      shrubs: Array.from({ length: shrubCount }, () => Math.floor(Math.random() * grid.cols)),
+    };
+  }
+
+  function makeRoadRow(index) {
+    const speed = (Math.random() < 0.5 ? -1 : 1) * random(1.1, 1.9);
+    const cars = Array.from({ length: Math.random() < 0.5 ? 2 : 3 }, (_, lane) => ({
+      x: Math.random() * (grid.cols + 2) - 1,
+      length: Math.random() < 0.55 ? 1.4 : 2.2,
+      color: lane % 2 ? "#ff5fb2" : "#ffd166",
+    }));
+    return { index, type: "road", speed, cars };
+  }
+
+  function makeWaterRow(index) {
+    const speed = (Math.random() < 0.5 ? -1 : 1) * random(0.45, 0.85);
+    const logs = Array.from({ length: 3 + Math.floor(Math.random() * 2) }, () => ({
+      x: Math.random() * (grid.cols + 3) - 1.5,
+      length: 2 + Math.random() * 1.2,
+    }));
+    return { index, type: "water", speed, logs };
+  }
+
   function makeRow(index) {
-    const nearStart = index < 3;
-    const type = nearStart ? "grass" : randomChoice(types);
-    if (type === "road") {
-      const speed = (Math.random() < 0.5 ? -1 : 1) * (1.2 + Math.random() * 1.6);
-      const length = Math.random() < 0.6 ? 2 : 1;
-      const cars = [];
-      for (let lane = 0; lane < 3; lane += 1) {
-        cars.push({ x: Math.random() * grid.cols, length, color: lane % 2 ? "#ff5fb2" : "#ffd166" });
-      }
-      return { index, type, speed, cars };
+    if (index <= 2) return makeGrassRow(index);
+    if (index <= 7) return Math.random() < 0.65 ? makeRoadRow(index) : makeGrassRow(index);
+    if (index <= 13) return randomChoice([makeGrassRow(index), makeRoadRow(index), makeRoadRow(index)]);
+    return randomChoice([makeGrassRow(index), makeRoadRow(index), makeRoadRow(index), makeWaterRow(index)]);
+  }
+
+  function getRow(index) {
+    if (index <= 0) return makeGrassRow(0);
+    if (!rowCache.has(index)) {
+      rowCache.set(index, makeRow(index));
     }
-    if (type === "water") {
-      const speed = (Math.random() < 0.5 ? -1 : 1) * (0.75 + Math.random() * 1.2);
-      const logs = [];
-      for (let lane = 0; lane < 2; lane += 1) {
-        logs.push({ x: Math.random() * grid.cols, length: 2 + Math.floor(Math.random() * 2) });
-      }
-      return { index, type, speed, logs };
-    }
-    const shrubs = Array.from({ length: Math.random() < 0.4 ? 1 : 2 }, () => Math.floor(Math.random() * grid.cols));
-    return { index, type, shrubs };
+    return rowCache.get(index);
+  }
+
+  function visibleAbsoluteRow(localY) {
+    return Math.max(0, state.scroll + (startLocalRow - localY));
+  }
+
+  function currentProgress() {
+    return Math.max(0, state.scroll + (startLocalRow - state.player.y));
   }
 
   function syncHud() {
     scoreElement.textContent = String(state.score);
-    rowsElement.textContent = String(state.rowsAdvanced);
+    rowsElement.textContent = String(state.bestProgress);
   }
 
   function resetGame() {
+    rowCache.clear();
     state.score = 0;
-    state.rowsAdvanced = 0;
+    state.bestProgress = 0;
     state.paused = false;
     state.gameOver = false;
     state.lastTime = 0;
-    state.baseRowIndex = 0;
-    state.player = { x: 3, y: 8 };
+    state.scroll = 0;
+    state.player = { x: 3, y: startLocalRow };
     pauseButton.textContent = "Pause";
     statusElement.textContent = "Ready";
-    state.rows = Array.from({ length: 22 }, (_, idx) => makeRow(idx));
     syncHud();
   }
 
@@ -76,113 +108,112 @@ if (canvas) {
     statusElement.textContent = state.paused ? "Pause" : "Hop";
   }
 
-  function visibleRowIndex(localY) {
-    return state.baseRowIndex + localY;
-  }
+  function updateVisibleRows(delta) {
+    const seen = new Set();
+    for (let localY = 0; localY < grid.rows; localY += 1) {
+      const row = getRow(visibleAbsoluteRow(localY));
+      if (seen.has(row.index)) continue;
+      seen.add(row.index);
 
-  function getRowByIndex(index) {
-    while (state.rows.at(-1).index < index) {
-      state.rows.push(makeRow(state.rows.at(-1).index + 1));
+      if (row.type === "road") {
+        row.cars.forEach((car) => {
+          car.x += row.speed * delta;
+          if (row.speed > 0 && car.x > grid.cols + 1.5) car.x = -car.length - Math.random() * 2;
+          if (row.speed < 0 && car.x + car.length < -1.5) car.x = grid.cols + Math.random() * 2;
+        });
+      }
+
+      if (row.type === "water") {
+        row.logs.forEach((log) => {
+          log.x += row.speed * delta;
+          if (row.speed > 0 && log.x > grid.cols + 1.5) log.x = -log.length - Math.random() * 2;
+          if (row.speed < 0 && log.x + log.length < -1.5) log.x = grid.cols + Math.random() * 2;
+        });
+      }
     }
-    state.rows = state.rows.filter((row) => row.index >= state.baseRowIndex - 2);
-    return state.rows.find((row) => row.index === index);
   }
 
   function update(delta) {
     if (state.paused || state.gameOver) return;
 
-    state.rows.forEach((row) => {
-      if (row.type === "road") {
-        row.cars.forEach((car) => {
-          car.x += row.speed * delta;
-          if (row.speed > 0 && car.x > grid.cols + 1) car.x = -car.length - Math.random() * 2;
-          if (row.speed < 0 && car.x + car.length < -1) car.x = grid.cols + Math.random() * 2;
-        });
-      }
-      if (row.type === "water") {
-        row.logs.forEach((log) => {
-          log.x += row.speed * delta;
-          if (row.speed > 0 && log.x > grid.cols + 2) log.x = -log.length - Math.random() * 2;
-          if (row.speed < 0 && log.x + log.length < -2) log.x = grid.cols + Math.random() * 2;
-        });
-      }
-    });
+    updateVisibleRows(delta);
 
-    const row = getRowByIndex(visibleRowIndex(state.player.y));
-    if (row.type === "road") {
-      const hit = row.cars.some((car) => state.player.x + 0.2 < car.x + car.length && state.player.x + 0.8 > car.x);
+    const playerRow = getRow(visibleAbsoluteRow(state.player.y));
+    if (playerRow.type === "road") {
+      const hit = playerRow.cars.some((car) => state.player.x + 0.22 < car.x + car.length && state.player.x + 0.78 > car.x);
       if (hit) {
         state.gameOver = true;
         statusElement.textContent = "Crash";
       }
     }
-    if (row.type === "water") {
-      const log = row.logs.find((item) => state.player.x + 0.2 < item.x + item.length && state.player.x + 0.8 > item.x);
+
+    if (playerRow.type === "water") {
+      const log = playerRow.logs.find((item) => state.player.x + 0.22 < item.x + item.length && state.player.x + 0.78 > item.x);
       if (!log) {
         state.gameOver = true;
         statusElement.textContent = "Splash";
       } else {
-        state.player.x += row.speed * delta;
-        if (state.player.x < 0 || state.player.x > grid.cols - 1) {
+        state.player.x += playerRow.speed * delta * 0.85;
+        if (state.player.x < -0.15 || state.player.x > grid.cols - 0.85) {
           state.gameOver = true;
           statusElement.textContent = "Splash";
         }
       }
     }
+  }
 
+  function awardProgress() {
+    const progress = currentProgress();
+    if (progress > state.bestProgress) {
+      state.bestProgress = progress;
+      state.score = progress * 25;
+    }
     syncHud();
   }
 
   function movePlayer(dx, dy) {
     if (state.paused || state.gameOver) return;
-    const targetX = Math.max(0, Math.min(grid.cols - 1, state.player.x + dx));
-    const targetY = Math.max(0, Math.min(grid.rows - 1, state.player.y + dy));
-    const targetRow = getRowByIndex(visibleRowIndex(targetY));
-    if (targetRow.type === "grass" && targetRow.shrubs?.includes(targetX)) {
+
+    const nextX = Math.max(0, Math.min(grid.cols - 1, Math.round(state.player.x + dx)));
+    let nextY = Math.max(0, Math.min(grid.rows - 1, state.player.y + dy));
+
+    if (dy < 0 && state.player.y <= scrollAnchor) {
+      state.scroll += 1;
+      nextY = scrollAnchor;
+    }
+
+    const targetRow = getRow(visibleAbsoluteRow(nextY));
+    if (targetRow.type === "grass" && targetRow.shrubs?.includes(nextX)) {
       return;
     }
 
-    state.player.x = targetX;
-    state.player.y = targetY;
+    state.player.x = nextX;
+    state.player.y = nextY;
     statusElement.textContent = "Hop";
-
-    if (dy === -1 && targetY <= 3) {
-      state.baseRowIndex += 1;
-      state.player.y += 1;
-      state.rowsAdvanced += 1;
-      state.score += 25;
-    } else if (dy === -1) {
-      state.rowsAdvanced += 1;
-      state.score += 25;
-    } else if (dy === 1 && state.rowsAdvanced > 0) {
-      state.rowsAdvanced = Math.max(0, state.rowsAdvanced - 1);
-    }
-
-    syncHud();
+    awardProgress();
   }
 
-  function drawRow(row, localY) {
-    const y = localY * grid.cell;
-    if (row.type === "grass") {
-      ctx.fillStyle = localY % 2 ? "#2d693f" : "#36734a";
-      ctx.fillRect(0, y, canvas.width, grid.cell);
-      ctx.fillStyle = "#1b4d30";
-      (row.shrubs || []).forEach((shrub) => {
-        ctx.fillRect(shrub * grid.cell + 18, y + 16, 20, 20);
-      });
-      return;
-    }
-    if (row.type === "road") {
-      ctx.fillStyle = "#2f333d";
-      ctx.fillRect(0, y, canvas.width, grid.cell);
-      ctx.fillStyle = "#f7f5ff";
-      for (let x = 18; x < canvas.width; x += 74) ctx.fillRect(x, y + grid.cell / 2 - 2, 30, 4);
-      row.cars.forEach((car) => {
-        ctx.fillStyle = car.color;
-        ctx.fillRect(car.x * grid.cell + 4, y + 10, car.length * grid.cell - 8, grid.cell - 20);
-      });
-      return;
-    }
+  function drawGrass(row, y) {
+    ctx.fillStyle = row.index % 2 ? "#2d693f" : "#36734a";
+    ctx.fillRect(0, y, canvas.width, grid.cell);
+    ctx.fillStyle = "#1b4d30";
+    (row.shrubs || []).forEach((shrub) => {
+      ctx.fillRect(shrub * grid.cell + 18, y + 16, 20, 20);
+    });
+  }
+
+  function drawRoad(row, y) {
+    ctx.fillStyle = "#2f333d";
+    ctx.fillRect(0, y, canvas.width, grid.cell);
+    ctx.fillStyle = "#f7f5ff";
+    for (let x = 18; x < canvas.width; x += 74) ctx.fillRect(x, y + grid.cell / 2 - 2, 30, 4);
+    row.cars.forEach((car) => {
+      ctx.fillStyle = car.color;
+      ctx.fillRect(car.x * grid.cell + 4, y + 10, car.length * grid.cell - 8, grid.cell - 20);
+    });
+  }
+
+  function drawWater(row, y) {
     ctx.fillStyle = "#164866";
     ctx.fillRect(0, y, canvas.width, grid.cell);
     ctx.fillStyle = "rgba(255,255,255,0.08)";
@@ -223,7 +254,11 @@ if (canvas) {
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let localY = 0; localY < grid.rows; localY += 1) {
-      drawRow(getRowByIndex(visibleRowIndex(localY)), localY);
+      const row = getRow(visibleAbsoluteRow(localY));
+      const y = localY * grid.cell;
+      if (row.type === "grass") drawGrass(row, y);
+      if (row.type === "road") drawRoad(row, y);
+      if (row.type === "water") drawWater(row, y);
     }
     drawPlayer();
     drawOverlay();

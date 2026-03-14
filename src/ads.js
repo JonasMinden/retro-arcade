@@ -23,7 +23,7 @@ function createAdUnit(slotId, client) {
   ad.dataset.adClient = client;
   ad.dataset.adSlot = slotId;
   ad.dataset.adFormat = "auto";
-  ad.dataset.fulleidthResponsive = "true";
+  ad.dataset.fullWidthResponsive = "true";
   return ad;
 }
 
@@ -31,7 +31,7 @@ function renderPreparedNotice(element) {
   element.classList.add("ad-slot--placeholder");
   element.innerHTML = `
     <p class="ad-slot__label">Ad Slot</p>
-    <p>eerbefläche vorbereitet. Aktivierung erfolgt nach AdSense-Freigabe und Consent-Setup.</p>
+    <p>Werbefläche vorbereitet. Aktivierung erfolgt nach AdSense-Freigabe und Consent-Setup.</p>
   `;
 }
 
@@ -59,6 +59,12 @@ function initAds() {
     return;
   }
 
+  const consent = window.retroArcadeConsent || null;
+  if (!consent || !consent.marketing) {
+    adElements.forEach((element) => renderPreparedNotice(element));
+    return;
+  }
+
   if (!siteConfig.enableAds || !siteConfig.adsenseClient) {
     adElements.forEach((element) => renderPreparedNotice(element));
     return;
@@ -75,5 +81,3 @@ function initAds() {
 if (typeof document !== "undefined") {
   initAds();
 }
-
-
