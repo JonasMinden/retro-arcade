@@ -106,6 +106,7 @@ if (canvas) {
   function update(delta) {
     if (state.paused || state.gameOver) return;
 
+    state.safeTimer = Math.max(0, state.safeTimer - delta);
     state.speed = Math.min(0.56, state.speed + delta * 0.009);
     state.score += Math.round(18 + state.speed * 45);
     scoreElement.textContent = String(state.score);
@@ -314,5 +315,6 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
 
 

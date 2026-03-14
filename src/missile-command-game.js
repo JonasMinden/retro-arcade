@@ -83,7 +83,7 @@ if (canvas) {
     }
     const targets = [...aliveCities.map((city) => city.x), ...siloPositions];
     const tx = targets[Math.floor(Math.random() * targets.length)];
-    state.enemyMissiles.push({ x: 32 + Math.random() * (canvas.width - 64), y: -20, tx, ty: 372, speed: 48 + state.wave * 7 });
+    state.enemyMissiles.push({ x: 32 + Math.random() * (canvas.width - 64), y: -24, tx, ty: 372, speed: 48 + state.wave * 7, radius: 10 + Math.random() * 6, spin: Math.random() * Math.PI * 2 });
     state.missilesLeft -= 1;
   }
 
@@ -149,7 +149,7 @@ if (canvas) {
           missile.destroyed = true;
           state.score += 25;
           scoreElement.textContent = String(state.score);
-          triggerExplosion(missile.x, missile.y, 26);
+          triggerExplosion(missile.x, missile.y, 30);
         }
       });
     });
@@ -291,3 +291,4 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
