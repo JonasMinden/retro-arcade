@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Classic Snake | Retro Arcade</title>
+    <meta
+      name="description"
+      content="Spiele Classic Snake direkt im Browser. Steuere mit Pfeiltasten oder WASD und knacke deinen Highscore."
+    >
+    <link rel="stylesheet" href="../../styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell site-header__inner">
+        <a class="brand" href="../../index.html">Retro Arcade</a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <a href="../../index.html">Start</a>
+          <a href="./index.html" aria-current="page">Snake</a>
+          <a href="../../privacy.html">Datenschutz</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell page">
+      <section class="section section--split game-layout">
+        <article class="panel">
+          <div class="panel__header">
+            <div>
+              <p class="eyebrow">Arcade</p>
+              <h1>Classic Snake</h1>
+            </div>
+            <div class="scoreboard" aria-live="polite">
+              <span>Score</span>
+              <strong id="score">0</strong>
+            </div>
+          </div>
+
+          <div class="status-row">
+            <p id="status">Press any arrow key or WASD to start.</p>
+            <div class="actions">
+              <button id="pause-button" type="button">Pause</button>
+              <button id="restart-button" type="button">Restart</button>
+            </div>
+          </div>
+
+          <div
+            id="game-board"
+            class="board"
+            role="grid"
+            aria-label="Snake game board"
+          ></div>
+
+          <div class="controls" aria-label="On-screen controls">
+            <button class="control control--up" data-direction="up" type="button">Up</button>
+            <div class="controls__middle">
+              <button class="control" data-direction="left" type="button">Left</button>
+              <button class="control" data-direction="down" type="button">Down</button>
+              <button class="control" data-direction="right" type="button">Right</button>
+            </div>
+          </div>
+
+          <p class="hint">
+            Use arrow keys or WASD to steer. Press Space to pause or resume.
+          </p>
+        </article>
+
+        <aside class="game-sidebar">
+          <section class="card">
+            <p class="eyebrow">So spielt man</p>
+            <h2>Kurz und klassisch</h2>
+            <p>
+              Sammle das Futter ein, werde laenger und vermeide Waende oder den eigenen Koerper.
+            </p>
+          </section>
+
+          <section class="ad-slot" aria-label="Werbeflaeche Platzhalter">
+            <p class="ad-slot__label">Ad Slot</p>
+            <p>Hier kann spaeter ein responsiver Werbeblock fuer Spieleseiten sitzen.</p>
+          </section>
+
+          <section class="card">
+            <p class="eyebrow">Mehr Spiele</p>
+            <h2>Weitere Titel folgen</h2>
+            <p>
+              Von hier aus koennen spaeter neue Spiele derselben Sammlung verlinkt werden.
+            </p>
+            <a class="button-link button-link--secondary" href="../../index.html">Zurueck zur Startseite</a>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell site-footer__inner">
+        <p>Retro Arcade</p>
+        <nav class="site-nav" aria-label="Footer Navigation">
+          <a href="../../index.html">Start</a>
+          <a href="../../privacy.html">Datenschutz</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script type="module" src="../../src/snake-game.js"></script>
+  </body>
+</html>

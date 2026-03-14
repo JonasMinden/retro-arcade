@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Retro Arcade</title>
+    <meta
+      name="description"
+      content="Retro Arcade ist eine kleine Browser-Spielesammlung. Starte mit Classic Snake und erweitere die Seite spaeter um weitere Games."
+    >
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell site-header__inner">
+        <a class="brand" href="./index.html">Retro Arcade</a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <a href="./index.html">Start</a>
+          <a href="./games/snake/index.html">Snake</a>
+          <a href="./privacy.html">Datenschutz</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell page">
+      <section class="hero card">
+        <div class="hero__copy">
+          <p class="eyebrow">Browser Games</p>
+          <h1>Eine kleine Spieleseite, die wir spaeter erweitern koennen.</h1>
+          <p class="lead">
+            Classic Snake ist der erste Baustein. Die Struktur ist jetzt so angelegt,
+            dass weitere Spiele nur noch als neue Unterseiten und Karten dazu kommen.
+          </p>
+          <div class="hero__actions">
+            <a class="button-link" href="./games/snake/index.html">Snake spielen</a>
+            <a class="button-link button-link--secondary" href="#games">Zur Uebersicht</a>
+          </div>
+        </div>
+        <aside class="ad-slot" aria-label="Werbeflaeche Platzhalter">
+          <p class="ad-slot__label">Ad Slot</p>
+          <p>Hier kann spaeter ein 300 x 250 Werbeblock eingebunden werden.</p>
+        </aside>
+      </section>
+
+      <section id="games" class="section">
+        <div class="section__heading">
+          <div>
+            <p class="eyebrow">Spiele</p>
+            <h2>Aktuelle Sammlung</h2>
+          </div>
+          <p class="section__text">Neue Games kannst du als weitere Ordner unter <code>games/</code> anlegen.</p>
+        </div>
+
+        <div class="game-grid">
+          <article class="game-card">
+            <div class="game-card__body">
+              <p class="game-card__tag">Arcade</p>
+              <h3>Classic Snake</h3>
+              <p>Das erste Spiel der Sammlung: gridbasiert, schnell, direkt und mobil bedienbar.</p>
+            </div>
+            <div class="game-card__footer">
+              <a class="button-link" href="./games/snake/index.html">Jetzt spielen</a>
+            </div>
+          </article>
+
+          <article class="game-card game-card--placeholder">
+            <div class="game-card__body">
+              <p class="game-card__tag">Demnaechst</p>
+              <h3>Naechstes Spiel</h3>
+              <p>Hier ist Platz fuer ein zweites Browser-Game, damit die Seite organisch waechst.</p>
+            </div>
+            <div class="game-card__footer">
+              <span class="muted-note">Slot fuer spaetere Erweiterung</span>
+            </div>
+          </article>
+
+          <article class="game-card game-card--placeholder">
+            <div class="game-card__body">
+              <p class="game-card__tag">Demnaechst</p>
+              <h3>Noch ein Titel</h3>
+              <p>Die Kartenstruktur bleibt gleich, egal ob Puzzle, Jump and Run oder Highscore-Spiel.</p>
+            </div>
+            <div class="game-card__footer">
+              <span class="muted-note">Weiteres Game-Modul</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section section--split">
+        <article class="card">
+          <p class="eyebrow">Monetarisierung</p>
+          <h2>Werbung spaeter sauber einfuegen</h2>
+          <p>
+            Die Seite hat bereits sichtbare Platzhalter fuer Anzeigen. Sobald du ein AdSense-Konto
+            hast, koennen wir die echten Werbe-Snippets in klar definierte Bereiche setzen.
+          </p>
+        </article>
+
+        <aside class="card">
+          <p class="eyebrow">Content</p>
+          <h2>Warum das besser ist</h2>
+          <p>
+            Statt nur einer einzelnen Spieleseite hast du jetzt eine kleine Startseite mit Sammlung,
+            Navigation und Raum fuer weitere Inhalte.
+          </p>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell site-footer__inner">
+        <p>Retro Arcade</p>
+        <nav class="site-nav" aria-label="Footer Navigation">
+          <a href="./games/snake/index.html">Snake</a>
+          <a href="./privacy.html">Datenschutz</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>
