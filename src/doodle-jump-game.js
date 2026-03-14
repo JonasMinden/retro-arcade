@@ -58,12 +58,13 @@ if (canvas) {
   function maybeMonster(platform) {
     if (Math.random() < 0.18) {
       return {
-        x: platform.x + platform.width / 2,
+        x: platform.x + platform.width / 2 - 11,
         y: platform.y - 18,
         width: 22,
         height: 16,
         direction: Math.random() < 0.5 ? -1 : 1,
         speed: random(18, 32),
+        defeated: false,
       };
     }
     return null;
@@ -140,7 +141,33 @@ if (canvas) {
 
     state.platforms = state.platforms.filter((platform) => platform.y < state.cameraOffset + state.height + 120);
     state.coinsOnMap = state.coinsOnMap.filter((coin) => !coin.taken && coin.y < state.cameraOffset + state.height + 120);
-    state.monsters = state.monsters.filter((monster) => monster.y < state.cameraOffset + state.height + 140);
+    state.monsters = state.monsters.filter((monster) => !monster.defeated && monster.y < state.cameraOffset + state.height + 140);
+  }
+
+  function handleMonsterBounce(monster, previousY) {
+    const playerBottom = state.player.y + state.player.height;
+    const previousBottom = previousY + state.player.height;
+    const monsterTop = monster.y;
+    const withinX = state.player.x + state.player.width > monster.x + 4 && state.player.x < monster.x + monster.width - 4;
+    const stomping = state.player.vy > 0 && previousBottom <= monsterTop + 4 && playerBottom >= monsterTop && withinX;
+
+    if (stomping) {
+      monster.defeated = true;
+      state.player.y = monsterTop - state.player.height;
+      state.player.vy = -760;
+      state.score += 85;
+      return;
+    }
+
+    const overlap =
+      state.player.x < monster.x + monster.width &&
+      state.player.x + state.player.width > monster.x &&
+      state.player.y < monster.y + monster.height &&
+      state.player.y + state.player.height > monster.y;
+
+    if (overlap) {
+      state.gameOver = true;
+    }
   }
 
   function update(delta) {
@@ -206,13 +233,8 @@ if (canvas) {
     });
 
     state.monsters.forEach((monster) => {
-      const overlap =
-        state.player.x < monster.x + monster.width &&
-        state.player.x + state.player.width > monster.x &&
-        state.player.y < monster.y + monster.height &&
-        state.player.y + state.player.height > monster.y;
-      if (overlap) {
-        state.gameOver = true;
+      if (!monster.defeated) {
+        handleMonsterBounce(monster, previousY);
       }
     });
 
@@ -284,6 +306,7 @@ if (canvas) {
 
   function drawMonsters() {
     state.monsters.forEach((monster) => {
+      if (monster.defeated) return;
       const y = toScreenY(monster.y);
       if (y < -30 || y > state.height + 30) return;
       ctx.fillStyle = "#ff5fb2";
@@ -291,6 +314,9 @@ if (canvas) {
       ctx.fillStyle = "#f7f5ff";
       ctx.fillRect(monster.x + 4, y + 4, 4, 4);
       ctx.fillRect(monster.x + monster.width - 8, y + 4, 4, 4);
+      ctx.fillStyle = "#101221";
+      ctx.fillRect(monster.x + 5, y + 5, 2, 2);
+      ctx.fillRect(monster.x + monster.width - 7, y + 5, 2, 2);
     });
   }
 
