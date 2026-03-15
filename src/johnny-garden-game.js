@@ -189,6 +189,38 @@ if (canvas) {
     spawnParticle(enemy.x, enemy.y, "rgba(210, 181, 118, 0.7)", 5);
   }
 
+  function chooseChaseVector(enemy) {
+    const dx = state.player.x - enemy.x;
+    const dy = state.player.y - enemy.y;
+    const primaryHorizontal = Math.abs(dx) >= Math.abs(dy);
+    const attempts = primaryHorizontal
+      ? [
+          [Math.sign(dx), 0],
+          [0, Math.sign(dy)],
+          [Math.sign(dx), Math.sign(dy)],
+          [0, -Math.sign(dy)],
+          [-Math.sign(dx), 0]
+        ]
+      : [
+          [0, Math.sign(dy)],
+          [Math.sign(dx), 0],
+          [Math.sign(dx), Math.sign(dy)],
+          [-Math.sign(dx), 0],
+          [0, -Math.sign(dy)]
+        ];
+
+    for (const [mx, my] of attempts) {
+      if (!mx && !my) continue;
+      const probeX = enemy.x + mx * 18;
+      const probeY = enemy.y + my * 18;
+      if (!collidesMaze(probeX, probeY, enemy.radius)) {
+        return { x: mx, y: my };
+      }
+    }
+
+    return { x: 0, y: 0 };
+  }
+
   function updateEnemies(delta) {
     state.enemies.forEach((enemy, index) => {
       enemy.think -= delta;
@@ -199,10 +231,14 @@ if (canvas) {
       const visible = canSeePlayer(enemy);
 
       if (enemy.think <= 0) {
-        enemy.think = 0.16 + Math.random() * 0.24;
+        enemy.think = 0.1 + Math.random() * 0.18;
+        const chase = chooseChaseVector(enemy);
         if (visible) {
           enemy.dirX = dx / distance;
           enemy.dirY = dy / distance;
+        } else if (chase.x || chase.y) {
+          enemy.dirX = chase.x;
+          enemy.dirY = chase.y;
         } else {
           const angle = Math.random() * Math.PI * 2;
           enemy.dirX = Math.cos(angle);
@@ -210,11 +246,11 @@ if (canvas) {
         }
       }
 
-      moveActor(enemy, enemy.dirX, enemy.dirY, delta * (visible ? 1 : 0.7));
+      moveActor(enemy, enemy.dirX, enemy.dirY, delta * (visible ? 1.08 : 0.92));
 
-      if (visible && enemy.throwCooldown <= 0) {
+      if ((visible || distance < 180) && enemy.throwCooldown <= 0) {
         throwRock(enemy);
-        enemy.throwCooldown = 1.3 - Math.min(0.45, state.wave * 0.06) + Math.random() * 0.4;
+        enemy.throwCooldown = 1.05 - Math.min(0.3, state.wave * 0.04) + Math.random() * 0.22;
       }
 
       if (Math.hypot(state.player.x - enemy.x, state.player.y - enemy.y) < state.player.radius + enemy.radius + 2) {

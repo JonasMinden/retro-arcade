@@ -207,6 +207,12 @@ if (canvas) {
     state.ball.vy -= 2 * dot * ny;
     state.ball.vx *= restitution;
     state.ball.vy *= restitution;
+    const outward = state.ball.vx * nx + state.ball.vy * ny;
+    if (outward < 150) {
+      const boost = 150 - outward;
+      state.ball.vx += nx * boost;
+      state.ball.vy += ny * boost;
+    }
   }
 
   function pushBallOut(collision, padding) {
@@ -218,7 +224,7 @@ if (canvas) {
     return { nx, ny };
   }
 
-  function collideCircle(circle, restitution = 0.92, score = 0, impulse = 0) {
+  function collideCircle(circle, restitution = 0.94, score = 0, impulse = 0) {
     const dx = state.ball.x - circle.x;
     const dy = state.ball.y - circle.y;
     const distance = Math.hypot(dx, dy);
@@ -267,7 +273,7 @@ if (canvas) {
       const distance = Math.hypot(collision.dx, collision.dy);
       const padding = ball.radius + 3;
       if (distance >= padding) return;
-      const push = pushBallOut(collision, padding);
+      const push = pushBallOut(collision, padding + 1.5);
       reflectVelocity(push.nx, push.ny, segment.restitution);
       emitHit(collision.x, collision.y, "rgba(255, 232, 190, 0.9)", 5);
       if (segment.sling) {
@@ -430,8 +436,8 @@ if (canvas) {
 
     handleWallCollisions();
     const pulse = performance.now() / 180;
-    state.bumpers.forEach((bumper, index) => collideCircle(bumper, 0.92, bumper.score, index < 3 ? 24 + Math.sin(pulse + index) * 6 : 14));
-    state.posts.forEach((post) => collideCircle(post, 0.84, 6, 4));
+    state.bumpers.forEach((bumper, index) => collideCircle(bumper, 0.95, bumper.score, index < 3 ? 32 + Math.sin(pulse + index) * 7 : 20));
+    state.posts.forEach((post) => collideCircle(post, 0.92, 6, 12));
     handleTargets(step);
     handleFlippers();
     stabilizeBall(step);
