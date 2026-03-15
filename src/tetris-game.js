@@ -10,7 +10,7 @@ if (canvas) {
   const controlButtons = Array.from(document.querySelectorAll("[data-move]"));
 
   const cols = 10;
-  const rows = 16;
+  const rows = 14;
   const cellSize = canvas.width / cols;
   const colors = {
     I: "#71e3ff",
@@ -91,103 +91,6 @@ if (canvas) {
     });
     return placedCells;
   }
-
-  function collapseBoard() {
-    for (let x = 0; x < cols; x += 1) {
-      const column = [];
-      for (let y = rows - 1; y >= 0; y -= 1) {
-        if (state.board[y][x]) column.push(state.board[y][x]);
-      }
-      for (let y = rows - 1; y >= 0; y -= 1) {
-        state.board[y][x] = column[rows - 1 - y] || null;
-      }
-    }
-  }
-
-  function clearLines() {
-    let cleared = 0;
-    state.board = state.board.filter((row) => {
-      const full = row.every(Boolean);
-      if (full) cleared += 1;
-      return !full;
-    });
-    while (state.board.length < rows) {
-      state.board.unshift(Array(cols).fill(null));
-    }
-    if (cleared > 0) {
-      state.lines += cleared;
-      state.score += [0, 100, 300, 500, 800][cleared] * state.level;
-    }
-    return cleared;
-  }
-
-  function clearColorClusters(placedCells) {
-    const queued = [];
-    const queuedKeys = new Set();
-    placedCells.forEach(([x, y]) => {
-      if (x < 0 || x >= cols || y < 0 || y >= rows) return;
-      if (!state.board[y][x]) return;
-      const key = `${x},${y}`;
-      if (!queuedKeys.has(key)) {
-        queued.push([x, y]);
-        queuedKeys.add(key);
-      }
-    });
-
-    if (!queued.length) return 0;
-
-    const visited = new Set();
-    const groups = [];
-    queued.forEach(([seedX, seedY]) => {
-      const originType = state.board[seedY][seedX];
-      if (!originType) return;
-      const seedKey = `${seedX},${seedY}`;
-      if (visited.has(seedKey)) return;
-
-      const stack = [[seedX, seedY]];
-      const group = [];
-      visited.add(seedKey);
-
-      while (stack.length) {
-        const [cx, cy] = stack.pop();
-        group.push([cx, cy]);
-        [
-          [1, 0],
-          [-1, 0],
-          [0, 1],
-          [0, -1],
-        ].forEach(([dx, dy]) => {
-          const nx = cx + dx;
-          const ny = cy + dy;
-          if (nx < 0 || nx >= cols || ny < 0 || ny >= rows) return;
-          if (state.board[ny][nx] !== originType) return;
-          const key = `${nx},${ny}`;
-          if (visited.has(key)) return;
-          visited.add(key);
-          stack.push([nx, ny]);
-        });
-      }
-
-      if (group.length >= 6) groups.push(group);
-    });
-
-    if (!groups.length) return 0;
-
-    let clearedBlocks = 0;
-    groups.forEach((group) => {
-      group.forEach(([x, y]) => {
-        if (state.board[y][x]) {
-          state.board[y][x] = null;
-          clearedBlocks += 1;
-        }
-      });
-    });
-
-    collapseBoard();
-    state.score += clearedBlocks * 18 * state.level;
-    return clearedBlocks;
-  }
-
   function syncHud() {
     state.level = 1 + Math.floor(state.lines / 10);
     scoreElement.textContent = String(state.score);
@@ -245,8 +148,7 @@ if (canvas) {
   }
 
   function lockPiece() {
-    const placedCells = mergePiece();
-    clearColorClusters(placedCells);
+    mergePiece();
     clearLines();
     syncHud();
     spawnPiece();
@@ -376,4 +278,6 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
+
 
