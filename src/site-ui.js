@@ -327,6 +327,15 @@ function renderScoreList(container, entries) {
   });
 }
 
+function formatRecentTimestamp(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return new Intl.DateTimeFormat('de-DE', {
+    dateStyle: 'short',
+    timeStyle: 'short'
+  }).format(date);
+}
 function renderRecentScores(entries) {
   const containers = document.querySelectorAll("[data-recent-scores]");
   if (!containers.length) return;
@@ -338,7 +347,8 @@ function renderRecentScores(entries) {
     }
     entries.forEach((entry) => {
       const item = document.createElement("li");
-      item.innerHTML = `<span>${entry.username}</span><strong>${entry.score}</strong><em>${entry.game_name}</em>`;
+      const timestamp = formatRecentTimestamp(entry.created_at);
+      item.innerHTML = `<span>${entry.username}</span><strong>${entry.score}</strong><em>${entry.game_name}</em>${timestamp ? `<small>${timestamp}</small>` : ""}`;
       container.appendChild(item);
     });
   });
@@ -436,6 +446,7 @@ async function initSiteUi() {
 }
 
 export { initSiteUi, detectGameKey };
+
 
 
 
