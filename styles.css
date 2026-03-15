@@ -758,6 +758,10 @@ button,
   color: var(--accent-yellow) !important;
 }
 
+.footer-legacy-link {
+  color: var(--accent-blue) !important;
+}
+
 .game-card__art {
   position: relative;
   overflow: auto;
@@ -1112,6 +1116,16 @@ button,
     linear-gradient(180deg, transparent 0 62%, rgba(255,255,255,0.18) 62% 64%, transparent 64% 68%, rgba(255,255,255,0.14) 68% 70%, transparent 70%);
 }
 
+.pixel-art--legacy-chicken {
+  background:
+    linear-gradient(180deg, #9fd7ff 0 58%, #7fcb6d 58% 100%),
+    radial-gradient(circle at 26% 30%, #f7f5ff 0 12px, transparent 13px),
+    radial-gradient(circle at 58% 42%, #f7f5ff 0 11px, transparent 12px),
+    radial-gradient(circle at 74% 22%, #ffd166 0 9px, transparent 10px),
+    linear-gradient(135deg, transparent 0 44%, #ff9b54 44% 50%, transparent 50%),
+    linear-gradient(180deg, transparent 0 68%, rgba(255,255,255,0.2) 68% 70%, transparent 70% 74%, rgba(255,255,255,0.15) 74% 76%, transparent 76%);
+}
+
 .pixel-art--head-soccer {
   background:
     linear-gradient(180deg, #10203d 0 68%, #2ccf8f 68% 100%),
@@ -1257,6 +1271,10 @@ button,
   height: 100%;
   background: linear-gradient(90deg, #87ff65, #ffd166, #ff6b6b);
   box-shadow: 0 0 14px rgba(135, 255, 101, 0.3);
+}
+
+.legacy-grid {
+  grid-template-columns: minmax(0, 360px);
 }
 
 @media (max-width: 860px) {

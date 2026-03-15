@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Legacy Games | Retro Arcade</title>
+    <meta
+      name="description"
+      content="Legacy Games sammelt alte, charmant kaputte oder einfach lustige Versionen aus der Retro Arcade mit eigenen Scoreboards."
+    >
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell site-header__inner">
+        <a class="brand" href="./index.html">Retro Arcade</a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <a href="./index.html">Start</a>
+          <a href="./impressum.html">Impressum</a>
+          <a href="./privacy.html">Datenschutz</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell page arcade-page">
+      <section class="marquee">
+        <div class="marquee__lights" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <p class="kicker">Backroom Cabinet</p>
+        <h1>Legacy Games</h1>
+        <p>Hier wohnen die alten Fassungen, die vielleicht nicht mehr die neuesten sind, aber immer noch herrlich Quatsch machen.</p>
+      </section>
+
+      <section class="section">
+        <div class="section__heading">
+          <div>
+            <p class="eyebrow">Archiv</p>
+            <h2>Frühere Versionen mit eigenem Scoreboard</h2>
+          </div>
+          <p class="section__text">Legacy-Scores laufen komplett getrennt, damit niemand Duck-Hunt-Rekorde mit dem alten Hühnerchaos verschmiert.</p>
+        </div>
+
+        <div class="game-grid legacy-grid">
+          <article class="game-card game-card--active">
+            <div>
+              <p class="game-card__tag">Legacy</p>
+              <h3>Chicken Hunt Classic</h3>
+              <div class="game-card__art pixel-art--legacy-chicken"></div>
+              <p>Die alte Moorhuhn-artige Version mit Timer, Bonuszielen und genau der Sorte Chaos, die niemand ordentlich archivieren wollte.</p>
+            </div>
+            <div class="game-card__footer">
+              <a class="button-link" href="./games/chicken-hunt-legacy/index.html">Spielen</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell site-footer__inner">
+        <p>Retro Arcade</p>
+        <nav class="site-nav" aria-label="Footer Navigation">
+          <a href="./patches.html">Patch-Notizen</a>
+          <a href="./legacy-games.html" aria-current="page">Legacy Games</a>
+          <a href="./games/chicken-hunt-legacy/index.html">Chicken Hunt Classic</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script type="module" src="./src/ads.js"></script>
+  </body>
+</html>

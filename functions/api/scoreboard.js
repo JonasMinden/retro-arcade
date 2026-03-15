@@ -1,4 +1,4 @@
-﻿import { json, normalizeGameKey } from "./_utils.js";
+import { json, normalizeGameKey } from "./_utils.js";
 
 const gameLabels = {
   snake: "Snake",
@@ -13,6 +13,16 @@ const gameLabels = {
   helicopter: "Helicopter Game",
   "crossy-road": "Crossy Road",
   runner: "Runner Game",
+  "missile-command": "Sky Shield",
+  centipede: "Centipede",
+  "astro-blaster": "Astro Blaster",
+  "tank-battle": "Panzerspiel",
+  "chicken-hunt": "Duck Hunt",
+  "chicken-hunt-legacy": "Chicken Hunt Classic",
+  "head-soccer": "Head Soccer",
+  "johnny-garden": "Johnny in the Garden",
+  "tower-defense": "Tower Defense",
+  "doctor-mario": "Doctor Mario",
 };
 
 export async function onRequestGet(context) {

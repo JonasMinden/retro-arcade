@@ -1,4 +1,4 @@
-﻿const encoder = new TextEncoder();
+const encoder = new TextEncoder();
 
 export function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
@@ -152,6 +152,7 @@ export function normalizeGameKey(game) {
     "astro-blaster",
     "tank-battle",
     "chicken-hunt",
+    "chicken-hunt-legacy",
     "head-soccer",
     "johnny-garden",
     "tower-defense",

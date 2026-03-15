@@ -17,6 +17,7 @@ const GAME_CONFIG = {
   "astro-blaster": { title: "Astro Blaster Scores", selector: "#score" },
   "tank-battle": { title: "Panzerspiel Scores", selector: "#score" },
   "chicken-hunt": { title: "Duck Hunt Scores", selector: "#score" },
+  "chicken-hunt-legacy": { title: "Chicken Hunt Classic Scores", selector: "#score" },
   "head-soccer": { title: "Head Soccer Scores", selector: "#home-score" },
   "johnny-garden": { title: "Johnny in the Garden Scores", selector: "#score" },
   "tower-defense": { title: "Tower Defense Scores", selector: "#score" },
@@ -100,21 +101,21 @@ function createCookieBanner() {
   banner.innerHTML = `
     <div class="cookie-banner__header">
       <p class="eyebrow">Cookie-Einstellungen</p>
-      <h2>Deine Auswahl für Cookies und ähnliche Speicherungen</h2>
-      <p>Notwendige Cookies sind für Login und sichere Sessions aktiv. Analyse und Marketing bleiben aus, bis du sie erlaubst.</p>
+      <h2>Deine Auswahl fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼r Cookies und ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤hnliche Speicherungen</h2>
+      <p>Notwendige Cookies sind fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼r Login und sichere Sessions aktiv. Analyse und Marketing bleiben aus, bis du sie erlaubst.</p>
     </div>
     <div class="cookie-banner__grid">
       <label class="cookie-banner__option">
         <strong><input type="checkbox" checked disabled>Notwendig</strong>
-        <span>Erforderlich für Sessions, Login und grundlegende Funktionen.</span>
+        <span>Erforderlich fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼r Sessions, Login und grundlegende Funktionen.</span>
       </label>
       <label class="cookie-banner__option">
         <strong><input type="checkbox" data-consent-analytics>Analyse</strong>
-        <span>Für spätere Reichweitenmessung und Nutzungsstatistiken.</span>
+        <span>FÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼r spÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤tere Reichweitenmessung und Nutzungsstatistiken.</span>
       </label>
       <label class="cookie-banner__option">
         <strong><input type="checkbox" data-consent-marketing>Marketing</strong>
-        <span>Für spätere Werbeeinbindung und personalisierte Ad-Auslieferung.</span>
+        <span>FÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼r spÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤tere Werbeeinbindung und personalisierte Ad-Auslieferung.</span>
       </label>
     </div>
     <div class="cookie-banner__actions">
@@ -176,12 +177,15 @@ function buildNavLink(href, label, className = "") {
 
 function syncFooterLegalLinks() {
   document.querySelectorAll(".site-footer .site-nav").forEach((nav) => {
+    nav.querySelectorAll("[data-legacy-link]").forEach((node) => node.remove());
     nav.querySelectorAll("[data-legal-link]").forEach((node) => node.remove());
+    const legacy = buildNavLink("/legacy-games.html", "Legacy Games", "footer-legacy-link");
     const legal = buildNavLink("/impressum.html", "Impressum", "footer-legal-link");
     const privacy = buildNavLink("/privacy.html", "Datenschutz", "footer-legal-link");
+    legacy.dataset.legacyLink = "true";
     legal.dataset.legalLink = "true";
     privacy.dataset.legalLink = "true";
-    nav.append(legal, privacy);
+    nav.append(legacy, legal, privacy);
   });
 }
 
@@ -291,8 +295,8 @@ function syncSubmitButtonState(gameKey, panel, score) {
   if (!message) return;
   const helperMessages = new Set([
     "Bitte erst optional einloggen, um Scores zu speichern.",
-    "Spiele erst eine Runde mit gültigem Score.",
-    "Score lässt sich erst nach Game Over speichern.",
+    "Spiele erst eine Runde mit gÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ltigem Score.",
+    "Score lÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤sst sich erst nach Game Over speichern.",
     "Diesen Score hast du in dieser Runde bereits gespeichert."
   ]);
   if (locked) {
@@ -301,11 +305,11 @@ function syncSubmitButtonState(gameKey, panel, score) {
   }
   if (!ended) {
     if (!message.textContent || helperMessages.has(message.textContent)) {
-      message.textContent = "Score lässt sich erst nach Game Over speichern.";
+      message.textContent = "Score lÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤sst sich erst nach Game Over speichern.";
     }
     return;
   }
-  if (message.textContent === "Diesen Score hast du in dieser Runde bereits gespeichert." || message.textContent === "Score lässt sich erst nach Game Over speichern.") {
+  if (message.textContent === "Diesen Score hast du in dieser Runde bereits gespeichert." || message.textContent === "Score lÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤sst sich erst nach Game Over speichern.") {
     message.textContent = "";
   }
 }
@@ -314,7 +318,7 @@ function scoreboardMarkup(title) {
     <section class="scoreboard-panel">
       <p class="eyebrow">Scoreboard</p>
       <h2>${title}</h2>
-      <p class="scoreboard-panel__meta">Top 10 dieser Maschine. Gastspiel bleibt ohne Login möglich.</p>
+      <p class="scoreboard-panel__meta">Top 10 dieser Maschine. Gastspiel bleibt ohne Login mÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¶glich.</p>
       <div class="scoreboard-panel__current">Aktueller Score: <strong data-current-score>0</strong></div>
       <button class="pixel-button" type="button" data-submit-score>Score speichern</button>
       <p class="scoreboard-panel__hint">Um Scores zu speichern bitte einloggen!</p>
@@ -327,7 +331,7 @@ function scoreboardMarkup(title) {
 function renderScoreList(container, entries) {
   container.innerHTML = "";
   if (!entries.length) {
-    container.innerHTML = "<li>Noch keine Einträge.</li>";
+    container.innerHTML = "<li>Noch keine EintrÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤ge.</li>";
     return;
   }
   entries.forEach((entry) => {
@@ -408,11 +412,11 @@ async function refreshScoreboard() {
         return;
       }
       if (!gameHasEnded(gameKey)) {
-        message.textContent = "Score lässt sich erst nach Game Over speichern.";
+        message.textContent = "Score lÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¤sst sich erst nach Game Over speichern.";
         return;
       }
       if (!Number.isFinite(score) || score <= 0) {
-        message.textContent = "Spiele erst eine Runde mit gültigem Score.";
+        message.textContent = "Spiele erst eine Runde mit gÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¼ltigem Score.";
         return;
       }
       try {
