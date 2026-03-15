@@ -1,4 +1,4 @@
-﻿const GAME_CONFIG = {
+const GAME_CONFIG = {
   snake: { title: "Snake Scores", selector: "#score" },
   pong: { title: "Pong Scores", selector: "#player-score" },
   breakout: { title: "Breakout Scores", selector: "#score" },
@@ -16,7 +16,7 @@
   centipede: { title: "Centipede Scores", selector: "#score" },
   "astro-blaster": { title: "Astro Blaster Scores", selector: "#score" },
   "tank-battle": { title: "Panzerspiel Scores", selector: "#score" },
-  "chicken-hunt": { title: "Barn Blaster Scores", selector: "#score" },
+  "chicken-hunt": { title: "Duck Hunt Scores", selector: "#score" },
   "head-soccer": { title: "Head Soccer Scores", selector: "#home-score" },
   "johnny-garden": { title: "Johnny in the Garden Scores", selector: "#score" },
   "tower-defense": { title: "Tower Defense Scores", selector: "#score" },

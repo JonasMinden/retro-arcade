@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   color-scheme: dark;
   --bg: #090814;
   --bg-glow: #18122c;
@@ -1103,11 +1103,13 @@ button,
 
 .pixel-art--chicken {
   background:
-    linear-gradient(180deg, #7ad2ff 0 64%, #67c65f 64% 100%),
-    radial-gradient(circle at 28% 42%, #ff9b54 0 14px, transparent 15px),
-    radial-gradient(circle at 64% 34%, #ffd166 0 12px, transparent 13px),
-    linear-gradient(135deg, transparent 0 46%, #f7f5ff 46% 52%, transparent 52%),
-    linear-gradient(225deg, transparent 0 46%, #f7f5ff 46% 52%, transparent 52%);
+    linear-gradient(180deg, #92dcff 0 56%, #76c971 56% 100%),
+    radial-gradient(circle at 48% 78%, #69bfe7 0 34px, transparent 35px),
+    radial-gradient(circle at 28% 42%, #ffcc3f 0 13px, transparent 14px),
+    radial-gradient(circle at 64% 34%, #ffcc3f 0 11px, transparent 12px),
+    linear-gradient(135deg, transparent 0 44%, #f7f5ff 44% 51%, transparent 51%),
+    linear-gradient(225deg, transparent 0 44%, #f7f5ff 44% 51%, transparent 51%),
+    linear-gradient(180deg, transparent 0 62%, rgba(255,255,255,0.18) 62% 64%, transparent 64% 68%, rgba(255,255,255,0.14) 68% 70%, transparent 70%);
 }
 
 .pixel-art--head-soccer {

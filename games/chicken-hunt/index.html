@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Chicken Hunt | Retro Arcade</title>
-    <meta name="description" content="Ein Moorhuhn-artiges Klickspiel mit fliegenden Zielen und kurzer Reaktionszeit.">
+    <title>Duck Hunt | Retro Arcade</title>
+    <meta name="description" content="Duck Hunt im Browser mit Quietscheenten, steigender Jagdgeschwindigkeit und optionalem Scoreboard.">
     <link rel="stylesheet" href="../../styles.css">
   </head>
   <body>
@@ -13,7 +13,7 @@
         <a class="brand" href="../../index.html">Retro Arcade</a>
         <nav class="site-nav" aria-label="Hauptnavigation">
           <a href="../../index.html">Start</a>
-          <a href="./index.html" aria-current="page">Chicken Hunt</a>
+          <a href="./index.html" aria-current="page">Duck Hunt</a>
           <a href="../../impressum.html">Impressum</a>
           <a href="../../privacy.html">Datenschutz</a>
         </nav>
@@ -23,8 +23,8 @@
       <section class="marquee">
         <div class="marquee__lights" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
         <p class="kicker">Wave 3</p>
-        <h1>Chicken Hunt</h1>
-        <p>Tippe oder klicke fliegende Hühner und Bonusziele weg, bevor die Zeit abläuft.</p>
+        <h1>Duck Hunt</h1>
+        <p>Schieße Quietscheenten ab, bevor sie aus dem Bild huschen. Mit der Zeit wird es schneller, voller und deutlich gemeiner.</p>
       </section>
       <section class="arcade-layout">
         <article class="arcade-frame">
@@ -32,7 +32,7 @@
             <div class="arcade-header">
               <div>
                 <p class="eyebrow">Arcade Cabinet</p>
-                <h2 class="arcade-panel-title">Barn Blaster</h2>
+                <h2 class="arcade-panel-title">Quack Blaster</h2>
               </div>
               <div class="arcade-actions">
                 <button class="pixel-button" id="pause-button" type="button">Pause</button>
@@ -42,23 +42,23 @@
             <div class="arcade-stats" aria-live="polite">
               <div class="arcade-stat"><span class="arcade-stat__label">Score</span><strong class="arcade-stat__value" id="score">0</strong></div>
               <div class="arcade-stat"><span class="arcade-stat__label">Hits</span><strong class="arcade-stat__value" id="hits">0</strong></div>
-              <div class="arcade-stat"><span class="arcade-stat__label">Time</span><strong class="arcade-stat__value" id="time">45</strong></div>
+              <div class="arcade-stat"><span class="arcade-stat__label">Lives</span><strong class="arcade-stat__value" id="lives">5</strong></div>
             </div>
-            <canvas id="game-canvas" class="game-canvas" width="640" height="420" aria-label="Chicken Hunt Spielfeld"></canvas>
-            <div class="arcade-controls" aria-label="Chicken Hunt Steuerung">
+            <canvas id="game-canvas" class="game-canvas" width="640" height="420" aria-label="Duck Hunt Spielfeld"></canvas>
+            <div class="arcade-controls" aria-label="Duck Hunt Steuerung">
               <button data-action="pause" type="button">Pause</button>
               <button data-action="restart" type="button">Restart</button>
             </div>
-            <p class="arcade-hint">Steuerung: klicken oder tippen trifft. Goldene Ziele bringen Extrapunkte.</p>
+            <p class="arcade-hint">Steuerung: klicken oder tippen schießt. Enten, die entkommen, kosten ein Leben. Später kommen mehrere gleichzeitig.</p>
           </div>
         </article>
         <aside class="arcade-sidebar">
           <section>
             <p class="eyebrow">Spielziel</p>
             <ul class="game-rules">
-              <li>Erreiche so viele Treffer wie möglich in 45 Sekunden.</li>
-              <li>Goldene Ziele sind selten, aber wertvoll.</li>
-              <li>Fehlklicks kosten keine Punkte, aber Zeit läuft weiter.</li>
+              <li>Getroffene Quietscheenten quaken, entkommene Enten kosten direkt ein Leben.</li>
+              <li>Die Spawnrate zieht permanent an, also wird aus gemütlich sehr schnell hektisch.</li>
+              <li>Mehrfach-Spawns sind kein Versehen, sondern das eigentliche Problem.</li>
             </ul>
           </section>
           <section class="ad-slot" data-ad-slot-key="snakeSidebar" aria-label="Werbefläche Platzhalter">
