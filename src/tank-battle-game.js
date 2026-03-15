@@ -10,12 +10,12 @@ if (canvas) {
 
   const TANK_RADIUS = 12;
   const STATIC_WALLS = [
-    { x: 110, y: 92, w: 64, h: 14 },
-    { x: 346, y: 92, w: 64, h: 14 },
-    { x: 110, y: 314, w: 64, h: 14 },
-    { x: 346, y: 314, w: 64, h: 14 },
-    { x: 220, y: 150, w: 82, h: 14 },
-    { x: 220, y: 252, w: 82, h: 14 }
+    { x: 126, y: 96, w: 56, h: 12 },
+    { x: 338, y: 96, w: 56, h: 12 },
+    { x: 126, y: 312, w: 56, h: 12 },
+    { x: 338, y: 312, w: 56, h: 12 },
+    { x: 224, y: 154, w: 74, h: 12 },
+    { x: 224, y: 250, w: 74, h: 12 }
   ];
 
   const state = {
@@ -56,7 +56,8 @@ if (canvas) {
       targetButton: null,
       wanderTimer: 0,
       wanderDir: 'up',
-      speed: isEnemy ? 82 + Math.random() * 8 : 116,
+      unstuckCooldown: 0,
+      speed: isEnemy ? 88 + Math.random() * 10 : 116,
     };
   }
 
@@ -156,6 +157,7 @@ if (canvas) {
       }
     }
     tank.cooldown = Math.max(0, tank.cooldown - delta);
+    tank.unstuckCooldown = Math.max(0, (tank.unstuckCooldown || 0) - delta);
     return moved;
   }
 
@@ -251,9 +253,12 @@ if (canvas) {
         const fallback = fallbackOptions[Math.floor(Math.random() * fallbackOptions.length)];
         enemy.dir = fallback;
         enemy.wanderDir = fallback;
-        enemy.wanderTimer = 0.2;
-        enemy.think = 0.03;
+        enemy.wanderTimer = 0.32;
+        enemy.think = 0.02;
         enemy.stuckFor = 0;
+        enemy.unstuckCooldown = 0.18;
+        const [fx, fy] = vectorFor(fallback);
+        updateTank(enemy, delta * 1.6, fx, fy);
       }
     } else {
       enemy.stuckFor = 0;
@@ -264,7 +269,12 @@ if (canvas) {
       if (Math.random() < 0.003) enemy.cooldown = Math.max(enemy.cooldown, 0.16);
     }
 
-    if (canSeePlayer && enemy.cooldown < 0.04 && Math.random() < 0.18) {
+    if (enemy.unstuckCooldown > 0) {
+      const [ux, uy] = vectorFor(enemy.wanderDir);
+      updateTank(enemy, delta * 0.9, ux, uy);
+    }
+
+    if (canSeePlayer && enemy.cooldown < 0.04 && Math.random() < 0.14) {
       fire(enemy);
     }
   }
@@ -457,6 +467,7 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
 
 
 

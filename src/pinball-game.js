@@ -32,6 +32,8 @@ if (canvas) {
     ball: null,
     lastTime: 0,
     hitEffects: [],
+    stuckTimer: 0,
+    previousBallPosition: null,
     bumpers: [
       { x: 116, y: 146, radius: 22, color: "#ffb347", ring: "#ffe0a6", score: 35 },
       { x: 210, y: 110, radius: 20, color: "#ffd166", ring: "#fff1b5", score: 50 },
@@ -123,6 +125,8 @@ if (canvas) {
     state.leftAngularVelocity = 0;
     state.rightAngularVelocity = 0;
     state.hitEffects = [];
+    state.stuckTimer = 0;
+    state.previousBallPosition = null;
     state.targets.forEach((target) => {
       target.active = true;
       target.flash = 0;
@@ -351,7 +355,7 @@ if (canvas) {
     return false;
   }
 
-  function stabilizeBall() {
+  function stabilizeBall(step) {
     const ball = state.ball;
     if (ball.mode === "tube") return;
     ball.vx *= 0.994;
@@ -361,6 +365,25 @@ if (canvas) {
       const scale = MAX_SPEED / speed;
       ball.vx *= scale;
       ball.vy *= scale;
+    }
+
+    if (state.previousBallPosition) {
+      const drift = Math.hypot(ball.x - state.previousBallPosition.x, ball.y - state.previousBallPosition.y);
+      const nearTop = ball.y < 176;
+      const trappedLane = ball.x > 330;
+      if ((speed < 95 && drift < 0.45) || (nearTop && trappedLane && speed < 130)) {
+        state.stuckTimer += step;
+      } else {
+        state.stuckTimer = Math.max(0, state.stuckTimer - step * 2);
+      }
+    }
+    state.previousBallPosition = { x: ball.x, y: ball.y };
+
+    if (state.stuckTimer > 0.32) {
+      ball.vx += ball.x > 210 ? -150 : 150;
+      ball.vy += 120;
+      state.stuckTimer = 0;
+      emitHit(ball.x, ball.y, "rgba(255, 245, 200, 0.95)", 10);
     }
   }
 
@@ -411,7 +434,7 @@ if (canvas) {
     state.posts.forEach((post) => collideCircle(post, 0.84, 6, 4));
     handleTargets(step);
     handleFlippers();
-    stabilizeBall();
+    stabilizeBall(step);
 
     ball.trail.unshift({ x: ball.x, y: ball.y });
     ball.trail = ball.trail.slice(0, 10);
