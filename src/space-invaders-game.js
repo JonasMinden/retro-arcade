@@ -47,7 +47,7 @@ if (canvas) {
     }
     state.enemies = enemies;
     state.enemyDirection = 1;
-    state.enemySpeed = 28 + state.wave * 7;
+    state.enemySpeed = 30 + state.wave * 9;
     state.enemyBullets = [];
     state.bullets = [];
     state.playerX = state.width / 2 - 18;
@@ -108,7 +108,7 @@ if (canvas) {
     }
 
     state.enemyFireTimer += delta;
-    if (state.enemyFireTimer >= Math.max(0.45, 1.2 - state.wave * 0.08)) {
+    if (state.enemyFireTimer >= Math.max(0.22, 1.05 - state.wave * 0.1)) {
       state.enemyFireTimer = 0;
       const columns = {};
       activeEnemies.forEach((enemy) => {
@@ -120,7 +120,10 @@ if (canvas) {
       const shooters = Object.values(columns);
       if (shooters.length) {
         const shooter = shooters[Math.floor(Math.random() * shooters.length)];
-        state.enemyBullets.push({ x: shooter.x + shooter.width / 2, y: shooter.y + shooter.height, vy: 240 + state.wave * 10 });
+        const shots = state.wave >= 4 && Math.random() < 0.4 ? 2 : 1;
+        for (let i = 0; i < shots; i += 1) {
+          state.enemyBullets.push({ x: shooter.x + shooter.width / 2 + (i === 0 ? 0 : (Math.random() < 0.5 ? -8 : 8)), y: shooter.y + shooter.height, vy: 240 + state.wave * 16 + i * 18 });
+        }
       }
     }
   }
@@ -282,4 +285,5 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
 

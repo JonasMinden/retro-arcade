@@ -58,11 +58,11 @@ if (canvas) {
       color,
       isEnemy,
       hp: isEnemy ? 2 : 3,
-      think: 0.22 + Math.random() * 0.28,
+      think: 0.16 + Math.random() * 0.22,
       stuckFor: 0,
       intent: 'hunt',
       targetButton: null,
-      speed: isEnemy ? 88 + Math.random() * 14 : 122
+      speed: isEnemy ? 84 + Math.random() * 12 : 122,
     };
   }
 
@@ -108,7 +108,7 @@ if (canvas) {
   }
 
   function respawnWave() {
-    state.player = createTank(84, 384, '#71e3ff');
+    state.player = createTank(260, 382, '#71e3ff');
     state.gates = [
       createGate('alpha', 246, 96, 28, 16),
       createGate('beta', 246, 308, 28, 16),
@@ -122,12 +122,12 @@ if (canvas) {
       createButton('delta-btn', 426, 258, 'delta')
     ];
 
-    const enemyCount = Math.min(7, 3 + state.wave);
+    const enemyCount = Math.min(7, 2 + state.wave);
     const spawnPoints = [
       [438, 76],
-      [438, 384],
+      [438, 316],
       [260, 76],
-      [260, 384],
+      [260, 88],
       [86, 76],
       [86, 254],
       [438, 254]
@@ -229,14 +229,14 @@ if (canvas) {
 
     if (enemy.think <= 0) {
       enemy.think = 0.16 + Math.random() * 0.24;
-      const pursueButton = !canSeePlayer && Math.random() < 0.38;
+      const pursueButton = !canSeePlayer && Math.random() < 0.32;
       enemy.targetButton = pursueButton ? chooseButtonTarget(enemy) : null;
       enemy.intent = enemy.targetButton ? 'button' : 'hunt';
 
-      if (canSeePlayer && Math.random() < 0.65) {
+      if (canSeePlayer && Math.random() < 0.48) {
         enemy.dir = directionToward(enemy, playerTarget);
         fire(enemy);
-      } else if (enemy.targetButton && lineOfSight(enemy, enemy.targetButton) && Math.random() < 0.55) {
+      } else if (enemy.targetButton && lineOfSight(enemy, enemy.targetButton) && Math.random() < 0.42) {
         enemy.dir = directionToward(enemy, enemy.targetButton);
         fire(enemy);
       }
@@ -250,7 +250,7 @@ if (canvas) {
     if (!moved) {
       enemy.stuckFor += delta;
       if (enemy.stuckFor > 0.18) {
-        const fallback = preferredDirections[1] || preferredDirections[0] || enemy.dir;
+        const fallback = preferredDirections[Math.floor(Math.random() * Math.max(1, preferredDirections.length))] || enemy.dir;
         enemy.dir = fallback;
         enemy.think = 0.04;
         enemy.stuckFor = 0;
@@ -261,7 +261,7 @@ if (canvas) {
 
     if (enemy.targetButton && Math.hypot(enemy.x - enemy.targetButton.x, enemy.y - enemy.targetButton.y) < 110 && lineOfSight(enemy, enemy.targetButton)) {
       enemy.dir = directionToward(enemy, enemy.targetButton);
-      if (Math.random() < 0.02) fire(enemy);
+      if (Math.random() < 0.012) fire(enemy);
     }
   }
 
@@ -453,3 +453,4 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
