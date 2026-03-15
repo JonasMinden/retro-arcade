@@ -1228,3 +1228,6 @@ button,
   display: inline-block;
   min-width: 160px;
 }
+.patch-log__list strong::after {
+  content: "";
+}

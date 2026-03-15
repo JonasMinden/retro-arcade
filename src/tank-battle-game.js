@@ -50,7 +50,7 @@ if (canvas) {
       cooldown: 0,
       color,
       isEnemy,
-      hp: isEnemy ? 2 : 3,
+      hp: isEnemy ? 1 : 3,
       think: 0.12 + Math.random() * 0.18,
       stuckFor: 0,
       targetButton: null,
@@ -95,7 +95,7 @@ if (canvas) {
 
   function fire(tank) {
     if (!tank || tank.cooldown > 0) return;
-    tank.cooldown = tank.isEnemy ? 1.05 : 0.34;
+    tank.cooldown = tank.isEnemy ? 1.28 : 0.34;
     const vectors = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
     const [dx, dy] = vectors[tank.dir];
     state.bullets.push({ x: tank.x, y: tank.y, dx, dy, owner: tank.isEnemy ? 'enemy' : 'player', life: 2.2 });
@@ -224,12 +224,12 @@ if (canvas) {
       enemy.think = 0.12 + Math.random() * 0.18;
       enemy.targetButton = !canSeePlayer && Math.random() < 0.2 ? chooseButtonTarget() : null;
 
-      if (canSeePlayer && Math.random() < 0.34) {
+      if (canSeePlayer && Math.random() < 0.22) {
         enemy.dir = directionToward(enemy, playerTarget);
-        fire(enemy);
-      } else if (enemy.targetButton && lineOfSight(enemy, enemy.targetButton) && Math.random() < 0.24) {
+        enemy.cooldown = Math.max(enemy.cooldown, 0.22);
+      } else if (enemy.targetButton && lineOfSight(enemy, enemy.targetButton) && Math.random() < 0.16) {
         enemy.dir = directionToward(enemy, enemy.targetButton);
-        fire(enemy);
+        enemy.cooldown = Math.max(enemy.cooldown, 0.18);
       }
 
       const dirs = ['up', 'down', 'left', 'right'];
@@ -261,7 +261,11 @@ if (canvas) {
 
     if (enemy.targetButton && Math.hypot(enemy.x - enemy.targetButton.x, enemy.y - enemy.targetButton.y) < 90 && lineOfSight(enemy, enemy.targetButton)) {
       enemy.dir = directionToward(enemy, enemy.targetButton);
-      if (Math.random() < 0.006) fire(enemy);
+      if (Math.random() < 0.003) enemy.cooldown = Math.max(enemy.cooldown, 0.16);
+    }
+
+    if (canSeePlayer && enemy.cooldown < 0.04 && Math.random() < 0.18) {
+      fire(enemy);
     }
   }
 
@@ -453,3 +457,6 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
+
+

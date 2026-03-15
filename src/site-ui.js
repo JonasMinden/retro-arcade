@@ -189,16 +189,22 @@ function updateHeaderAuth() {
     const wrapper = document.createElement("span");
     wrapper.dataset.authSlot = "true";
     wrapper.className = "auth-nav";
+    wrapper.appendChild(buildNavLink("/account.html", "Account"));
     if (currentUser) {
-      wrapper.innerHTML = `<span class="auth-nav__name">${currentUser.username}</span> <button class="auth-nav__button" type="button">Logout</button>`;
-      wrapper.querySelector("button").addEventListener("click", async () => {
+      const name = document.createElement("span");
+      name.className = "auth-nav__name";
+      name.textContent = currentUser.username;
+      const button = document.createElement("button");
+      button.className = "auth-nav__button";
+      button.type = "button";
+      button.textContent = "Logout";
+      button.addEventListener("click", async () => {
         await api("/api/logout", { method: "POST", body: "{}" });
         currentUser = null;
         updateHeaderAuth();
         refreshScoreboard();
       });
-    } else {
-      wrapper.innerHTML = `<a href="/account.html">Account</a>`;
+      wrapper.append(name, button);
     }
     nav.appendChild(wrapper);
   });
@@ -334,7 +340,8 @@ function formatRecentTimestamp(value) {
   if (Number.isNaN(date.getTime())) return '';
   return new Intl.DateTimeFormat('de-DE', {
     dateStyle: 'short',
-    timeStyle: 'short'
+    timeStyle: 'short',
+    timeZone: 'Europe/Berlin'
   }).format(date);
 }
 function renderRecentScores(entries) {
@@ -423,6 +430,54 @@ async function refreshScoreboard() {
   await loadScoreboard(gameKey, panel);
 }
 
+function initAccountForms() {
+  const registerForm = document.querySelector("#register-form");
+  const loginForm = document.querySelector("#login-form");
+
+  if (registerForm) {
+    registerForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const message = document.querySelector("#register-message");
+      const username = document.querySelector("#register-username")?.value?.trim() || "";
+      const password = document.querySelector("#register-password")?.value || "";
+      try {
+        const data = await api("/api/register", {
+          method: "POST",
+          body: JSON.stringify({ username, password })
+        });
+        currentUser = data.user || null;
+        registerForm.reset();
+        if (message) message.textContent = "Account erstellt und eingeloggt.";
+        updateHeaderAuth();
+        await Promise.allSettled([loadRecentScores(), refreshScoreboard(), loadPopularGames()]);
+      } catch (error) {
+        if (message) message.textContent = error.message;
+      }
+    });
+  }
+
+  if (loginForm) {
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const message = document.querySelector("#login-message");
+      const username = document.querySelector("#login-username")?.value?.trim() || "";
+      const password = document.querySelector("#login-password")?.value || "";
+      try {
+        const data = await api("/api/login", {
+          method: "POST",
+          body: JSON.stringify({ username, password })
+        });
+        currentUser = data.user || null;
+        loginForm.reset();
+        if (message) message.textContent = "Erfolgreich eingeloggt.";
+        updateHeaderAuth();
+        await Promise.allSettled([loadRecentScores(), refreshScoreboard(), loadPopularGames()]);
+      } catch (error) {
+        if (message) message.textContent = error.message;
+      }
+    });
+  }
+}
 async function loadCurrentUser() {
   try {
     const data = await api("/api/me");
@@ -437,6 +492,7 @@ async function initSiteUi() {
   ensureFavicon();
   createCookieBanner();
   syncFooterLegalLinks();
+  initAccountForms();
   await loadCurrentUser();
   await Promise.allSettled([loadPopularGames(), loadRecentScores(), refreshScoreboard()]);
   if (detectGameKey()) {
@@ -447,6 +503,8 @@ async function initSiteUi() {
 }
 
 export { initSiteUi, detectGameKey };
+
+
 
 
 
