@@ -62,7 +62,7 @@ export async function onRequestGet(context) {
      FROM scores
      JOIN users ON users.id = scores.user_id
      ORDER BY scores.created_at DESC
-     LIMIT 12`
+     LIMIT 6`
   ).all();
 
   return json({
@@ -72,3 +72,4 @@ export async function onRequestGet(context) {
     })),
   });
 }
+

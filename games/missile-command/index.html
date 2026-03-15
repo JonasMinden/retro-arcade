@@ -1,5 +1,86 @@
-﻿a!doctype html>
-ahtml lang="de">ahead>ameta charset="utf-8">ameta name="viewport" content="width=device-width, initial-scale=1">atitle>Missile Command | Retro Arcadea/title>ameta name="description" content="Verteidige deine Städte in Missile Command gegen einfallende Raketen.">alink rel="stylesheet" href="../../styles.css">a/head>abody>aheader class="site-header">adiv class="shell site-header__inner">aa class="brand" href="../../index.html">Retro Arcadea/a>anav class="site-nav" aria-label="Hauptnavigation">aa href="../../index.html">Starta/a>aa href="./index.html" aria-current="page">Missile Commanda/a>aa href="../../impressum.html">Impressuma/a>aa href="../../privacy.html">Datenschutza/a>a/nav>a/div>a/header>amain class="shell page arcade-page">asection class="marquee">adiv class="marquee__lights" aria-hidden="true">aspan>a/span>aspan>a/span>aspan>a/span>aspan>a/span>aspan>a/span>aspan>a/span>aspan>a/span>aspan>a/span>aspan>a/span>aspan>a/span>aspan>a/span>aspan>a/span>a/div>ap class="kicker">Wave 3a/p>ah1>Missile Commanda/h1>ap>Schütze Städte und Silos, indem du gegnerische Raketen in der Luft sprengst.a/p>a/section>asection class="arcade-layout">aarticle class="arcade-frame">adiv class="arcade-frame__screen">adiv class="arcade-header">adiv>ap class="eyebrow">Arcade Cabineta/p>ah2 class="arcade-panel-title">Sky Shielda/h2>a/div>adiv class="arcade-actions">abutton class="pixel-button" id="pause-button" type="button">Pausea/button>abutton class="pixel-button pixel-button--secondary" id="restart-button" type="button">Restarta/button>a/div>a/div>adiv class="arcade-stats" aria-live="polite">adiv class="arcade-stat">aspan class="arcade-stat__label">Scorea/span>astrong class="arcade-stat__value" id="score">0a/strong>a/div>adiv class="arcade-stat">aspan class="arcade-stat__label">Citiesa/span>astrong class="arcade-stat__value" id="cities">6a/strong>a/div>adiv class="arcade-stat">aspan class="arcade-stat__label">Wavea/span>astrong class="arcade-stat__value" id="wave">1a/strong>a/div>a/div>acanvas id="game-canvas" class="game-canvas" width="640" height="420" aria-label="Missile Command Spielfeld">a/canvas>adiv class="arcade-controls" aria-label="Missile Command Steuerung">abutton data-action="left" type="button">Left Siloa/button>abutton data-action="center" type="button">Center Siloa/button>abutton data-action="right" type="button">Right Siloa/button>abutton data-action="pause" type="button">Pausea/button>a/div>ap class="arcade-hint">Steuerung: klicken oder tippen, um einen Einschlagspunkt zu setzen. Die Mobilbuttons wählen das Start-Silo.a/p>a/div>a/article>aaside class="arcade-sidebar">asection>ap class="eyebrow">Spielziela/p>aul class="game-rules">ali>Lass keine gegnerische Rakete in deinen Städten einschlagen.a/li>ali>Explosionen fangen weitere Raketen ab.a/li>ali>Mit jeder Welle steigt der Druck.a/li>a/ul>a/section>asection class="ad-slot" data-ad-slot-key="snakeSidebar" aria-label="Werbefläche Platzhalter">ap class="ad-slot__label">Ad Slota/p>ap>Für spätere Anzeigen vorbereitet.a/p>a/section>a/aside>a/section>a/main>afooter class="site-footer">adiv class="shell site-footer__inner">ap>Retro Arcadea/p>anav class="site-nav" aria-label="Footer Navigation">aa href="../astro-blaster/index.html">Astro Blastera/a>aa href="../centipede/index.html">Centipedea/a>aa href="../tank-battle/index.html">Panzerspiela/a>a/nav>a/div>a/footer>ascript type="module" src="../../src/ads.js">a/script>ascript type="module" src="../../src/missile-command-game.js">a/script>a/body>a/html>
-
-
-
+﻿<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Missile Command | Retro Arcade</title>
+    <meta name="description" content="Verteidige deine Städte in Missile Command gegen einfallende Raketen.">
+    <link rel="stylesheet" href="../../styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell site-header__inner">
+        <a class="brand" href="../../index.html">Retro Arcade</a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <a href="../../index.html">Start</a>
+          <a href="./index.html" aria-current="page">Missile Command</a>
+          <a href="../../impressum.html">Impressum</a>
+          <a href="../../privacy.html">Datenschutz</a>
+        </nav>
+      </div>
+    </header>
+    <main class="shell page arcade-page">
+      <section class="marquee">
+        <div class="marquee__lights" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <p class="kicker">Wave 3</p>
+        <h1>Missile Command</h1>
+        <p>Schütze Städte und Silos, indem du gegnerische Raketen in der Luft sprengst.</p>
+      </section>
+      <section class="arcade-layout">
+        <article class="arcade-frame">
+          <div class="arcade-frame__screen">
+            <div class="arcade-header">
+              <div>
+                <p class="eyebrow">Arcade Cabinet</p>
+                <h2 class="arcade-panel-title">Sky Shield</h2>
+              </div>
+              <div class="arcade-actions">
+                <button class="pixel-button" id="pause-button" type="button">Pause</button>
+                <button class="pixel-button pixel-button--secondary" id="restart-button" type="button">Restart</button>
+              </div>
+            </div>
+            <div class="arcade-stats" aria-live="polite">
+              <div class="arcade-stat"><span class="arcade-stat__label">Score</span><strong class="arcade-stat__value" id="score">0</strong></div>
+              <div class="arcade-stat"><span class="arcade-stat__label">Cities</span><strong class="arcade-stat__value" id="cities">6</strong></div>
+              <div class="arcade-stat"><span class="arcade-stat__label">Wave</span><strong class="arcade-stat__value" id="wave">1</strong></div>
+            </div>
+            <canvas id="game-canvas" class="game-canvas" width="640" height="420" aria-label="Missile Command Spielfeld"></canvas>
+            <div class="arcade-controls" aria-label="Missile Command Steuerung">
+              <button data-action="left" type="button">Left Silo</button>
+              <button data-action="center" type="button">Center Silo</button>
+              <button data-action="right" type="button">Right Silo</button>
+              <button data-action="pause" type="button">Pause</button>
+            </div>
+            <p class="arcade-hint">Steuerung: klicken oder tippen, um einen Einschlagspunkt zu setzen. Die Mobilbuttons wählen das Start-Silo.</p>
+          </div>
+        </article>
+        <aside class="arcade-sidebar">
+          <section>
+            <p class="eyebrow">Spielziel</p>
+            <ul class="game-rules">
+              <li>Lass keine gegnerische Rakete in deinen Städten einschlagen.</li>
+              <li>Explosionen fangen weitere Raketen ab.</li>
+              <li>Mit jeder Welle steigt der Druck.</li>
+            </ul>
+          </section>
+          <section class="ad-slot" data-ad-slot-key="snakeSidebar" aria-label="Werbefläche Platzhalter">
+            <p class="ad-slot__label">Ad Slot</p>
+            <p>Für spätere Anzeigen vorbereitet.</p>
+          </section>
+        </aside>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="shell site-footer__inner">
+        <p>Retro Arcade</p>
+        <nav class="site-nav" aria-label="Footer Navigation">
+          <a href="../astro-blaster/index.html">Astro Blaster</a>
+          <a href="../centipede/index.html">Centipede</a>
+          <a href="../tank-battle/index.html">Panzerspiel</a>
+        </nav>
+      </div>
+    </footer>
+    <script type="module" src="../../src/ads.js"></script>
+    <script type="module" src="../../src/missile-command-game.js"></script>
+  </body>
+</html>

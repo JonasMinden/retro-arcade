@@ -448,6 +448,8 @@ button,
   .arcade-layout { grid-template-columns: 1fr; }
   .home-page { padding-right: 0; }
   .floating-scores {
+  max-height: min(70vh, 520px);
+  overflow: hidden;
     position: static;
     width: auto;
     margin: 0 16px 24px;
@@ -602,6 +604,8 @@ button,
 }
 
 .recent-scores {
+  max-height: 360px;
+  overflow: hidden;
   margin: 0;
   padding-left: 18px;
   display: grid;
@@ -623,6 +627,8 @@ button,
 }
 
 .floating-scores {
+  max-height: min(70vh, 520px);
+  overflow: hidden;
   position: fixed;
   top: 120px;
   right: 24px;
@@ -890,6 +896,8 @@ button,
   }
 
   .floating-scores {
+  max-height: min(70vh, 520px);
+  overflow: hidden;
     position: static;
     width: auto;
     margin: 0 auto 24px;
@@ -900,6 +908,8 @@ button,
 
 @media (max-width: 980px) {
   .floating-scores {
+  max-height: min(70vh, 520px);
+  overflow: hidden;
     margin: 0 16px 24px;
   }
 }
@@ -1115,4 +1125,6 @@ button,
   font-size: 0.72rem;
   letter-spacing: 0.04em;
 }
+
+
 
