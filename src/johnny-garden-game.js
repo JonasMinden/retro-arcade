@@ -10,9 +10,14 @@ if (canvas) {
   const restartButton = document.querySelector("#restart-button");
   const actionButtons = Array.from(document.querySelectorAll("[data-action]"));
 
+  const SAFE_ZONE = { x: 24, y: 24, w: 104, h: 88 };
+  const HUNT_ZONE = { x: 128, y: 20, w: 492, h: 380 };
+  const EXIT_ZONE = { x: 562, y: 330, w: 44, h: 52 };
+
   const state = {
     score: 0,
     wave: 1,
+    level: 1,
     paused: false,
     gameOver: false,
     lastTime: 0,
@@ -22,6 +27,7 @@ if (canvas) {
     rocks: [],
     particles: [],
     walls: [],
+    huntActive: false,
   };
   window.__retroArcadeGameState = state;
 
@@ -55,8 +61,8 @@ if (canvas) {
 
   function createPlayer() {
     return {
-      x: 54,
-      y: 52,
+      x: SAFE_ZONE.x + 30,
+      y: SAFE_ZONE.y + 28,
       radius: 12,
       speed: 160,
       health: 100,
@@ -71,17 +77,21 @@ if (canvas) {
       x,
       y,
       radius: 12,
-      speed: 68 + seed * 4,
+      speed: 74 + seed * 5,
       dirX: 0,
       dirY: 0,
-      think: 0.18 + Math.random() * 0.2,
+      think: 0.16 + Math.random() * 0.18,
       throwCooldown: 0.8 + Math.random() * 0.6,
-      panic: 0,
+      awake: false,
     };
   }
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
+  }
+
+  function insideZone(entity, zone) {
+    return entity.x > zone.x && entity.x < zone.x + zone.w && entity.y > zone.y && entity.y < zone.y + zone.h;
   }
 
   function collidesCircleRect(x, y, radius, wall) {
@@ -134,27 +144,38 @@ if (canvas) {
     }
   }
 
-  function resetGame() {
-    state.score = 0;
-    state.wave = 1;
-    state.paused = false;
-    state.gameOver = false;
-    state.lastTime = 0;
-    state.input = { x: 0, y: 0 };
+  function buildLevel(keepHealth = false) {
+    const currentHealth = keepHealth && state.player ? state.player.health : 100;
     state.player = createPlayer();
+    state.player.health = currentHealth;
+    state.player.invulnerable = 0.6;
     state.enemies = [
       createEnemy(566, 56, 1),
       createEnemy(566, 356, 2),
       createEnemy(320, 352, 3),
     ];
+    if (state.level >= 2) state.enemies.push(createEnemy(436, 224, 4));
+    if (state.level >= 4) state.enemies.push(createEnemy(210, 352, 5));
     state.rocks = [];
     state.particles = [];
     state.walls = createMaze();
+    state.huntActive = false;
+    waveElement.textContent = String(state.level);
+    healthLabel.textContent = String(Math.round(currentHealth));
+    healthFill.style.width = `${currentHealth}%`;
+  }
+
+  function resetGame() {
+    state.score = 0;
+    state.wave = 1;
+    state.level = 1;
+    state.paused = false;
+    state.gameOver = false;
+    state.lastTime = 0;
+    state.input = { x: 0, y: 0 };
     scoreElement.textContent = "0";
-    waveElement.textContent = "1";
-    healthLabel.textContent = "100";
-    healthFill.style.width = "100%";
     pauseButton.textContent = "Pause";
+    buildLevel(false);
   }
 
   function togglePause() {
@@ -181,8 +202,8 @@ if (canvas) {
     state.rocks.push({
       x: enemy.x,
       y: enemy.y,
-      vx: (dx / distance) * (180 + state.wave * 10),
-      vy: (dy / distance) * (180 + state.wave * 10) - 18,
+      vx: (dx / distance) * (186 + state.level * 10),
+      vy: (dy / distance) * (186 + state.level * 10) - 18,
       radius: 6,
       life: 3,
     });
@@ -229,9 +250,16 @@ if (canvas) {
       const dy = state.player.y - enemy.y;
       const distance = Math.hypot(dx, dy) || 1;
       const visible = canSeePlayer(enemy);
+      enemy.awake = state.huntActive;
+
+      if (!enemy.awake) {
+        enemy.dirX = 0;
+        enemy.dirY = 0;
+        return;
+      }
 
       if (enemy.think <= 0) {
-        enemy.think = 0.1 + Math.random() * 0.18;
+        enemy.think = 0.08 + Math.random() * 0.14;
         const chase = chooseChaseVector(enemy);
         if (visible) {
           enemy.dirX = dx / distance;
@@ -246,11 +274,11 @@ if (canvas) {
         }
       }
 
-      moveActor(enemy, enemy.dirX, enemy.dirY, delta * (visible ? 1.08 : 0.92));
+      moveActor(enemy, enemy.dirX, enemy.dirY, delta * (visible ? 1.15 : 0.98));
 
-      if ((visible || distance < 180) && enemy.throwCooldown <= 0) {
+      if ((visible || distance < 200) && enemy.throwCooldown <= 0) {
         throwRock(enemy);
-        enemy.throwCooldown = 1.05 - Math.min(0.3, state.wave * 0.04) + Math.random() * 0.22;
+        enemy.throwCooldown = 0.96 - Math.min(0.26, state.level * 0.03) + Math.random() * 0.18;
       }
 
       if (Math.hypot(state.player.x - enemy.x, state.player.y - enemy.y) < state.player.radius + enemy.radius + 2) {
@@ -259,7 +287,7 @@ if (canvas) {
         enemy.dirY *= -1;
       }
 
-      if (enemy.think < 0.02 && index === state.wave % state.enemies.length) {
+      if (enemy.think < 0.02 && index === state.level % state.enemies.length) {
         enemy.dirX *= -1;
         enemy.dirY *= -1;
       }
@@ -307,19 +335,21 @@ if (canvas) {
   function update(delta) {
     if (state.paused) return;
     updatePlayer(delta);
+    state.huntActive = insideZone(state.player, HUNT_ZONE);
     updateEnemies(delta);
     updateRocks(delta);
     updateParticles(delta);
     state.score += delta * 10;
-    scoreElement.textContent = String(Math.floor(state.score));
-    const nextWave = 1 + Math.floor(state.score / 180);
-    if (nextWave !== state.wave) {
-      state.wave = nextWave;
-      waveElement.textContent = String(state.wave);
-      if (state.enemies.length < 5) {
-        state.enemies.push(createEnemy(586, 210, state.enemies.length + 1));
-      }
+
+    if (state.huntActive && insideZone(state.player, EXIT_ZONE)) {
+      state.level += 1;
+      state.wave = state.level;
+      state.score += 250 + state.level * 60;
+      buildLevel(true);
     }
+
+    scoreElement.textContent = String(Math.floor(state.score));
+    waveElement.textContent = String(state.level);
   }
 
   function drawMaze() {
@@ -328,6 +358,16 @@ if (canvas) {
     sky.addColorStop(1, "#102510");
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "rgba(70, 144, 255, 0.18)";
+    ctx.fillRect(SAFE_ZONE.x, SAFE_ZONE.y, SAFE_ZONE.w, SAFE_ZONE.h);
+    ctx.fillStyle = state.huntActive ? "rgba(79, 180, 82, 0.14)" : "rgba(79, 180, 82, 0.1)";
+    ctx.fillRect(HUNT_ZONE.x, HUNT_ZONE.y, HUNT_ZONE.w, HUNT_ZONE.h);
+    ctx.fillStyle = "rgba(255, 209, 102, 0.22)";
+    ctx.fillRect(EXIT_ZONE.x, EXIT_ZONE.y, EXIT_ZONE.w, EXIT_ZONE.h);
+    ctx.strokeStyle = "rgba(255, 209, 102, 0.8)";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(EXIT_ZONE.x + 2, EXIT_ZONE.y + 2, EXIT_ZONE.w - 4, EXIT_ZONE.h - 4);
 
     ctx.fillStyle = "rgba(255,255,255,0.06)";
     for (let x = 0; x < canvas.width; x += 32) ctx.fillRect(x, 0, 1, canvas.height);
@@ -366,6 +406,7 @@ if (canvas) {
     state.enemies.forEach((enemy, index) => {
       ctx.save();
       ctx.translate(enemy.x, enemy.y);
+      ctx.globalAlpha = enemy.awake ? 1 : 0.8;
       ctx.fillStyle = index % 2 === 0 ? "#ff6b6b" : "#ff9b54";
       ctx.beginPath();
       ctx.arc(0, 0, enemy.radius, 0, Math.PI * 2);
@@ -393,9 +434,21 @@ if (canvas) {
   function drawParticles() {
     state.particles.forEach((particle) => {
       const alpha = 1 - particle.age / particle.life;
-      ctx.fillStyle = particle.color.replace(/0\.[0-9]+\)/, `${alpha})`);
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = particle.color;
       ctx.fillRect(particle.x - 2, particle.y - 2, 4, 4);
+      ctx.restore();
     });
+  }
+
+  function drawZoneLabels() {
+    ctx.fillStyle = "rgba(247,245,255,0.82)";
+    ctx.font = "12px 'Courier New'";
+    ctx.textAlign = "left";
+    ctx.fillText("Safe Zone", SAFE_ZONE.x + 10, SAFE_ZONE.y + 18);
+    ctx.fillText("Garden", HUNT_ZONE.x + 12, HUNT_ZONE.y + 18);
+    ctx.fillText("Exit", EXIT_ZONE.x + 8, EXIT_ZONE.y + 18);
   }
 
   function drawOverlay() {
@@ -414,6 +467,7 @@ if (canvas) {
 
   function draw() {
     drawMaze();
+    drawZoneLabels();
     drawEnemies();
     drawRocks();
     drawPlayer();
