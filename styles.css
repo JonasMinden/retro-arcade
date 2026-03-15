@@ -1137,3 +1137,61 @@ button,
   font-size: 0.84rem;
 }
 
+
+.marquee--home {
+  display: grid;
+  grid-template-columns: minmax(230px, 280px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.patch-notes {
+  position: relative;
+  z-index: 1;
+  padding: 18px 18px 18px 26px;
+  color: #2a2a38;
+  background:
+    linear-gradient(90deg, rgba(255, 95, 178, 0.22) 0 3px, transparent 3px),
+    repeating-linear-gradient(180deg, rgba(95, 135, 255, 0.22) 0 1px, transparent 1px 28px),
+    linear-gradient(180deg, #fff8d7, #f7efc0);
+  border: 1px solid rgba(126, 104, 33, 0.35);
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.28);
+}
+
+.patch-notes::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.35), transparent 32%);
+  pointer-events: none;
+}
+
+.patch-notes .eyebrow,
+.patch-notes h2,
+.patch-notes li {
+  position: relative;
+  z-index: 1;
+}
+
+.patch-notes .eyebrow {
+  color: #a34a1b;
+}
+
+.patch-notes h2 {
+  margin-bottom: 10px;
+  color: #3c2b16;
+  text-shadow: none;
+  font-size: 1.15rem;
+}
+
+.patch-notes ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.patch-notes li {
+  line-height: 1.45;
+}
+

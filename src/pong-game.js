@@ -18,7 +18,7 @@ if (canvas) {
     paddleHeight: 90,
     playerScore: 0,
     cpuScore: 0,
-    targetScore: 7,
+    cpuTargetScore: 7,
     playerMove: 0,
     paused: false,
     running: false,
@@ -94,19 +94,14 @@ if (canvas) {
     if (side === "player") {
       state.playerScore += 1;
       playerScore.textContent = String(state.playerScore);
-      if (state.playerScore >= state.targetScore) {
-        state.winner = "You";
-        setStatus("You Win");
-        resetRound(1);
-        return;
-      }
+      setStatus(`Du führst mit ${state.playerScore}`);
       resetRound(1);
       return;
     }
 
     state.cpuScore += 1;
     cpuScore.textContent = String(state.cpuScore);
-    if (state.cpuScore >= state.targetScore) {
+    if (state.cpuScore >= state.cpuTargetScore) {
       state.winner = "CPU";
       setStatus("CPU Wins");
       resetRound(-1);
@@ -191,7 +186,7 @@ if (canvas) {
       ctx.fillStyle = "#f7f5ff";
       ctx.font = "28px 'Courier New'";
       ctx.textAlign = "center";
-      ctx.fillText(`${state.winner} win the match`, state.width / 2, state.height / 2 - 8);
+      ctx.fillText(state.winner === "CPU" ? "CPU gewinnt bei 7 Punkten" : `${state.winner} führt weiter`, state.width / 2, state.height / 2 - 8);
       ctx.font = "18px 'Courier New'";
       ctx.fillText("Press Restart to play again", state.width / 2, state.height / 2 + 24);
     }
@@ -257,4 +252,6 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
+
 
