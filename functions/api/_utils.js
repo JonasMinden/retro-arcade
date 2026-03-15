@@ -153,10 +153,15 @@ export function normalizeGameKey(game) {
     "tank-battle",
     "chicken-hunt",
     "head-soccer",
-    "johnny-garden"
+    "johnny-garden",
+    "tower-defense",
+    "doctor-mario"
   ];
   return allowed.includes(game) ? game : null;
 }
+
+
+
 
 
 

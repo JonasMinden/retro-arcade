@@ -19,6 +19,8 @@
   "chicken-hunt": { title: "Barn Blaster Scores", selector: "#score" },
   "head-soccer": { title: "Head Soccer Scores", selector: "#home-score" },
   "johnny-garden": { title: "Johnny in the Garden Scores", selector: "#score" },
+  "tower-defense": { title: "Tower Defense Scores", selector: "#score" },
+  "doctor-mario": { title: "Doctor Mario Scores", selector: "#score" },
 };
 
 const COOKIE_CONSENT_KEY = "retro_arcade_cookie_consent_v1";
@@ -504,6 +506,9 @@ async function initSiteUi() {
 }
 
 export { initSiteUi, detectGameKey };
+
+
+
 
 
 

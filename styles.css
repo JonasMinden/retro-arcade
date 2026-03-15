@@ -1263,3 +1263,24 @@ button,
   }
 }
 
+
+
+.pixel-art--tower-defense {
+  background:
+    linear-gradient(180deg, #101d31 0 24%, #18314f 24% 42%, #3a2a19 42% 56%, #243d22 56% 100%),
+    linear-gradient(90deg, transparent 0 12%, #ffd166 12% 18%, transparent 18% 36%, #ff5fb2 36% 42%, transparent 42% 58%, #71e3ff 58% 64%, transparent 64% 82%, #87ff65 82% 88%, transparent 88%),
+    radial-gradient(circle at 26% 70%, #4d7cff 0 10px, transparent 11px),
+    radial-gradient(circle at 70% 36%, #ff9b54 0 10px, transparent 11px),
+    #101221;
+}
+
+.pixel-art--doctor-mario {
+  background:
+    linear-gradient(180deg, #0e1730 0 100%),
+    linear-gradient(90deg, transparent 0 16%, #ff5fb2 16% 26%, transparent 26% 36%, #71e3ff 36% 46%, transparent 46% 56%, #ffd166 56% 66%, transparent 66% 76%, #87ff65 76% 86%, transparent 86%),
+    radial-gradient(circle at 24% 74%, #ff5fb2 0 10px, transparent 11px),
+    radial-gradient(circle at 48% 58%, #71e3ff 0 10px, transparent 11px),
+    radial-gradient(circle at 72% 42%, #ffd166 0 10px, transparent 11px),
+    linear-gradient(180deg, transparent 0 18%, rgba(255,255,255,0.08) 18% 20%, transparent 20% 38%, rgba(255,255,255,0.08) 38% 40%, transparent 40% 58%, rgba(255,255,255,0.08) 58% 60%, transparent 60%),
+    #101221;
+}

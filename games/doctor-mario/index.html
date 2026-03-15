@@ -1,0 +1,105 @@
+﻿<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Doctor Mario | Retro Arcade</title>
+    <meta name="description" content="Doctor Mario im Browser mit Kapseln, Viren und klassischen Farb-Matches.">
+    <link rel="stylesheet" href="../../styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell site-header__inner">
+        <a class="brand" href="../../index.html">Retro Arcade</a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <a href="../../index.html">Start</a>
+          <a href="./index.html" aria-current="page">Doctor Mario</a>
+          <a href="../../impressum.html">Impressum</a>
+          <a href="../../privacy.html">Datenschutz</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell page arcade-page">
+      <section class="marquee">
+        <div class="marquee__lights" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <p class="kicker">Neue Maschine</p>
+        <h1>Doctor Mario</h1>
+        <p>Wirf Kapseln in die Flasche, bilde Viererketten und räume die Viren raus, bevor dir das Spielfeld überläuft.</p>
+      </section>
+
+      <section class="arcade-layout">
+        <article class="arcade-frame">
+          <div class="arcade-frame__screen">
+            <div class="arcade-header">
+              <div>
+                <p class="eyebrow">Arcade Cabinet</p>
+                <h2 class="arcade-panel-title">Virus Ward</h2>
+              </div>
+              <div class="arcade-actions">
+                <button class="pixel-button" id="pause-button" type="button">Pause</button>
+                <button class="pixel-button pixel-button--secondary" id="restart-button" type="button">Restart</button>
+              </div>
+            </div>
+
+            <div class="arcade-stats" aria-live="polite">
+              <div class="arcade-stat"><span class="arcade-stat__label">Score</span><strong class="arcade-stat__value" id="score">0</strong></div>
+              <div class="arcade-stat"><span class="arcade-stat__label">Viruses</span><strong class="arcade-stat__value" id="viruses">0</strong></div>
+              <div class="arcade-stat"><span class="arcade-stat__label">Level</span><strong class="arcade-stat__value" id="level">1</strong></div>
+            </div>
+
+            <canvas id="game-canvas" class="game-canvas tetris-canvas" width="320" height="512" aria-label="Doctor Mario Spielfeld"></canvas>
+
+            <div class="arcade-controls" aria-label="Doctor Mario Steuerung">
+              <button data-move="left" type="button">Left</button>
+              <button data-move="rotate" type="button">Rotate</button>
+              <button data-move="right" type="button">Right</button>
+              <button data-move="drop" type="button">Drop</button>
+            </div>
+
+            <p class="arcade-hint">Steuerung: <code>Pfeile</code> oder <code>A/D/W/S</code>. Vier gleiche Farben in Reihe oder Spalte räumen Viren und Kapselreste ab.</p>
+          </div>
+        </article>
+
+        <aside class="arcade-sidebar">
+          <section>
+            <p class="eyebrow">Spielziel</p>
+            <ul class="game-rules">
+              <li>Vier gleiche Farben in Reihe oder Spalte lassen die Gruppe verschwinden.</li>
+              <li>Wenn alle Viren weg sind, startet das nächste Level automatisch.</li>
+              <li>Stapelt sich die Flasche bis oben zu, ist der Run vorbei.</li>
+            </ul>
+          </section>
+          <section class="ad-slot" data-ad-slot-key="snakeSidebar" aria-label="Werbefläche Platzhalter">
+            <p class="ad-slot__label">Ad Slot</p>
+            <p>Für spätere Anzeigen vorbereitet.</p>
+          </section>
+          <section>
+            <p class="eyebrow">Mehr Spiele</p>
+            <div class="arcade-buttons">
+              <a class="button-link" href="../tetris/index.html">Tetris</a>
+              <a class="button-link button-link--secondary" href="../pac-man/index.html">Pac-Man</a>
+            </div>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell site-footer__inner">
+        <p>Retro Arcade</p>
+        <nav class="site-nav" aria-label="Footer Navigation">
+          <a href="../tetris/index.html">Tetris</a>
+          <a href="../pac-man/index.html">Pac-Man</a>
+          <a href="../snake/index.html">Snake</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script type="module" src="../../src/ads.js"></script>
+    <script type="module" src="../../src/doctor-mario-game.js"></script>
+  </body>
+</html>
