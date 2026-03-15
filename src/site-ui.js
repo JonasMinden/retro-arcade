@@ -28,6 +28,7 @@ const DEFAULT_POPULAR_GAMES = [
 ];
 
 let currentUser = null;
+const scoreboardRuntimeState = {};
 
 function rootAsset(path) {
   return new URL(path, window.location.origin).toString();
@@ -239,6 +240,13 @@ function readLastSubmittedScore(gameKey) {
   }
 }
 
+function clearLastSubmittedScore(gameKey) {
+  try {
+    window.sessionStorage.removeItem(scoreLockKey(gameKey));
+  } catch {
+    // Ignore storage errors and keep the UI usable.
+  }
+}
 function writeLastSubmittedScore(gameKey, score) {
   try {
     window.sessionStorage.setItem(scoreLockKey(gameKey), String(score));
@@ -261,6 +269,12 @@ function syncSubmitButtonState(gameKey, panel, score) {
   const message = panel.querySelector("[data-submit-message]");
   if (!button) return;
   const ended = gameHasEnded(gameKey);
+  const runtime = scoreboardRuntimeState[gameKey] || { ended: false };
+  if ((!ended && runtime.ended) || (!ended && score === 0)) {
+    clearLastSubmittedScore(gameKey);
+  }
+  runtime.ended = ended;
+  scoreboardRuntimeState[gameKey] = runtime;
   const lastSubmitted = readLastSubmittedScore(gameKey);
   const validScore = Number.isFinite(score) && score > 0;
   const locked = ended && validScore && score === lastSubmitted;
@@ -422,6 +436,8 @@ async function initSiteUi() {
 }
 
 export { initSiteUi, detectGameKey };
+
+
 
 
 

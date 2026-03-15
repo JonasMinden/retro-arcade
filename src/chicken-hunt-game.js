@@ -7,15 +7,14 @@ if (canvas) {
   const pauseButton = document.querySelector('#pause-button');
   const restartButton = document.querySelector('#restart-button');
   const actionButtons = Array.from(document.querySelectorAll('[data-action]'));
+  const state = { score: 0, hits: 0, time: 45, paused: false, gameOver: false, birds: [], spawnTimer: 0, muzzle: 0, lastTime: 0, aimX: 320, aimY: 210 };
+  window.__retroArcadeGameState = state;
 
   const covers = [
     { x: 110, y: 298, w: 118, h: 70, type: 'hay' },
     { x: 270, y: 286, w: 150, h: 86, type: 'wagon' },
     { x: 502, y: 304, w: 116, h: 64, type: 'crate' },
   ];
-
-  
-  window.__retroArcadeGameState = state;
 
   function restartGame() {
     state.score = 0;
@@ -255,5 +254,10 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
+
+
+
+
 
 
