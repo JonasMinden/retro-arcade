@@ -10,11 +10,11 @@ if (canvas) {
   const actionButtons = Array.from(document.querySelectorAll("[data-action]"));
 
   const TABLE = { left: 28, right: 352, top: 26, bottom: 600 };
-  const SHOOTER = { left: 364, right: 392, top: 48, bottom: 564, exitX: 350, exitY: 128 };
+  const SHOOTER = { left: 364, right: 392, top: 48, bottom: 564, exitX: 344, exitY: 116 };
   const BALL_RADIUS = 7.5;
-  const GRAVITY = 760;
-  const MAX_SPEED = 760;
-  const FLIPPER_SPEED = 10.5;
+  const GRAVITY = 690;
+  const MAX_SPEED = 620;
+  const FLIPPER_SPEED = 8.8;
 
   const state = {
     width: canvas.width,
@@ -31,30 +31,31 @@ if (canvas) {
     rightAngularVelocity: 0,
     ball: null,
     lastTime: 0,
+    hitEffects: [],
     bumpers: [
-      { x: 118, y: 148, radius: 24, color: "#ffb347", ring: "#ffe0a6", score: 40 },
-      { x: 210, y: 112, radius: 22, color: "#ffd166", ring: "#fff1b5", score: 55 },
-      { x: 302, y: 150, radius: 24, color: "#71e3ff", ring: "#cff7ff", score: 40 },
-      { x: 150, y: 258, radius: 18, color: "#ff6b6b", ring: "#ffc1c1", score: 70 },
-      { x: 270, y: 262, radius: 18, color: "#c9a227", ring: "#f7e4a3", score: 70 }
+      { x: 116, y: 146, radius: 22, color: "#ffb347", ring: "#ffe0a6", score: 35 },
+      { x: 210, y: 110, radius: 20, color: "#ffd166", ring: "#fff1b5", score: 50 },
+      { x: 300, y: 148, radius: 22, color: "#71e3ff", ring: "#cff7ff", score: 35 },
+      { x: 152, y: 254, radius: 16, color: "#ff6b6b", ring: "#ffc1c1", score: 60 },
+      { x: 268, y: 258, radius: 16, color: "#c9a227", ring: "#f7e4a3", score: 60 }
     ],
     posts: [
-      { x: 86, y: 330, radius: 9 },
-      { x: 334, y: 330, radius: 9 },
-      { x: 112, y: 452, radius: 8 },
-      { x: 308, y: 452, radius: 8 },
-      { x: 182, y: 520, radius: 7 },
-      { x: 238, y: 520, radius: 7 },
-      { x: 362, y: 122, radius: 7 },
-      { x: 362, y: 232, radius: 7 }
+      { x: 86, y: 326, radius: 8 },
+      { x: 334, y: 326, radius: 8 },
+      { x: 112, y: 448, radius: 7 },
+      { x: 308, y: 448, radius: 7 },
+      { x: 176, y: 516, radius: 6 },
+      { x: 244, y: 516, radius: 6 },
+      { x: 362, y: 122, radius: 6 },
+      { x: 362, y: 236, radius: 6 }
     ],
     targets: [
-      { x: 72, y: 218, width: 18, height: 56, color: "#ff9b54", score: 110, active: true },
-      { x: 330, y: 218, width: 18, height: 56, color: "#ff9b54", score: 110, active: true },
-      { x: 202, y: 194, width: 16, height: 54, color: "#87ff65", score: 140, active: true },
-      { x: 122, y: 86, width: 14, height: 46, color: "#ffd166", score: 95, active: true },
-      { x: 284, y: 86, width: 14, height: 46, color: "#ffd166", score: 95, active: true },
-      { x: 352, y: 308, width: 14, height: 44, color: "#71e3ff", score: 125, active: true }
+      { x: 72, y: 214, width: 18, height: 54, color: "#ff9b54", score: 100, active: true, flash: 0 },
+      { x: 330, y: 214, width: 18, height: 54, color: "#ff9b54", score: 100, active: true, flash: 0 },
+      { x: 202, y: 190, width: 16, height: 52, color: "#87ff65", score: 130, active: true, flash: 0 },
+      { x: 122, y: 86, width: 14, height: 44, color: "#ffd166", score: 85, active: true, flash: 0 },
+      { x: 284, y: 86, width: 14, height: 44, color: "#ffd166", score: 85, active: true, flash: 0 },
+      { x: 352, y: 308, width: 14, height: 44, color: "#71e3ff", score: 115, active: true, flash: 0 }
     ],
     lights: [
       { x: 90, y: 72, color: "#ffb347" },
@@ -75,7 +76,7 @@ if (canvas) {
       radius: BALL_RADIUS,
       launched: false,
       mode: "ready",
-      trail: [],
+      trail: []
     };
   }
 
@@ -86,6 +87,23 @@ if (canvas) {
   function addScore(value) {
     state.score += value;
     scoreElement.textContent = String(state.score);
+  }
+
+  function emitHit(x, y, color, count = 6) {
+    for (let i = 0; i < count; i += 1) {
+      const angle = (Math.PI * 2 * i) / count + Math.random() * 0.4;
+      const speed = 40 + Math.random() * 90;
+      state.hitEffects.push({
+        x,
+        y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 0.12 + Math.random() * 0.2,
+        age: 0,
+        color,
+        size: 2 + Math.random() * 3
+      });
+    }
   }
 
   function resetBall() {
@@ -104,7 +122,11 @@ if (canvas) {
     state.rightAngle = Math.PI - 0.42;
     state.leftAngularVelocity = 0;
     state.rightAngularVelocity = 0;
-    state.targets.forEach((target) => { target.active = true; });
+    state.hitEffects = [];
+    state.targets.forEach((target) => {
+      target.active = true;
+      target.flash = 0;
+    });
     scoreElement.textContent = "0";
     livesElement.textContent = "3";
     pauseButton.textContent = "Pause";
@@ -122,17 +144,17 @@ if (canvas) {
     state.ball.launched = true;
     state.ball.mode = "tube";
     state.ball.vx = 0;
-    state.ball.vy = -540;
+    state.ball.vy = -500;
     statusElement.textContent = "Launch";
   }
 
   function flippers() {
     return [
       {
-        pivotX: 148,
+        pivotX: 140,
         pivotY: 548,
-        length: 56,
-        width: 15,
+        length: 50,
+        width: 14,
         angle: state.leftAngle,
         color: "#ff9b54",
         glow: "rgba(255, 155, 84, 0.42)",
@@ -140,10 +162,10 @@ if (canvas) {
         side: "left"
       },
       {
-        pivotX: 272,
+        pivotX: 280,
         pivotY: 548,
-        length: 56,
-        width: 15,
+        length: 50,
+        width: 14,
         angle: state.rightAngle,
         color: "#ffd166",
         glow: "rgba(255, 209, 102, 0.42)",
@@ -154,8 +176,8 @@ if (canvas) {
   }
 
   function updateFlippers(delta) {
-    const leftTarget = state.leftActive ? -0.56 : 0.42;
-    const rightTarget = state.rightActive ? Math.PI + 0.56 : Math.PI - 0.42;
+    const leftTarget = state.leftActive ? -0.58 : 0.42;
+    const rightTarget = state.rightActive ? Math.PI + 0.58 : Math.PI - 0.42;
     const nextLeft = clamp(leftTarget - state.leftAngle, -FLIPPER_SPEED * delta, FLIPPER_SPEED * delta);
     const nextRight = clamp(rightTarget - state.rightAngle, -FLIPPER_SPEED * delta, FLIPPER_SPEED * delta);
     state.leftAngularVelocity = delta > 0 ? nextLeft / delta : 0;
@@ -174,7 +196,7 @@ if (canvas) {
     return { x: closestX, y: closestY, dx: px - closestX, dy: py - closestY, t };
   }
 
-  function reflectVelocity(nx, ny, restitution = 0.92) {
+  function reflectVelocity(nx, ny, restitution = 0.9) {
     const dot = state.ball.vx * nx + state.ball.vy * ny;
     if (dot >= 0) return;
     state.ball.vx -= 2 * dot * nx;
@@ -192,7 +214,7 @@ if (canvas) {
     return { nx, ny };
   }
 
-  function collideCircle(circle, restitution = 0.96, score = 0, impulse = 0) {
+  function collideCircle(circle, restitution = 0.92, score = 0, impulse = 0) {
     const dx = state.ball.x - circle.x;
     const dy = state.ball.y - circle.y;
     const distance = Math.hypot(dx, dy);
@@ -208,28 +230,28 @@ if (canvas) {
       state.ball.vy += ny * impulse;
     }
     if (score) addScore(score);
+    emitHit(circle.x, circle.y, circle.color || "rgba(255,245,200,0.95)", 7);
     return true;
   }
 
   function tableSegments() {
     return [
-      { ax: 28, ay: 598, bx: 28, by: 96, restitution: 0.9 },
-      { ax: 28, ay: 96, bx: 96, by: 32, restitution: 0.92 },
-      { ax: 96, ay: 32, bx: 286, by: 32, restitution: 0.92 },
-      { ax: 286, ay: 32, bx: 352, by: 94, restitution: 0.92 },
-      { ax: 352, ay: 94, bx: 352, by: 598, restitution: 0.9 },
-      { ax: 60, ay: 440, bx: 122, by: 596, restitution: 0.88 },
-      { ax: 320, ay: 440, bx: 258, by: 596, restitution: 0.88 },
-      { ax: 92, ay: 430, bx: 162, by: 486, restitution: 0.92, sling: "left" },
-      { ax: 328, ay: 430, bx: 258, by: 486, restitution: 0.92, sling: "right" },
-      { ax: 88, ay: 214, bx: 128, by: 162, restitution: 0.94 },
-      { ax: 332, ay: 214, bx: 292, by: 162, restitution: 0.94 },
-      { ax: 126, ay: 344, bx: 174, by: 292, restitution: 0.9 },
-      { ax: 294, ay: 344, bx: 246, by: 292, restitution: 0.9 },
-      { ax: 364, ay: 48, bx: 364, by: 564, restitution: 0.86 },
-      { ax: 392, ay: 48, bx: 392, by: 564, restitution: 0.86 },
-      { ax: 364, ay: 48, bx: 392, by: 48, restitution: 0.86 },
-      { ax: 364, ay: 564, bx: 392, by: 564, restitution: 0.86 }
+      { ax: 28, ay: 598, bx: 28, by: 96, restitution: 0.88 },
+      { ax: 28, ay: 96, bx: 96, by: 32, restitution: 0.9 },
+      { ax: 96, ay: 32, bx: 286, by: 32, restitution: 0.88 },
+      { ax: 286, ay: 32, bx: 352, by: 94, restitution: 0.9 },
+      { ax: 352, ay: 94, bx: 352, by: 598, restitution: 0.88 },
+      { ax: 60, ay: 440, bx: 118, by: 596, restitution: 0.84 },
+      { ax: 320, ay: 440, bx: 262, by: 596, restitution: 0.84 },
+      { ax: 92, ay: 430, bx: 158, by: 484, restitution: 0.9, sling: "left" },
+      { ax: 328, ay: 430, bx: 262, by: 484, restitution: 0.9, sling: "right" },
+      { ax: 88, ay: 214, bx: 128, by: 162, restitution: 0.9 },
+      { ax: 332, ay: 214, bx: 292, by: 162, restitution: 0.9 },
+      { ax: 126, ay: 344, bx: 174, by: 292, restitution: 0.88 },
+      { ax: 294, ay: 344, bx: 246, by: 292, restitution: 0.88 },
+      { ax: 364, ay: 48, bx: 364, by: 564, restitution: 0.82 },
+      { ax: 392, ay: 48, bx: 392, by: 564, restitution: 0.82 },
+      { ax: 364, ay: 564, bx: 392, by: 564, restitution: 0.82 }
     ];
   }
 
@@ -243,17 +265,19 @@ if (canvas) {
       if (distance >= padding) return;
       const push = pushBallOut(collision, padding);
       reflectVelocity(push.nx, push.ny, segment.restitution);
+      emitHit(collision.x, collision.y, "rgba(255, 232, 190, 0.9)", 5);
       if (segment.sling) {
-        const slingKick = segment.sling === "left" ? { x: 110, y: -160 } : { x: -110, y: -160 };
+        const slingKick = segment.sling === "left" ? { x: 78, y: -120 } : { x: -78, y: -120 };
         state.ball.vx += slingKick.x;
         state.ball.vy += slingKick.y;
-        addScore(12);
+        addScore(10);
       }
     });
   }
 
-  function handleTargets() {
+  function handleTargets(delta) {
     state.targets.forEach((target) => {
+      target.flash = Math.max(0, target.flash - delta);
       if (!target.active) return;
       const hit =
         state.ball.x + state.ball.radius > target.x &&
@@ -262,9 +286,11 @@ if (canvas) {
         state.ball.y - state.ball.radius < target.y + target.height;
       if (!hit) return;
       target.active = false;
-      state.ball.vx *= -0.88;
-      state.ball.vy = Math.min(state.ball.vy, -200);
+      target.flash = 0.26;
+      state.ball.vx *= -0.8;
+      state.ball.vy = Math.min(state.ball.vy, -180);
       addScore(target.score);
+      emitHit(target.x + target.width / 2, target.y + target.height / 2, target.color, 10);
     });
   }
 
@@ -274,28 +300,29 @@ if (canvas) {
       const tipY = flipper.pivotY + Math.sin(flipper.angle) * flipper.length;
       const collision = lineDistance(state.ball.x, state.ball.y, flipper.pivotX, flipper.pivotY, tipX, tipY);
       const distance = Math.hypot(collision.dx, collision.dy);
-      const padding = state.ball.radius + flipper.width * 0.55;
+      const padding = state.ball.radius + flipper.width * 0.5;
       if (distance >= padding) return;
       const push = pushBallOut(collision, padding);
-      reflectVelocity(push.nx, push.ny, 0.9);
+      reflectVelocity(push.nx, push.ny, 0.88);
       const tangentX = (tipX - flipper.pivotX) / flipper.length;
       const tangentY = (tipY - flipper.pivotY) / flipper.length;
-      const flipStrength = Math.abs(flipper.angularVelocity) * 22;
-      const reachBoost = 0.65 + collision.t * 0.65;
-      if (flipStrength > 6) {
-        state.ball.vx += tangentX * flipStrength * reachBoost + (flipper.side === "left" ? -36 : 36);
-        state.ball.vy += tangentY * flipStrength * reachBoost - 280;
+      const flipStrength = Math.abs(flipper.angularVelocity) * 16;
+      const reachBoost = 0.62 + collision.t * 0.42;
+      if (flipStrength > 4) {
+        state.ball.vx += tangentX * flipStrength * reachBoost + (flipper.side === "left" ? -24 : 24);
+        state.ball.vy += tangentY * flipStrength * reachBoost - 190;
+        addScore(14);
       } else {
-        state.ball.vy -= 32;
+        state.ball.vy -= 18;
+        addScore(4);
       }
-      if (state.ball.vy > -260) state.ball.vy = -260;
-      addScore(flipStrength > 6 ? 16 : 6);
+      emitHit(collision.x, collision.y, flipper.color, 6);
     });
   }
 
   function handleDrain() {
-    const drainLeft = 194;
-    const drainRight = 226;
+    const drainLeft = 180;
+    const drainRight = 240;
     if (state.ball.y > 584 && state.ball.x > drainLeft && state.ball.x < drainRight) {
       state.lives -= 1;
       livesElement.textContent = String(state.lives);
@@ -327,16 +354,11 @@ if (canvas) {
   function stabilizeBall() {
     const ball = state.ball;
     if (ball.mode === "tube") return;
-    ball.vx *= 0.997;
-    ball.vy *= 0.998;
+    ball.vx *= 0.994;
+    ball.vy *= 0.996;
     const speed = Math.hypot(ball.vx, ball.vy);
     if (speed > MAX_SPEED) {
       const scale = MAX_SPEED / speed;
-      ball.vx *= scale;
-      ball.vy *= scale;
-    }
-    if (ball.launched && ball.mode === "live" && speed < 220) {
-      const scale = 220 / Math.max(speed, 1);
       ball.vx *= scale;
       ball.vy *= scale;
     }
@@ -350,10 +372,22 @@ if (canvas) {
       ball.mode = "live";
       ball.x = SHOOTER.exitX;
       ball.y = SHOOTER.exitY;
-      ball.vx = -248;
-      ball.vy = -188;
+      ball.vx = -188;
+      ball.vy = -126;
+      emitHit(ball.x, ball.y, "rgba(255, 209, 102, 0.9)", 8);
       statusElement.textContent = "Live";
     }
+  }
+
+  function updateHitEffects(delta) {
+    state.hitEffects.forEach((effect) => {
+      effect.age += delta;
+      effect.x += effect.vx * delta;
+      effect.y += effect.vy * delta;
+      effect.vx *= 0.92;
+      effect.vy *= 0.92;
+    });
+    state.hitEffects = state.hitEffects.filter((effect) => effect.age < effect.life);
   }
 
   function updateBallStep(step) {
@@ -363,7 +397,7 @@ if (canvas) {
     if (ball.mode === "tube") {
       updateLaunchTube(step);
       ball.trail.unshift({ x: ball.x, y: ball.y });
-      ball.trail = ball.trail.slice(0, 8);
+      ball.trail = ball.trail.slice(0, 10);
       return;
     }
 
@@ -372,24 +406,25 @@ if (canvas) {
     ball.y += ball.vy * step;
 
     handleWallCollisions();
-    const pulse = performance.now() / 140;
-    state.bumpers.forEach((bumper, index) => collideCircle(bumper, 0.96, bumper.score, index < 3 ? 38 + Math.sin(pulse + index) * 8 : 22));
-    state.posts.forEach((post) => collideCircle(post, 0.9, 8, 8));
-    handleTargets();
+    const pulse = performance.now() / 180;
+    state.bumpers.forEach((bumper, index) => collideCircle(bumper, 0.92, bumper.score, index < 3 ? 24 + Math.sin(pulse + index) * 6 : 14));
+    state.posts.forEach((post) => collideCircle(post, 0.84, 6, 4));
+    handleTargets(step);
     handleFlippers();
     stabilizeBall();
 
     ball.trail.unshift({ x: ball.x, y: ball.y });
-    ball.trail = ball.trail.slice(0, 8);
+    ball.trail = ball.trail.slice(0, 10);
   }
 
   function updateBall(delta) {
     if (state.paused) return;
     updateFlippers(delta);
+    updateHitEffects(delta);
     if (!state.ball.launched) return;
     let remaining = delta;
     while (remaining > 0) {
-      const step = Math.min(1 / 120, remaining);
+      const step = Math.min(1 / 140, remaining);
       updateBallStep(step);
       if (state.ball.mode === "live" && handleDrain()) return;
       remaining -= step;
@@ -457,7 +492,7 @@ if (canvas) {
     ctx.lineTo(352, 598);
     ctx.stroke();
 
-    ctx.strokeStyle = "rgba(255, 233, 183, 0.16)";
+    ctx.strokeStyle = "rgba(255, 239, 199, 0.18)";
     ctx.lineWidth = 3;
     ctx.strokeRect(364, 48, 28, 516);
 
@@ -491,7 +526,7 @@ if (canvas) {
 
   function drawBumpers() {
     state.bumpers.forEach((bumper, index) => {
-      const pulse = 0.86 + Math.sin(performance.now() / 170 + index) * 0.14;
+      const pulse = 0.82 + Math.sin(performance.now() / 170 + index) * 0.12;
       const ring = ctx.createRadialGradient(bumper.x - 6, bumper.y - 6, 4, bumper.x, bumper.y, bumper.radius + 14);
       ring.addColorStop(0, bumper.ring);
       ring.addColorStop(0.4, bumper.color);
@@ -507,7 +542,7 @@ if (canvas) {
       ctx.fill();
       ctx.fillStyle = bumper.ring;
       ctx.beginPath();
-      ctx.arc(bumper.x, bumper.y, bumper.radius * 0.52, 0, Math.PI * 2);
+      ctx.arc(bumper.x, bumper.y, bumper.radius * 0.5, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = "rgba(255,255,255,0.34)";
       ctx.lineWidth = 3;
@@ -518,9 +553,10 @@ if (canvas) {
   function drawTargets() {
     state.targets.forEach((target, index) => {
       const pulse = 0.55 + Math.sin(performance.now() / 160 + index * 1.3) * 0.2;
+      const flash = target.flash > 0 ? 0.32 + target.flash : 0;
       ctx.fillStyle = target.active ? target.color : "rgba(255,255,255,0.14)";
       ctx.fillRect(target.x, target.y, target.width, target.height);
-      ctx.fillStyle = target.active ? `rgba(255,255,255,${0.18 + pulse * 0.18})` : "rgba(255,255,255,0.08)";
+      ctx.fillStyle = target.active ? `rgba(255,255,255,${0.18 + pulse * 0.18 + flash})` : "rgba(255,255,255,0.08)";
       ctx.fillRect(target.x + 2, target.y + 3, target.width - 4, 10);
       ctx.strokeStyle = "rgba(16,18,33,0.55)";
       ctx.lineWidth = 2;
@@ -546,10 +582,10 @@ if (canvas) {
       const tipX = flipper.pivotX + Math.cos(flipper.angle) * flipper.length;
       const tipY = flipper.pivotY + Math.sin(flipper.angle) * flipper.length;
       ctx.strokeStyle = flipper.color;
-      ctx.lineWidth = 16;
+      ctx.lineWidth = 14;
       ctx.lineCap = "round";
       ctx.shadowColor = flipper.glow;
-      ctx.shadowBlur = 16;
+      ctx.shadowBlur = 14;
       ctx.beginPath();
       ctx.moveTo(flipper.pivotX, flipper.pivotY);
       ctx.lineTo(tipX, tipY);
@@ -572,9 +608,20 @@ if (canvas) {
     ctx.fillRect(372, 500, 12, 10);
   }
 
+  function drawHitEffects() {
+    state.hitEffects.forEach((effect) => {
+      const alpha = 1 - effect.age / effect.life;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = effect.color;
+      ctx.fillRect(effect.x - effect.size / 2, effect.y - effect.size / 2, effect.size, effect.size);
+      ctx.restore();
+    });
+  }
+
   function drawBall() {
     state.ball.trail.forEach((point, index) => {
-      const alpha = (1 - index / state.ball.trail.length) * 0.18;
+      const alpha = (1 - index / state.ball.trail.length) * 0.16;
       ctx.fillStyle = `rgba(255,255,255,${alpha})`;
       ctx.beginPath();
       ctx.arc(point.x, point.y, Math.max(2, state.ball.radius - index * 0.6), 0, Math.PI * 2);
@@ -598,7 +645,7 @@ if (canvas) {
     ctx.textAlign = "center";
     ctx.fillText("Launch the Ball", state.width / 2 - 12, state.height / 2 - 10);
     ctx.font = "14px 'Courier New'";
-    ctx.fillText("Die Kugel kommt oben sauber aus der Röhre. Danach musst du wirklich arbeiten.", state.width / 2 - 12, state.height / 2 + 18);
+    ctx.fillText("Die Kugel verlässt die Startröhre oben. Danach zählt Flipper-Timing, nicht Glück.", state.width / 2 - 12, state.height / 2 + 18);
   }
 
   function draw() {
@@ -608,6 +655,7 @@ if (canvas) {
     drawPosts();
     drawFlippers();
     drawLauncher();
+    drawHitEffects();
     drawBall();
     drawOverlay();
   }
@@ -664,3 +712,5 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
+

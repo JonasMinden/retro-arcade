@@ -18,6 +18,7 @@
   "tank-battle": { title: "Panzerspiel Scores", selector: "#score" },
   "chicken-hunt": { title: "Barn Blaster Scores", selector: "#score" },
   "head-soccer": { title: "Head Soccer Scores", selector: "#home-score" },
+  "johnny-garden": { title: "Johnny in the Garden Scores", selector: "#score" },
 };
 
 const COOKIE_CONSENT_KEY = "retro_arcade_cookie_consent_v1";
@@ -503,6 +504,8 @@ async function initSiteUi() {
 }
 
 export { initSiteUi, detectGameKey };
+
+
 
 
 

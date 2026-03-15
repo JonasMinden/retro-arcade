@@ -1231,3 +1231,35 @@ button,
 .patch-log__list strong::after {
   content: "";
 }
+
+
+.pixel-art--johnny-garden {
+  background:
+    linear-gradient(180deg, #233f1d 0 58%, #355f2d 58% 100%),
+    linear-gradient(90deg, transparent 0 18%, #c38b4a 18% 22%, transparent 22% 38%, #c38b4a 38% 42%, transparent 42% 58%, #c38b4a 58% 62%, transparent 62% 78%, #c38b4a 78% 82%, transparent 82%),
+    radial-gradient(circle at 26% 34%, #71e3ff 0 10px, transparent 11px),
+    radial-gradient(circle at 70% 42%, #ff6b6b 0 10px, transparent 11px),
+    radial-gradient(circle at 52% 68%, #ffd166 0 7px, transparent 8px),
+    #101221;
+}
+
+.health-bar {
+  height: 14px;
+  margin: 0 0 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+
+.health-bar__fill {
+  height: 100%;
+  background: linear-gradient(90deg, #87ff65, #ffd166, #ff6b6b);
+  box-shadow: 0 0 14px rgba(135, 255, 101, 0.3);
+}
+
+@media (max-width: 860px) {
+  .home-hero {
+    grid-template-columns: 1fr;
+  }
+}
+

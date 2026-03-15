@@ -152,9 +152,12 @@ export function normalizeGameKey(game) {
     "astro-blaster",
     "tank-battle",
     "chicken-hunt",
-    "head-soccer"
+    "head-soccer",
+    "johnny-garden"
   ];
   return allowed.includes(game) ? game : null;
 }
+
+
 
 
