@@ -339,7 +339,7 @@ if (canvas) {
     updateEnemies(delta);
     updateRocks(delta);
     updateParticles(delta);
-    state.score += delta * 10;
+    if (state.huntActive) state.score += delta * 10;
 
     if (state.huntActive && insideZone(state.player, EXIT_ZONE)) {
       state.level += 1;
@@ -531,3 +531,4 @@ if (canvas) {
   resetGame();
   requestAnimationFrame(frame);
 }
+
