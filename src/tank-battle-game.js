@@ -8,21 +8,20 @@ if (canvas) {
   const restartButton = document.querySelector('#restart-button');
   const actionButtons = Array.from(document.querySelectorAll('[data-action]'));
 
+  const TANK_RADIUS = 12;
   const STATIC_WALLS = [
-    { x: 52, y: 54, w: 120, h: 18 },
-    { x: 346, y: 54, w: 120, h: 18 },
-    { x: 52, y: 348, w: 120, h: 18 },
-    { x: 346, y: 348, w: 120, h: 18 },
-    { x: 120, y: 96, w: 18, h: 104 },
-    { x: 382, y: 96, w: 18, h: 104 },
-    { x: 120, y: 220, w: 18, h: 104 },
-    { x: 382, y: 220, w: 18, h: 104 },
-    { x: 174, y: 120, w: 172, h: 16 },
-    { x: 174, y: 284, w: 172, h: 16 },
-    { x: 212, y: 168, w: 16, h: 92 },
-    { x: 292, y: 168, w: 16, h: 92 },
-    { x: 64, y: 196, w: 78, h: 16 },
-    { x: 378, y: 196, w: 78, h: 16 }
+    { x: 74, y: 66, w: 78, h: 14 },
+    { x: 368, y: 66, w: 78, h: 14 },
+    { x: 74, y: 340, w: 78, h: 14 },
+    { x: 368, y: 340, w: 78, h: 14 },
+    { x: 172, y: 96, w: 16, h: 88 },
+    { x: 332, y: 96, w: 16, h: 88 },
+    { x: 172, y: 236, w: 16, h: 88 },
+    { x: 332, y: 236, w: 16, h: 88 },
+    { x: 220, y: 146, w: 80, h: 14 },
+    { x: 220, y: 260, w: 80, h: 14 },
+    { x: 98, y: 196, w: 74, h: 14 },
+    { x: 348, y: 196, w: 74, h: 14 }
   ];
 
   const state = {
@@ -46,7 +45,7 @@ if (canvas) {
   }
 
   function createButton(id, x, y, targetGate) {
-    return { id, x, y, r: 12, targetGate, pulse: Math.random() * Math.PI * 2 };
+    return { id, x, y, r: 10, targetGate, pulse: Math.random() * Math.PI * 2 };
   }
 
   function createTank(x, y, color, isEnemy = false) {
@@ -58,11 +57,12 @@ if (canvas) {
       color,
       isEnemy,
       hp: isEnemy ? 2 : 3,
-      think: 0.16 + Math.random() * 0.22,
+      think: 0.14 + Math.random() * 0.22,
       stuckFor: 0,
-      intent: 'hunt',
       targetButton: null,
-      speed: isEnemy ? 84 + Math.random() * 12 : 122,
+      wanderTimer: 0,
+      wanderDir: 'up',
+      speed: isEnemy ? 78 + Math.random() * 10 : 114,
     };
   }
 
@@ -75,7 +75,7 @@ if (canvas) {
   }
 
   function segmentsBlocked(x1, y1, x2, y2) {
-    const steps = 28;
+    const steps = 24;
     for (let i = 1; i <= steps; i += 1) {
       const t = i / steps;
       const px = x1 + (x2 - x1) * t;
@@ -89,50 +89,45 @@ if (canvas) {
     const gate = state.gates.find((entry) => entry.id === gateId);
     if (!gate || gate.cooldown > 0.01) return;
     gate.open = !gate.open;
-    gate.cooldown = 0.35;
+    gate.cooldown = 0.4;
   }
 
   function lineOfSight(a, b) {
-    const alignedX = Math.abs(a.x - b.x) < 18;
-    const alignedY = Math.abs(a.y - b.y) < 18;
+    const alignedX = Math.abs(a.x - b.x) < 16;
+    const alignedY = Math.abs(a.y - b.y) < 16;
     if (!alignedX && !alignedY) return false;
     return !segmentsBlocked(a.x, a.y, b.x, b.y);
   }
 
   function fire(tank) {
     if (!tank || tank.cooldown > 0) return;
-    tank.cooldown = tank.isEnemy ? 0.95 : 0.4;
+    tank.cooldown = tank.isEnemy ? 1.02 : 0.34;
     const vectors = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
     const [dx, dy] = vectors[tank.dir];
     state.bullets.push({ x: tank.x, y: tank.y, dx, dy, owner: tank.isEnemy ? 'enemy' : 'player', life: 2.2 });
   }
 
   function respawnWave() {
-    state.player = createTank(260, 382, '#71e3ff');
+    state.player = createTank(260, 380, '#71e3ff');
     state.gates = [
-      createGate('alpha', 246, 96, 28, 16),
-      createGate('beta', 246, 308, 28, 16),
-      createGate('gamma', 152, 202, 16, 36),
-      createGate('delta', 352, 202, 16, 36)
+      createGate('alpha', 252, 104, 20, 14),
+      createGate('beta', 252, 302, 20, 14)
     ];
     state.buttons = [
-      createButton('alpha-btn', 92, 156, 'alpha'),
-      createButton('beta-btn', 428, 156, 'beta'),
-      createButton('gamma-btn', 94, 258, 'gamma'),
-      createButton('delta-btn', 426, 258, 'delta')
+      createButton('alpha-btn', 88, 150, 'alpha'),
+      createButton('beta-btn', 432, 270, 'beta')
     ];
 
-    const enemyCount = Math.min(7, 2 + state.wave);
+    const enemyCount = Math.min(6, 2 + Math.floor(state.wave * 0.9));
     const spawnPoints = [
-      [438, 76],
-      [438, 316],
-      [260, 76],
-      [260, 88],
-      [86, 76],
-      [86, 254],
-      [438, 254]
+      [426, 74],
+      [426, 328],
+      [260, 74],
+      [96, 74],
+      [96, 328],
+      [426, 208]
     ];
-    const palette = ['#ff5fb2', '#ff9b54', '#ffd166', '#ff7676', '#c88cff', '#8ef0ff', '#f2c14e'];
+    const palette = ['#ff5fb2', '#ff9b54', '#ffd166', '#ff7676', '#c88cff', '#8ef0ff'];
     state.enemies = spawnPoints.slice(0, enemyCount).map(([x, y], index) => createTank(x, y, palette[index % palette.length], true));
     state.bullets = [];
   }
@@ -164,7 +159,7 @@ if (canvas) {
       else tank.dir = moveY < 0 ? 'up' : 'down';
       const nx = tank.x + moveX * tank.speed * delta;
       const ny = tank.y + moveY * tank.speed * delta;
-      if (nx > 22 && nx < canvas.width - 22 && ny > 22 && ny < canvas.height - 22 && !collidesRect(nx, ny, 17)) {
+      if (nx > 20 && nx < canvas.width - 20 && ny > 20 && ny < canvas.height - 20 && !collidesRect(nx, ny, TANK_RADIUS)) {
         tank.x = nx;
         tank.y = ny;
         moved = true;
@@ -203,10 +198,10 @@ if (canvas) {
         const [vx, vy] = vectorFor(dir);
         const probeX = enemy.x + vx * 28;
         const probeY = enemy.y + vy * 28;
-        if (probeX < 22 || probeX > canvas.width - 22 || probeY < 22 || probeY > canvas.height - 22) return null;
-        if (collidesRect(probeX, probeY, 16)) return null;
+        if (probeX < 20 || probeX > canvas.width - 20 || probeY < 20 || probeY > canvas.height - 20) return null;
+        if (collidesRect(probeX, probeY, TANK_RADIUS)) return null;
         const distance = Math.hypot(target.x - probeX, target.y - probeY);
-        const sameDirBonus = dir === enemy.dir ? -16 : 0;
+        const sameDirBonus = dir === enemy.dir ? -10 : 0;
         return { dir, distance: distance + sameDirBonus };
       })
       .filter(Boolean)
@@ -214,44 +209,60 @@ if (canvas) {
       .map((entry) => entry.dir);
   }
 
-  function chooseButtonTarget(enemy) {
-    const closedGateButton = state.buttons.find((button) => {
+  function chooseButtonTarget() {
+    return state.buttons.find((button) => {
       const gate = state.gates.find((entry) => entry.id === button.targetGate);
       return gate && !gate.open;
-    });
-    return closedGateButton || null;
+    }) || null;
+  }
+
+  function pickMovementDirection(enemy, options) {
+    if (!options.length) return enemy.dir;
+    if (enemy.wanderTimer > 0 && options.includes(enemy.wanderDir) && Math.random() < 0.45) return enemy.wanderDir;
+    if (Math.random() < 0.2 && options[1]) return options[1];
+    if (Math.random() < 0.14) return options[Math.floor(Math.random() * options.length)];
+    return options[0];
   }
 
   function updateEnemy(enemy, delta) {
     enemy.think -= delta;
+    enemy.wanderTimer = Math.max(0, enemy.wanderTimer - delta);
     const playerTarget = { x: state.player.x, y: state.player.y };
     const canSeePlayer = lineOfSight(enemy, playerTarget);
 
     if (enemy.think <= 0) {
-      enemy.think = 0.16 + Math.random() * 0.24;
-      const pursueButton = !canSeePlayer && Math.random() < 0.32;
-      enemy.targetButton = pursueButton ? chooseButtonTarget(enemy) : null;
-      enemy.intent = enemy.targetButton ? 'button' : 'hunt';
+      enemy.think = 0.14 + Math.random() * 0.26;
+      enemy.targetButton = !canSeePlayer && Math.random() < 0.24 ? chooseButtonTarget(enemy) : null;
 
-      if (canSeePlayer && Math.random() < 0.48) {
+      if (canSeePlayer && Math.random() < 0.38) {
         enemy.dir = directionToward(enemy, playerTarget);
         fire(enemy);
-      } else if (enemy.targetButton && lineOfSight(enemy, enemy.targetButton) && Math.random() < 0.42) {
+      } else if (enemy.targetButton && lineOfSight(enemy, enemy.targetButton) && Math.random() < 0.32) {
         enemy.dir = directionToward(enemy, enemy.targetButton);
         fire(enemy);
+      }
+
+      if (Math.random() < 0.18) {
+        const dirs = ['up', 'down', 'left', 'right'];
+        enemy.wanderDir = dirs[Math.floor(Math.random() * dirs.length)];
+        enemy.wanderTimer = 0.24 + Math.random() * 0.26;
       }
     }
 
     const target = enemy.targetButton || playerTarget;
     const preferredDirections = candidateDirections(enemy, target);
-    const [mx, my] = vectorFor(preferredDirections[0] || enemy.dir);
-    const moved = updateTank(enemy, delta, mx * 0.9, my * 0.9);
+    const chosenDir = pickMovementDirection(enemy, preferredDirections);
+    enemy.dir = chosenDir;
+    const [mx, my] = vectorFor(chosenDir);
+    const moved = updateTank(enemy, delta, mx * 0.88, my * 0.88);
 
     if (!moved) {
       enemy.stuckFor += delta;
-      if (enemy.stuckFor > 0.18) {
-        const fallback = preferredDirections[Math.floor(Math.random() * Math.max(1, preferredDirections.length))] || enemy.dir;
+      if (enemy.stuckFor > 0.14) {
+        const fallback = preferredDirections[Math.floor(Math.random() * Math.max(1, preferredDirections.length))] || ['up', 'down', 'left', 'right'][Math.floor(Math.random() * 4)];
         enemy.dir = fallback;
+        enemy.wanderDir = fallback;
+        enemy.wanderTimer = 0.2;
         enemy.think = 0.04;
         enemy.stuckFor = 0;
       }
@@ -259,9 +270,9 @@ if (canvas) {
       enemy.stuckFor = 0;
     }
 
-    if (enemy.targetButton && Math.hypot(enemy.x - enemy.targetButton.x, enemy.y - enemy.targetButton.y) < 110 && lineOfSight(enemy, enemy.targetButton)) {
+    if (enemy.targetButton && Math.hypot(enemy.x - enemy.targetButton.x, enemy.y - enemy.targetButton.y) < 96 && lineOfSight(enemy, enemy.targetButton)) {
       enemy.dir = directionToward(enemy, enemy.targetButton);
-      if (Math.random() < 0.012) fire(enemy);
+      if (Math.random() < 0.008) fire(enemy);
     }
   }
 
@@ -301,7 +312,7 @@ if (canvas) {
 
       if (bullet.owner === 'player') {
         state.enemies.forEach((enemy) => {
-          if (!enemy.dead && Math.abs(enemy.x - bullet.x) < 18 && Math.abs(enemy.y - bullet.y) < 18) {
+          if (!enemy.dead && Math.abs(enemy.x - bullet.x) < TANK_RADIUS + 4 && Math.abs(enemy.y - bullet.y) < TANK_RADIUS + 4) {
             enemy.hp -= 1;
             bullet.dead = true;
             if (enemy.hp <= 0) {
@@ -311,7 +322,7 @@ if (canvas) {
             }
           }
         });
-      } else if (Math.abs(state.player.x - bullet.x) < 18 && Math.abs(state.player.y - bullet.y) < 18) {
+      } else if (Math.abs(state.player.x - bullet.x) < TANK_RADIUS + 4 && Math.abs(state.player.y - bullet.y) < TANK_RADIUS + 4) {
         bullet.dead = true;
         loseLife();
       }
@@ -331,22 +342,22 @@ if (canvas) {
     ctx.save();
     ctx.translate(tank.x, tank.y);
     ctx.fillStyle = tank.isEnemy ? 'rgba(0,0,0,0.24)' : 'rgba(0,0,0,0.18)';
-    ctx.fillRect(-20, -15, 40, 30);
+    ctx.fillRect(-14, -10, 28, 20);
     ctx.fillStyle = '#2c2f40';
-    ctx.fillRect(-21, -17, 8, 34);
-    ctx.fillRect(13, -17, 8, 34);
+    ctx.fillRect(-15, -11, 5, 22);
+    ctx.fillRect(10, -11, 5, 22);
     ctx.fillStyle = tank.color;
-    ctx.fillRect(-16, -12, 32, 24);
+    ctx.fillRect(-11, -8, 22, 16);
     ctx.fillStyle = '#f7f5ff';
-    ctx.fillRect(-9, -8, 18, 16);
+    ctx.fillRect(-6, -5, 12, 10);
     ctx.fillStyle = '#101221';
     ctx.beginPath();
-    ctx.arc(0, 0, 8, 0, Math.PI * 2);
+    ctx.arc(0, 0, 5, 0, Math.PI * 2);
     ctx.fill();
-    if (tank.dir === 'up') ctx.fillRect(-3, -25, 6, 22);
-    if (tank.dir === 'down') ctx.fillRect(-3, 3, 6, 22);
-    if (tank.dir === 'left') ctx.fillRect(-25, -3, 22, 6);
-    if (tank.dir === 'right') ctx.fillRect(3, -3, 22, 6);
+    if (tank.dir === 'up') ctx.fillRect(-2, -18, 4, 15);
+    if (tank.dir === 'down') ctx.fillRect(-2, 3, 4, 15);
+    if (tank.dir === 'left') ctx.fillRect(-18, -2, 15, 4);
+    if (tank.dir === 'right') ctx.fillRect(3, -2, 15, 4);
     ctx.restore();
   }
 
@@ -355,7 +366,7 @@ if (canvas) {
     ctx.translate(button.x, button.y);
     ctx.fillStyle = '#18243f';
     ctx.beginPath();
-    ctx.arc(0, 0, button.r + 5, 0, Math.PI * 2);
+    ctx.arc(0, 0, button.r + 4, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = `rgba(255, 209, 102, ${0.45 + Math.sin(button.pulse) * 0.2})`;
     ctx.beginPath();
@@ -453,4 +464,3 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
-
