@@ -91,6 +91,22 @@ if (canvas) {
     });
     return placedCells;
   }
+  function clearLines() {
+    let cleared = 0;
+    state.board = state.board.filter((row) => {
+      const full = row.every(Boolean);
+      if (full) cleared += 1;
+      return !full;
+    });
+    while (state.board.length < rows) {
+      state.board.unshift(Array(cols).fill(null));
+    }
+    if (cleared > 0) {
+      state.lines += cleared;
+      state.score += [0, 100, 300, 500, 800][cleared] * state.level;
+    }
+    return cleared;
+  }
   function syncHud() {
     state.level = 1 + Math.floor(state.lines / 10);
     scoreElement.textContent = String(state.score);
@@ -278,6 +294,7 @@ if (canvas) {
   restartGame();
   requestAnimationFrame(frame);
 }
+
 
 
 

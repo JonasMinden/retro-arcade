@@ -308,6 +308,7 @@ function scoreboardMarkup(title) {
       <p class="scoreboard-panel__meta">Top 10 dieser Maschine. Gastspiel bleibt ohne Login möglich.</p>
       <div class="scoreboard-panel__current">Aktueller Score: <strong data-current-score>0</strong></div>
       <button class="pixel-button" type="button" data-submit-score>Score speichern</button>
+      <p class="scoreboard-panel__hint">Um Scores zu speichern bitte einloggen!</p>
       <p class="form-message" data-submit-message></p>
       <ol class="scoreboard-list" data-scoreboard-list></ol>
     </section>
@@ -446,6 +447,7 @@ async function initSiteUi() {
 }
 
 export { initSiteUi, detectGameKey };
+
 
 
 
