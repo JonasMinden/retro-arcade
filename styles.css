@@ -1139,14 +1139,11 @@ button,
 
 
 .marquee--home {
-  display: grid;
-  grid-template-columns: minmax(230px, 280px) minmax(0, 1fr);
-  gap: 24px;
-  align-items: start;
+  display: block;
 }
 
 .patch-notes {
-  position: relative;
+  position: static;
   z-index: 1;
   padding: 18px 18px 18px 26px;
   color: #2a2a38;
@@ -1193,5 +1190,13 @@ button,
 
 .patch-notes li {
   line-height: 1.45;
+}
+
+
+.home-hero {
+  display: grid;
+  grid-template-columns: minmax(230px, 280px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
 }
 

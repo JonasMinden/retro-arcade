@@ -23,11 +23,7 @@
     </header>
 
     <main class="shell page arcade-page home-page">
-      <section class="marquee marquee--home">
-        <div class="marquee__lights" aria-hidden="true">
-          <span></span><span></span><span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span><span></span><span></span>
-        </div>
+      <section class="home-hero">
         <aside class="patch-notes" aria-label="Letzte Änderungen">
           <p class="eyebrow">Patch-Notizen</p>
           <h2>Frisch aus der Werkstatt</h2>
@@ -37,18 +33,24 @@
             <li>Head Soccer, Chicken Hunt und Sky Shield wurden aus ihrem kaputten HTML-Sarkophag befreit.</li>
           </ul>
         </aside>
-        <div class="hero__copy">
-          <p class="eyebrow">Full Floor</p>
-          <h1>Die Arcade-Halle ist jetzt komplett offen.</h1>
-          <p class="lead">
-            Von Snake und Pong bis zu Space Invaders, Asteroids, Pac-Man, Pinball, Missile Command und der neuen Combat-Welle:
-            jede Maschine hat ihren eigenen Cabinet-Look, aber dieselbe Seite als Zuhause.
-          </p>
-          <div class="hero__actions">
-            <a class="button-link" href="#games">Alle Spiele</a>
-            <a class="button-link button-link--secondary" href="./account.html">Account & Scoreboards</a>
+        <section class="marquee marquee--home">
+          <div class="marquee__lights" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
           </div>
-        </div>
+          <div class="hero__copy">
+            <p class="eyebrow">Full Floor</p>
+            <h1>Die Arcade-Halle ist jetzt komplett offen.</h1>
+            <p class="lead">
+              Von Snake und Pong bis zu Space Invaders, Asteroids, Pac-Man, Pinball, Missile Command und der neuen Combat-Welle:
+              jede Maschine hat ihren eigenen Cabinet-Look, aber dieselbe Seite als Zuhause.
+            </p>
+            <div class="hero__actions">
+              <a class="button-link" href="#games">Alle Spiele</a>
+              <a class="button-link button-link--secondary" href="./account.html">Account & Scoreboards</a>
+            </div>
+          </div>
+        </section>
       </section>
 
       <section id="games" class="section">
@@ -116,7 +118,3 @@
     <script type="module" src="./src/ads.js"></script>
   </body>
 </html>
-
-
-
-
