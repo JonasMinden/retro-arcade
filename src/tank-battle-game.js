@@ -10,18 +10,12 @@ if (canvas) {
 
   const TANK_RADIUS = 12;
   const STATIC_WALLS = [
-    { x: 74, y: 66, w: 78, h: 14 },
-    { x: 368, y: 66, w: 78, h: 14 },
-    { x: 74, y: 340, w: 78, h: 14 },
-    { x: 368, y: 340, w: 78, h: 14 },
-    { x: 172, y: 96, w: 16, h: 88 },
-    { x: 332, y: 96, w: 16, h: 88 },
-    { x: 172, y: 236, w: 16, h: 88 },
-    { x: 332, y: 236, w: 16, h: 88 },
-    { x: 220, y: 146, w: 80, h: 14 },
-    { x: 220, y: 260, w: 80, h: 14 },
-    { x: 98, y: 196, w: 74, h: 14 },
-    { x: 348, y: 196, w: 74, h: 14 }
+    { x: 110, y: 92, w: 64, h: 14 },
+    { x: 346, y: 92, w: 64, h: 14 },
+    { x: 110, y: 314, w: 64, h: 14 },
+    { x: 346, y: 314, w: 64, h: 14 },
+    { x: 220, y: 150, w: 82, h: 14 },
+    { x: 220, y: 252, w: 82, h: 14 }
   ];
 
   const state = {
@@ -57,12 +51,12 @@ if (canvas) {
       color,
       isEnemy,
       hp: isEnemy ? 2 : 3,
-      think: 0.14 + Math.random() * 0.22,
+      think: 0.12 + Math.random() * 0.18,
       stuckFor: 0,
       targetButton: null,
       wanderTimer: 0,
       wanderDir: 'up',
-      speed: isEnemy ? 78 + Math.random() * 10 : 114,
+      speed: isEnemy ? 82 + Math.random() * 8 : 116,
     };
   }
 
@@ -75,7 +69,7 @@ if (canvas) {
   }
 
   function segmentsBlocked(x1, y1, x2, y2) {
-    const steps = 24;
+    const steps = 20;
     for (let i = 1; i <= steps; i += 1) {
       const t = i / steps;
       const px = x1 + (x2 - x1) * t;
@@ -101,34 +95,30 @@ if (canvas) {
 
   function fire(tank) {
     if (!tank || tank.cooldown > 0) return;
-    tank.cooldown = tank.isEnemy ? 1.02 : 0.34;
+    tank.cooldown = tank.isEnemy ? 1.05 : 0.34;
     const vectors = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
     const [dx, dy] = vectors[tank.dir];
     state.bullets.push({ x: tank.x, y: tank.y, dx, dy, owner: tank.isEnemy ? 'enemy' : 'player', life: 2.2 });
   }
 
   function respawnWave() {
-    state.player = createTank(260, 380, '#71e3ff');
+    state.player = createTank(260, 378, '#71e3ff');
     state.gates = [
-      createGate('alpha', 252, 104, 20, 14),
-      createGate('beta', 252, 302, 20, 14)
+      createGate('alpha', 252, 106, 18, 14),
+      createGate('beta', 252, 300, 18, 14)
     ];
     state.buttons = [
-      createButton('alpha-btn', 88, 150, 'alpha'),
-      createButton('beta-btn', 432, 270, 'beta')
+      createButton('alpha-btn', 88, 164, 'alpha'),
+      createButton('beta-btn', 432, 256, 'beta')
     ];
 
-    const enemyCount = Math.min(6, 2 + Math.floor(state.wave * 0.9));
     const spawnPoints = [
-      [426, 74],
-      [426, 328],
-      [260, 74],
-      [96, 74],
-      [96, 328],
-      [426, 208]
+      [420, 78],
+      [100, 78],
+      [420, 320]
     ];
-    const palette = ['#ff5fb2', '#ff9b54', '#ffd166', '#ff7676', '#c88cff', '#8ef0ff'];
-    state.enemies = spawnPoints.slice(0, enemyCount).map(([x, y], index) => createTank(x, y, palette[index % palette.length], true));
+    const palette = ['#ff6b8f', '#ffb25c', '#86e7ff'];
+    state.enemies = spawnPoints.map(([x, y], index) => createTank(x, y, palette[index % palette.length], true));
     state.bullets = [];
   }
 
@@ -196,12 +186,12 @@ if (canvas) {
     return base
       .map((dir) => {
         const [vx, vy] = vectorFor(dir);
-        const probeX = enemy.x + vx * 28;
-        const probeY = enemy.y + vy * 28;
+        const probeX = enemy.x + vx * 26;
+        const probeY = enemy.y + vy * 26;
         if (probeX < 20 || probeX > canvas.width - 20 || probeY < 20 || probeY > canvas.height - 20) return null;
         if (collidesRect(probeX, probeY, TANK_RADIUS)) return null;
         const distance = Math.hypot(target.x - probeX, target.y - probeY);
-        const sameDirBonus = dir === enemy.dir ? -10 : 0;
+        const sameDirBonus = dir === enemy.dir ? -8 : 0;
         return { dir, distance: distance + sameDirBonus };
       })
       .filter(Boolean)
@@ -218,9 +208,9 @@ if (canvas) {
 
   function pickMovementDirection(enemy, options) {
     if (!options.length) return enemy.dir;
-    if (enemy.wanderTimer > 0 && options.includes(enemy.wanderDir) && Math.random() < 0.45) return enemy.wanderDir;
-    if (Math.random() < 0.2 && options[1]) return options[1];
-    if (Math.random() < 0.14) return options[Math.floor(Math.random() * options.length)];
+    if (enemy.wanderTimer > 0 && options.includes(enemy.wanderDir)) return enemy.wanderDir;
+    if (Math.random() < 0.28 && options[1]) return options[1];
+    if (Math.random() < 0.18) return options[Math.floor(Math.random() * options.length)];
     return options[0];
   }
 
@@ -231,22 +221,20 @@ if (canvas) {
     const canSeePlayer = lineOfSight(enemy, playerTarget);
 
     if (enemy.think <= 0) {
-      enemy.think = 0.14 + Math.random() * 0.26;
-      enemy.targetButton = !canSeePlayer && Math.random() < 0.24 ? chooseButtonTarget(enemy) : null;
+      enemy.think = 0.12 + Math.random() * 0.18;
+      enemy.targetButton = !canSeePlayer && Math.random() < 0.2 ? chooseButtonTarget() : null;
 
-      if (canSeePlayer && Math.random() < 0.38) {
+      if (canSeePlayer && Math.random() < 0.34) {
         enemy.dir = directionToward(enemy, playerTarget);
         fire(enemy);
-      } else if (enemy.targetButton && lineOfSight(enemy, enemy.targetButton) && Math.random() < 0.32) {
+      } else if (enemy.targetButton && lineOfSight(enemy, enemy.targetButton) && Math.random() < 0.24) {
         enemy.dir = directionToward(enemy, enemy.targetButton);
         fire(enemy);
       }
 
-      if (Math.random() < 0.18) {
-        const dirs = ['up', 'down', 'left', 'right'];
-        enemy.wanderDir = dirs[Math.floor(Math.random() * dirs.length)];
-        enemy.wanderTimer = 0.24 + Math.random() * 0.26;
-      }
+      const dirs = ['up', 'down', 'left', 'right'];
+      enemy.wanderDir = dirs[Math.floor(Math.random() * dirs.length)];
+      enemy.wanderTimer = 0.18 + Math.random() * 0.24;
     }
 
     const target = enemy.targetButton || playerTarget;
@@ -258,21 +246,22 @@ if (canvas) {
 
     if (!moved) {
       enemy.stuckFor += delta;
-      if (enemy.stuckFor > 0.14) {
-        const fallback = preferredDirections[Math.floor(Math.random() * Math.max(1, preferredDirections.length))] || ['up', 'down', 'left', 'right'][Math.floor(Math.random() * 4)];
+      if (enemy.stuckFor > 0.08) {
+        const fallbackOptions = preferredDirections.length ? preferredDirections : ['up', 'down', 'left', 'right'];
+        const fallback = fallbackOptions[Math.floor(Math.random() * fallbackOptions.length)];
         enemy.dir = fallback;
         enemy.wanderDir = fallback;
         enemy.wanderTimer = 0.2;
-        enemy.think = 0.04;
+        enemy.think = 0.03;
         enemy.stuckFor = 0;
       }
     } else {
       enemy.stuckFor = 0;
     }
 
-    if (enemy.targetButton && Math.hypot(enemy.x - enemy.targetButton.x, enemy.y - enemy.targetButton.y) < 96 && lineOfSight(enemy, enemy.targetButton)) {
+    if (enemy.targetButton && Math.hypot(enemy.x - enemy.targetButton.x, enemy.y - enemy.targetButton.y) < 90 && lineOfSight(enemy, enemy.targetButton)) {
       enemy.dir = directionToward(enemy, enemy.targetButton);
-      if (Math.random() < 0.008) fire(enemy);
+      if (Math.random() < 0.006) fire(enemy);
     }
   }
 
@@ -364,11 +353,11 @@ if (canvas) {
   function drawButton(button) {
     ctx.save();
     ctx.translate(button.x, button.y);
-    ctx.fillStyle = '#18243f';
+    ctx.fillStyle = '#2b2038';
     ctx.beginPath();
     ctx.arc(0, 0, button.r + 4, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = `rgba(255, 209, 102, ${0.45 + Math.sin(button.pulse) * 0.2})`;
+    ctx.fillStyle = `rgba(255, 107, 107, ${0.45 + Math.sin(button.pulse) * 0.2})`;
     ctx.beginPath();
     ctx.arc(0, 0, button.r, 0, Math.PI * 2);
     ctx.fill();
@@ -376,7 +365,7 @@ if (canvas) {
   }
 
   function drawGate(gate) {
-    ctx.fillStyle = gate.open ? 'rgba(135, 255, 101, 0.18)' : '#87ff65';
+    ctx.fillStyle = gate.open ? 'rgba(113, 227, 255, 0.16)' : '#71e3ff';
     ctx.fillRect(gate.x, gate.y, gate.w, gate.h);
     if (!gate.open) {
       ctx.strokeStyle = '#101221';

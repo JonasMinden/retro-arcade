@@ -81,8 +81,8 @@ if (canvas) {
     state.defenseMissiles.push({ x: startX, y: 356, tx: targetX, ty: targetY, speed: 300 });
     state.preferredSilo = siloIndex;
     state.crosshair = { x: targetX, y: targetY };
-    state.defenseHeat = Math.min(3.2, state.defenseHeat + 0.9);
-    state.defenseCooldown = 0.22 + state.defenseHeat * 0.16;
+    state.defenseHeat = Math.min(3.8, state.defenseHeat + 0.95);
+    state.defenseCooldown = 0.3 + state.defenseHeat * 0.18;
     if (state.introTimer > 0) state.introTimer = 0;
   }
 
@@ -162,6 +162,8 @@ if (canvas) {
     if (city) {
       city.alive = false;
       citiesElement.textContent = String(state.cities.filter((entry) => entry.alive).length);
+      state.defenseCooldown = Math.max(state.defenseCooldown, 0.85 + state.wave * 0.08);
+      state.defenseHeat = Math.min(3.8, state.defenseHeat + 1.25);
     }
     if (!state.cities.some((entry) => entry.alive)) state.gameOver = true;
   }
@@ -179,7 +181,7 @@ if (canvas) {
     if (state.paused || state.gameOver) return;
     state.introTimer = Math.max(0, state.introTimer - delta);
     state.defenseCooldown = Math.max(0, state.defenseCooldown - delta);
-    state.defenseHeat = Math.max(0, state.defenseHeat - delta * 0.65);
+    state.defenseHeat = Math.max(0, state.defenseHeat - delta * 0.55);
 
     state.spawnTimer += delta;
     if (state.missilesLeft > 0 && state.spawnTimer >= Math.max(0.62, 1.28 - state.wave * 0.05)) {
@@ -260,7 +262,7 @@ if (canvas) {
     ctx.font = "16px 'Courier New'";
     ctx.textAlign = 'center';
     ctx.fillText('Tippe oder klicke auf einen Punkt im Himmel.', canvas.width / 2, 62);
-    ctx.fillText('Abwehrraketen haben Cooldown. Große Brocken splitten erst in kleinere.', canvas.width / 2, 86);
+    ctx.fillText('Nach Stadtverlust wird dein Cooldown länger. Panik war leider nie gratis.', canvas.width / 2, 86);
   }
 
   function draw() {
@@ -283,7 +285,7 @@ if (canvas) {
     ctx.fillStyle = '#2b3554';
     ctx.fillRect(22, 22, 162, 14);
     ctx.fillStyle = state.defenseCooldown > 0 ? '#ff6b6b' : '#71e3ff';
-    ctx.fillRect(22, 22, 162 * (1 - Math.min(1, state.defenseCooldown / 0.8)), 14);
+    ctx.fillRect(22, 22, 162 * (1 - Math.min(1, state.defenseCooldown / 1.2)), 14);
     ctx.fillStyle = '#f7f5ff';
     ctx.font = "11px 'Courier New'";
     ctx.textAlign = 'left';

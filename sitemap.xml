@@ -13,6 +13,9 @@
     <loc>https://retro-arcade-4cj.pages.dev/privacy.html</loc>
   </url>
   <url>
+    <loc>https://retro-arcade-4cj.pages.dev/patches.html</loc>
+  </url>
+  <url>
     <loc>https://retro-arcade-4cj.pages.dev/games/snake/</loc>
   </url>
   <url>
@@ -65,6 +68,5 @@
   </url>
   <url>
     <loc>https://retro-arcade-4cj.pages.dev/games/head-soccer/</loc>
-  </url></urlset>
-
-
+  </url>
+</urlset>
